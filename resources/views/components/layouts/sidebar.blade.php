@@ -1,0 +1,104 @@
+<style>
+    .li-active{
+        background-color: #272F3B;
+        color: white !important;
+    }
+    .li-active:hover{
+        background-color: #272F3B !important;
+        color: white !important;
+    }
+</style>
+<div class="sidebar-wrapper" data-simplebar="true">
+    <div class="sidebar-header">
+        <div>
+            <img style="width: 200px" src="{{ asset('assets/images/eldizerlogo.jpeg')}}" class="logo-icon" alt="logo icon">
+        </div>
+        {{-- <div>
+            <h4 class="logo-text">ElDIZER</h4>
+        </div> --}}
+        <div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>
+        </div>
+     </div>
+    <!--navigation-->
+    <ul class="metismenu" id="menu">
+        <li>
+            <a class="{{ Route::is('dashboard') ? "li-active": ""}}" href="{{ route('dashboard')}}">
+                <div class="parent-icon"><i class='bx bx-home-alt'></i>
+                </div>
+                <div class="menu-title">Home</div>
+            </a>
+        </li>
+        <li class="menu-label">Loan Management</li>
+        <li>
+            <a  class="{{ Route::is('customers.index') ? "li-active": ""}}" href="{{ route('customers.index')}}">
+                <div class="parent-icon"><i class='bx bx-user'></i>
+                </div>
+                <div class="menu-title">Customers</div>
+            </a>
+        </li>
+        <li>
+            <a class="{{ Route::is('loan.applications') ? "li-active": ""}}" href="{{ route('loan.applications')}}">
+                <div class="parent-icon"><i class='bx bx-envelope'></i>
+                </div>
+                <div class="menu-title">Loan Applications</div>
+            </a>
+        </li>
+        <li>
+            <a class="{{ Route::is('loan.contracts') ? "li-active": ""}}" href="{{ route('loan.contracts')}}">
+                <div class="parent-icon"><i class='bx bx-list-ol'></i>
+                </div>
+                <div class="menu-title">Loan Contracts</div>
+            </a>
+        </li>
+        <li class="menu-label">Payment</li>
+        <li>
+            <a class="{{ Route::is('payment.disbursed') ? "li-active": ""}}" href="{{ route('payment.disbursed')}}">
+                <div class="parent-icon"><i class='bx bx-money'></i>
+                </div>
+                <div class="menu-title">Disbursment</div>
+            </a>
+        </li>
+        <li>
+            <a class="{{ Route::is('payments') ? "li-active": ""}}" href="{{ route('payments')}}">
+                <div class="parent-icon"><i class='lni lni-money-location'></i>
+                </div>
+                <div class="menu-title">Repayments</div>
+            </a>
+        </li>
+        <li class="menu-label">Managements</li>
+        <li>
+            <a class="{{ Route::is('colleges.index') ? "li-active": ""}}" href="{{ route('colleges.index')}}">
+                <div class="parent-icon"> <i class="bx bx-buildings"></i>
+                </div>
+                <div class="menu-title">Universities</div>
+            </a>
+        </li>
+        <li>
+            <a class="{{ Route::is('agents.index') ? "li-active": ""}}" href="{{ route('agents.index')}}">
+                <div class="parent-icon"><i class="bx bx-user-circle"></i>
+                </div>
+                <div class="menu-title">Agents</div>
+            </a>
+        </li>
+       
+        <li>
+            <a class="{{ Route::is('users.index') ? "li-active": ""}}" href="{{ route('users.index')}}">
+                <div class="parent-icon"><i class="bx bx-user"></i>
+                </div>
+                <div class="menu-title">Users</div>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('logout')}}">
+                <div class="parent-icon"><i class="bx bx-log-out-circle"></i>
+                </div>
+                <div class="menu-title">Logout</div>
+            </a>
+        </li>
+        
+        
+      
+      
+    </ul>
+    <!--end navigation-->
+</div>

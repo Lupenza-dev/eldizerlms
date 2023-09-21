@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Mobile\V1\CustomerController;
+use App\Http\Controllers\Api\Mobile\V1\LoanApplicationController;
+use App\Http\Controllers\Api\Mobile\V1\AuthController;
+use App\Http\Controllers\Api\Mobile\V1\HomeController;
+use App\Http\Controllers\HomeController as TestController;
+
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::post('upload-loans',[TestController::class,'uploadLoans']);
+
+Route::post('V1/user-authentication',[AuthController::class,'userLogin']);
+Route::post('V1/customer-registration',[CustomerController::class,'store']);
+Route::post('V1/loan-calculator',[LoanApplicationController::class,'loanCalculator']);
+Route::get('V1/get-colleges',[HomeController::class,'getColleges']);
+Route::get('V1/get-regions',[HomeController::class,'getRegions']);
+Route::get('V1/get-districts/{region_id}',[HomeController::class,'getDistricts']);
+Route::get('V1/get-wards/{district_id}',[HomeController::class,'getWards']);
+Route::group(['prefix'=>'V1','middleware'=>'auth:api'], function(){
+   
+    Route::post('student-registration',[CustomerController::class,'storeStudent']);
+    Route::post('loan-application',[LoanApplicationController::class,'loanApplication']);
+    Route::post('loan-calculator',[LoanApplicationController::class,'loanCalculator']);
+    Route::post('get-loans',[HomeController::class,'getLoans']);
+    Route::post('get-payments',[HomeController::class,'getPayments']);
+    Route::get('get-agents',[HomeController::class,'getAgents']);
+});
