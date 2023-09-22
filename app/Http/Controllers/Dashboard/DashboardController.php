@@ -108,9 +108,9 @@ class DashboardController extends Controller
     public function grantedLoans(){
 
         $monthly_sales = LoanContract::
-                        whereYear( 'created_at', date( 'Y' ) )
+                        whereYear( 'start_date', 2021 )
                         //->where('status','Rejected')
-                        ->selectRaw('COUNT(id) as count, YEAR(created_at) year,MONTH(created_at) month ')
+                        ->selectRaw('COUNT(id) as count, YEAR(start_date) year,MONTH(start_date) month ')
                         ->groupBy('year','month' )
                         ->get( array('month', 'count' ));
 

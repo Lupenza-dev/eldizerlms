@@ -19,6 +19,7 @@ use App\Models\Payment\Payment;
 use Str;
 use DateTimeImmutable;
 use DateTimeZone;
+use Carbon\Carbon;
 
 
 
@@ -58,7 +59,7 @@ class HomeController extends Controller
             $region         =$row['Region'];
             $district       =$row['Disrict'];
             $street         =$row['Street'];
-            $college_name        =$row['College'];
+            $college_name   =$row['College'];
             $study_year     =$row['Study Year'];
             $reg_number     =$row['Reg ID'];
             $heslb_status   =$row['Heslb Status'];
@@ -66,10 +67,18 @@ class HomeController extends Controller
             $amount         =$row['Request Amount'];
             $start_date     =$row['start date'];
             $end_date       =$row['end date'];
+            $date = Carbon::parse($start_date);
+            $endd_date = Carbon::parse($end_date);
+            $dob_date = Carbon::parse($dob);
 
-          
+            // Get the date part as a string (YYYY-MM-DD)
+            $start_date = $date->toDateString();
+            $end_date = $endd_date->toDateString();
+            $dob = $dob_date->toDateString();
+
             ### create customer
-
+            $code =255;
+            $phone_number =$code.''.$phone_number;
             $customer =Customer::where('phone_number',$phone_number)->first();
 
             if (!$customer) {

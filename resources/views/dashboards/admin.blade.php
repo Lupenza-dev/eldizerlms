@@ -133,7 +133,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <div>
-                            <h6 class="mb-0">Loan Application Report {{ date('Y')}}</h6>
+                            <h6 class="mb-0">Loan Application Report 2021</h6>
                         </div>
                         <div class="dropdown ms-auto">
                             {{-- <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
@@ -330,7 +330,7 @@
             borderWidth: 0 
           },
            {
-            label: 'Granted Loans',
+            label: 'Disbursed Loans',
             data: JSON.parse(granted_loans),
             borderColor: gradientStroke2,
             backgroundColor: gradientStroke2,
@@ -361,18 +361,19 @@
    };	
    
    function unipiechart(){
-    var st_john ="{{ $loan_contracts->where('college_id',1)->count()}}";
-    var udsm ="{{ $loan_contracts->where('college_id',2)->count()}}";
-    var udom ="{{ $loan_contracts->where('college_id',3)->count()}}";
+    var st_john     =@json($loan_contracts->where('college_id',5)->count());
+    var cbe         =@json($loan_contracts->where('college_id',6)->count());
+    var udom        =@json($loan_contracts->where('college_id',7)->count());
     var options = {
-		series: [st_john, udsm, udom],
+		series: [st_john, cbe, udom],
+		//series: [518, 10, 10],
 		chart: {
 			foreColor: '#9ba7b2',
 			height: 330,
 			type: 'pie',
 		},
 		colors: ["#0d6efd", "#6c757d", "#17a00e"],
-		labels: ['ST JOHN UNIVERSITY', 'Udsm', 'Udom'],
+		labels: ['ST JOHN UNIVERSITY', 'CBE DODMA', 'UNIVERSITY OF DODOMA'],
 		responsive: [{
 			breakpoint: 480,
 			options: {
@@ -390,9 +391,10 @@
    }
 
    function unipiechart2(){
-    var GRANTED ="{{ $loan_contracts->where('status','GRANTED')->count()}}";
-    var CLOSED ="{{ $loan_contracts->where('status','CLOSED')->count()}}";
-    var DEFAULT ="{{ $loan_contracts->where('status','DEFAULT')->count()}}";
+    var GRANTED        =@json($loan_contracts->where('status','GRANTED')->count());
+    var CLOSED        =@json($loan_contracts->where('status','CLOSED')->count());
+    var DEFAULT        =@json($loan_contracts->where('status','DEFAULT')->count());
+
     var options = {
 		series: [GRANTED, CLOSED, DEFAULT],
 		chart: {
@@ -401,7 +403,7 @@
 			type: 'pie',
 		},
 		colors: ["#0d6efd", "#6c757d", "#17a00e"],
-		labels: ['GTRANTED', 'CLOSED', 'DEFAULT'],
+		labels: ['GRANTED', 'CLOSED', 'DEFAULT'],
 		responsive: [{
 			breakpoint: 480,
 			options: {
