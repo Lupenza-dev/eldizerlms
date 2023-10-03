@@ -3,18 +3,49 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
+use App\Models\Entities\Region;
+use App\Models\Management\College;
 use Illuminate\Http\Request;
 use App\Models\Management\Customer;
+use App\Traits\CustomerTrait;
 
 class CustomerController extends Controller
 {
+    use CustomerTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customers =Customer::with('region','district','ward')->latest()->get();
-        return view('managements.customers.customers',compact('customers'));
+        $requests =$request->all();
+        $customers =Customer::with('region','district','ward','student')
+                    ->whereHas('student',function($query) use ($requests){
+                        $query->withfilters($requests);
+                    })
+                    ->when($requests,function ($query) use ($requests){
+                        $query->withfilters($requests);
+                    })
+                    ->latest()
+                    ->get();
+        $regions   =Region::get();
+        $colleges  =College::get();
+        return view('managements.customers.customers',compact('customers','regions','colleges','requests'));
+    }
+
+    public function generateExcelReport(Request $request){
+        $requests =$request->all();
+        $customers =Customer::with('region','district','ward','student','student.college')
+                    ->whereHas('student',function($query) use ($requests){
+                        $query->withfilters($requests);
+                    })
+                    ->when($requests,function ($query) use ($requests){
+                        $query->withfilters($requests);
+                    })
+                    ->latest()
+                    ->cursor();
+        
+        return self::exportCustomerReport($customers);
+
     }
 
     /**

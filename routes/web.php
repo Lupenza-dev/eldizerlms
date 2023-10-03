@@ -48,6 +48,7 @@ Route::group(['middleware'=>'auth'],function(){
 
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
+    Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
 
     Route::resources([
         'users'          =>UserController::class,

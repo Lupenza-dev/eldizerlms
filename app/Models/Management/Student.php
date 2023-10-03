@@ -26,8 +26,13 @@ class Student extends Model
     public function scopeWithFilters($query,$request){
         
         $student_reg_id  =$request['student_reg_id'] ?? null;
+        $college_id  =$request['college_id'] ?? null;
         return $query->when($student_reg_id,function($query) use ($student_reg_id){
                 $query->where('student_reg_id','like','%'.$student_reg_id.'%');
-            });
+                })
+                ->when($college_id,function($query) use ($college_id){
+                    $query->where('college_id',$college_id);
+                });
     }
+
 }

@@ -3,6 +3,7 @@ namespace App\Traits;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 
+
 trait LoanTrait
 {
     public function exportLoanReport($contracts){

@@ -101,9 +101,36 @@ class Customer extends Model
 
     public function scopeWithFilters($query,$request){
         
-        $phone_number  =$request['phone_number'] ?? null;
+        $phone_number    =$request['phone_number'] ?? null;
+        $start_date      =$request['start_date'] ?? null;
+        $end_date        =$request['end_date'] ?? null;
+        $id_number       =$request['id_number'] ?? null;
+        $region_id       =$request['region_id'] ?? null;
+        $gender_id       =$request['gender_id'] ?? null;
+        
         return $query->when($phone_number,function($query) use ($phone_number){
                 $query->where('phone_number','like','%'.$phone_number.'%');
-            });
-      }
+              })
+              ->when($start_date,function($query) use ($start_date,$end_date){
+                if ($start_date != null || $end_date != null) {
+                    if ($start_date != null && $end_date != null)
+                        $query->whereBetween('created_at', [$start_date, $end_date]);
+        
+                    else if ($start_date != null)
+                        $query->where('created_at', '>=', $start_date);
+        
+                    else if ($end_date != null)
+                        $query->where('created_at', '<=', $end_date);
+                }
+                })
+                ->when($id_number,function($query) use ($id_number){
+                    $query->where('id_number',$id_number);
+                })
+                ->when($region_id,function($query) use ($region_id){
+                    $query->where('region_id',$region_id);
+                })
+                ->when($gender_id,function($query) use ($gender_id){
+                    $query->where('gender_id',$gender_id);
+                });
+    }
 }
