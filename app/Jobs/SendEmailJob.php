@@ -46,7 +46,7 @@ class SendEmailJob implements ShouldQueue
         $receiver_email =$this->receiver_email;
 
         Mail::send('mails.mail_template',['data'=>$data],function($message) use ($email_subject,$receiver_name,$receiver_email) {
-           $message->to("lupenza10@gmail.com", $receiver_name)->subject
+           $message->to($receiver_email, $receiver_name)->subject
               ($email_subject);
           // $message-bcc('lupenza10@gmail.com', 'Lupenza Luhangano');
            $message->from('non-reply@eldizerfinance.co.tz','Eldizer Finance Ltd Team');

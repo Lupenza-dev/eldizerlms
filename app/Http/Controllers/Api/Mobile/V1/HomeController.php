@@ -51,8 +51,7 @@ class HomeController extends Controller
     }
 
     public function getAgents(){
-        $student =Student::with('agents','agents.user')->where('customer_id',Auth::user()->customer_id)->first();
-        
+        $student =Student::where('customer_id',Auth::user()->customer_id)->first();
 
         return response()->json([
             'success' =>true,

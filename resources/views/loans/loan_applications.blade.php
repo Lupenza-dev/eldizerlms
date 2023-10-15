@@ -4,6 +4,12 @@
     td{
         align-content: center;
     }
+    .custom-header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: center
+    }
 </style>
 <div class="page-wrapper">
     <div class="page-content">
@@ -36,7 +42,66 @@
       
         <div class="card">
             <div class="card-body">
-                <h6 class="mb-0 text-uppercase text-center">Loan Applications</h6>
+                <div class="custom-header">
+                    <div></div>
+                    <h6 class="mb-0 text-uppercase">Loan Application</h6>
+                    <div>
+                        <button class="btn btn-info" id="filter-btn"><span style="color: #fff" class="bx bx-filter"></span> <span style="color: #fff">Custom Filter</span></button>
+                    </div>
+                </div>
+                <form action="" id="submit-form" style="display: none">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label for="">Start Date</label>
+                            <input type="date" name="application_start_date" class="form-control" value="{{ $requests['application_start_date'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">End Date</label>
+                            <input type="date" name="application_end_date" class="form-control" value="{{ $requests['application_end_date'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Gender</label>
+                            <select name="gender_id" class="form-control">
+                                <option value="">please choose Gender</option>
+                                @if ($requests['gender_id'] ?? null)
+                                <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
+                                <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
+                                @else
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>  
+                                @endif
+                               
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">College</label>
+                            <select name="college_id" class="form-control">
+                                <option value="">please choose College</option>
+                                @foreach ($colleges as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="margin-top: 10px">
+                        <div class="col-md-3">
+                            <label for="">Phone Number</label>
+                            <input type="number" name="phone_number" class="form-control" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">ID Number</label>
+                            <input type="number" name="id_number" class="form-control" value="{{ $requests['id_number'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Student Reg ID</label>
+                            <input type="text" name="student_reg_id" class="form-control" value="{{ $requests['student_reg_id'] ?? null}}">
+                        </div>
+                        <div class="col-md-3" style="text-align: right; padding-top: 20px;">
+                            <button class="btn btn-primary btn-sm" formaction="{{ route('loan.applications')}}" type="submit"><span class="bx bx-search"></span> Search</button>
+                            <button class="btn btn-success btn-sm" formaction="{{ route('genderate.loan.application.report')}}"><span class="bx bx-file"></span> Generate </button>
+                        </div>
+                    </div>
+                </form>
                 <hr>
                 <div class="table-responsive">
                     <table id="example" class="table table-striped table-bordered" style="width:100%">
@@ -136,4 +201,12 @@
 </div> --}}
     
 @endsection
+@push('scripts')
+<script>
+    $('#filter-btn').on('click',function(){
+        $('#submit-form').toggle();
+    })
+</script>
+    
+@endpush
 

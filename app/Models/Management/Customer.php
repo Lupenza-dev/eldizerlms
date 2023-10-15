@@ -72,7 +72,7 @@ class Customer extends Model
     }
 
     public function initiated_loan_application(){
-        return $this->hasMany(LoanApplication::class)->where('level','Initiated');
+        return $this->hasMany(LoanApplication::class)->where('level','Application');
     }
 
     public function region(){

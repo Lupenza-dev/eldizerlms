@@ -59,7 +59,6 @@ class LoanApplicationController extends Controller
                     $approval->save();
                 }
 
-
             }            
         }
 
@@ -84,7 +83,8 @@ class LoanApplicationController extends Controller
             'interest_amount'     =>$calculator['interest_amount'],
             'loan_code'           =>$code_generator->loanCode(),
             'uuid'                =>(string)Str::orderedUuid(),
-            'level'               =>"Initiated",
+            'level'               =>"Application",
+            'college_id'          =>$customer->student?->college_id
             
         ]);
 

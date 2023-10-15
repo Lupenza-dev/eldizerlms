@@ -40,6 +40,10 @@ class LoanContract extends Model
     return $this->hasOne(College::class,'id','college_id');
   }
 
+  public function guarantor(){
+    return $this->hasOne(Guarantor::class,'loan_application_id','loan_application_id');
+  }
+
   public function scopeWithFilters($query,$request){
         
     $start_date        =$request['start_date'] ?? null;

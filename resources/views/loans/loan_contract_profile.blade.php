@@ -326,7 +326,7 @@
                                         <tbody>
                                             <tr>
                                                 <th>Agent Name</th>
-                                                <td>{{ $contract->loan_approval?->agent->name }}</td>
+                                                <td>{{ $contract->loan_approval?->agent->name }}</td> 
                                                 <th>Agent College</th>
                                                 <td>{{ $contract->customer?->student->college?->name  }}</td>
                                                 <th>Phone Number</th>

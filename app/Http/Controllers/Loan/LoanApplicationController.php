@@ -3,20 +3,64 @@
 namespace App\Http\Controllers\Loan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Entities\Region;
 use Illuminate\Http\Request;
 use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanContract;
 use App\Models\Loan\Installment;
+use App\Models\Management\College;
 use App\Models\Payment\DisbursmentPayment;
 use Auth;
 use DB;
 use Str;
+use App\Traits\LoanTrait;
+
 
 class LoanApplicationController extends Controller
 {
-    public function index(){
-        $loans =LoanApplication::with('customer')->where('level','!=','Canceled')->where('level','!=','GRANTED')->get();
-        return view('loans.loan_applications',compact('loans'));
+    use LoanTrait;
+
+    public function index(Request $request){
+        $regions   =Region::get();
+        $colleges  =College::get();
+        $requests  =$request->all();
+        $loans =LoanApplication::with('customer','customer.student')
+                ->where('level','!=','Canceled')
+                ->where('level','!=','GRANTED')
+                ->where('level','!=','CLOSED')
+                ->whereHas('customer',function($query) use ($requests){
+                     $query->withfilters($requests);
+                })
+                ->whereHas('customer.student',function($query) use ($requests){
+                     $query->withfilters($requests);
+                })
+                ->when($requests, function($query) use ($requests){
+                    $query->withfilters($requests);
+                })
+                ->get();
+        return view('loans.loan_applications',compact('loans','requests','regions','colleges'));
+    }
+
+    public function generateExcelReport(Request $request){
+        $requests  =$request->all();
+        $loans =LoanApplication::with('customer','customer.student','college','customer.region','customer.district','customer.ward')
+                ->where('level','!=','Canceled')
+                ->where('level','!=','GRANTED')
+                ->where('level','!=','CLOSED')
+                ->whereHas('customer',function($query) use ($requests){
+                     $query->withfilters($requests);
+                })
+                ->whereHas('customer.student',function($query) use ($requests){
+                     $query->withfilters($requests);
+                })
+                ->when($requests, function($query) use ($requests){
+                    $query->withfilters($requests);
+                })
+                ->cursor();
+
+        return self::exportLoanApplicationReport($loans);
+
+         
     }
 
     public function profile($uuid){
@@ -30,7 +74,7 @@ class LoanApplicationController extends Controller
 
         $loan =LoanApplication::where('uuid',$loan_uuid)->first();
         $loan->remark =$remark;
-        $loan->level  ="Rejected";
+        $loan->level  ="Rejected by Admin";
         $loan->attended_by =Auth::user()->id;
         $loan->save();
 

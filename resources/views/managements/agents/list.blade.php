@@ -60,12 +60,12 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td><img style="height: 70px; width: 70px; border-radius: 50%" src="{{ asset('storage/attachments').'/'.$agent->image}}" alt=""></td>
                                 <td>{{ date('d,M-Y',strtotime($agent->created_at))}}</td>
-                                <td>{{ $agent->user->name }}</td>
-                                <td>{{ $agent->user->email }}</td>
-                                <td>{{ $agent->user->phone_number }}</td>
+                                <td>{{ $agent->user?->name }}</td>
+                                <td>{{ $agent->user?->email }}</td>
+                                <td>{{ $agent->user?->phone_number }}</td>
                                 <td>{{ $agent->student_reg_id }}</td>
-                                <td>{{ $agent->college->name }}</td>
-                                <td>{{ $agent->user->active }}</td>
+                                <td>{{ $agent->college?->name }}</td>
+                                <td>{{ $agent->user?->active }}</td>
                                 <td>Action</td>
                             </tr> 
                         @endforeach

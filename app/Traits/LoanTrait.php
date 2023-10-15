@@ -55,4 +55,40 @@ trait LoanTrait
             yield $loan;
         }
     }
+
+    public function exportLoanApplicationReport($loans){
+        return (new FastExcel($this->loanGenerator($loans)))->download('LoanApplicationReport.xlsx',function($loan){
+            
+            return [
+            'Full name'      =>ucwords($loan->customer?->first_name.' '.$loan->customer?->middle_name.' '.$loan->customer?->last_name),
+            'Other Name'     =>ucwords($loan->customer?->other_name),
+            'Phone Number'   =>$loan->customer?->phone_number,
+            'Gender'         =>$loan->customer?->gender?->name,
+            'ID Number'      =>$loan->customer?->id_number,
+            'DOB'            =>$loan->customer?->dob,
+            'Email'          =>$loan->customer?->email,
+            'Region'         =>$loan->customer?->region?->name,
+            'District'       =>$loan->customer?->district?->name,
+            'Ward'           =>$loan->customer?->ward?->name,
+            'Street'         =>$loan->customer?->street,
+            'Residence Since'     =>$loan->customer?->resident_since,
+            'College'             =>$loan->college?->name,
+            'College Location'    =>$loan->college?->location,
+            'Student Study Year'  =>$loan->customer?->student?->study_year,
+            'Student Reg ID'      =>$loan->customer?->student?->student_reg_id,
+            'Student Course'      =>$loan->customer?->student?->course,
+            'HESLB Status'        =>$loan->customer?->student?->heslb_status,
+            'Loan Start Date'     =>date('d-M-Y',strtotime($loan->created_at)),
+            'Request Amount'      =>$loan->amount,
+            'Total Loan Amount'      =>$loan->loan_amount,
+            'Plan'                   =>$loan->plan,
+            'Installment Amount'     =>$loan->installment_amount,
+            'Interest Rate'          =>$loan->interest_rate,
+            'Interest Rate'          =>$loan->interest_amount,
+            'Fees Amount'            =>$loan->fees_amount,
+            'Status'                 =>$loan->level,
+            'Loan Code'              =>$loan->loan_code,
+            ];
+        });
+    }
 }
