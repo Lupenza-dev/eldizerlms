@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Loan\LoanContract;
-
+use App\Models\Management\Customer;
 
 class User extends Authenticatable
 {
@@ -50,5 +50,9 @@ class User extends Authenticatable
 
     public function loan_contracts(){
         return $this->hasMany(LoanContract::class,'customer_id','customer_id')->where('status','GRANTED')->latest();
+    }
+
+    public function customer(){
+        return $this->hasOne(Customer::class,'id','customer_id');
     }
 }

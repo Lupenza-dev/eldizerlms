@@ -35,7 +35,7 @@ class AuthController extends Controller
         $user_request =$validator->valid();
 
         if (Auth::attempt(['email' => $user_request['email'], 'password' => $user_request['password']])) {
-            $user = User::find(auth()->user()->id);
+            $user = User::find(Auth()->user()->id);
             if ($user->active == 1) { 
                 return response()->json([
                     'success'  =>true,

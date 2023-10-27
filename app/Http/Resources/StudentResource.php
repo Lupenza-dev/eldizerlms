@@ -15,12 +15,12 @@ class StudentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'customer'       =>new CustomerResource($this->customer),
-            'college_name'   =>$this->college->name,
+           // 'customer'       =>new CustomerResource($this->customer),
+            'college_name'   =>$this->college?->name,
             'position'       =>$this->position,
             'study_year'     =>$this->study_year,
             'student_reg_id' =>$this->student_reg_id,
-            'heslb_status'   =>$this->heslb_status,
+            'heslb_status'   =>$this->heslb_status == 1 ? "Yes" : "No",
             'course'         =>$this->course,
         ];
     }

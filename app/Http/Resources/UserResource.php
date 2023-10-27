@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'outstanding_amount' =>$this->loan_contracts->sum('outstanding_amount')?? 0,
             'payment_date'       =>$this->loan_contracts->first()->next_payment_date ?? "",   
             'loan_count'         =>$this->loan_contracts->count(),
+            'customer'           =>new CustomerResource($this->customer),
             
         ];
     }
