@@ -21,7 +21,7 @@ class UserObserver
         $receiver_name  =$user->name;
         $subject        ="System Registration";
         SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
-        SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
+       // SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
     }
 
     /**

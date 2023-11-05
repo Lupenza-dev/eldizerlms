@@ -338,7 +338,7 @@
                                                 <th>Remark</th>
                                                 <td>{{ $contract->loan_approval?->remark}}</td>
                                                 <th>Attended Date</th>
-                                                <td>{{ $contract->loan_approval?->attended_date ? date('d,M-Y',strtotime($loan->loan_approval->attended_date)) : ""}}</td>
+                                                <td>{{ $contract->loan_approval?->attended_date ? date('d,M-Y',strtotime($contract->loan_approval?->attended_date)) : ""}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
