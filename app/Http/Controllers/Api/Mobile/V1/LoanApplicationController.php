@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Mobile\V1;
 
+use App\Event\LoanApplied;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Loan\LoanCalculatorService;
@@ -111,6 +112,8 @@ class LoanApplicationController extends Controller
             'phone_number'        =>$request->guarantor2pn,
             'uuid'                =>(string)Str::orderedUuid(),
         ]);
+
+        event (new LoanApplied($loan_application,1));
 
         return response()->json([
             'success' =>true,

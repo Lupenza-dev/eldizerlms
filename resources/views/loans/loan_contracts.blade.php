@@ -92,7 +92,9 @@
                 <div class="form-group row" style="margin-top: 10px;">
                     <div class="col-md-12 text-center">
                         <button formaction="{{ route('loan.contracts') }}" class="btn btn-primary"> <span class="bx bx-search"></span> Search </button>
-                        <button formaction="{{ route('generate.loan.contracts') }}" class="btn btn-success"> <span class="bx bx-file"></span> Generate Excel </button>
+                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                          <button formaction="{{ route('generate.loan.contracts') }}" class="btn btn-success"> <span class="bx bx-file"></span> Generate Excel </button>
+                        @endif
                     </div>
 
                 </div>
@@ -112,7 +114,9 @@
                                 <th>Outstanding Amount</th>
                                 {{-- <th>Plan</th> --}}
                                 <th>Status</th>
+                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                        <tbody>
@@ -127,12 +131,14 @@
                                 <td>{{ number_format($contract->loan_amount) }}</td>
                                 <td>{{ number_format($contract->current_balance) }}</td>
                                 <td>{{ number_format($contract->outstanding_amount) }}</td>
-                                <td>{{ $contract->status }}</td>
+                                <td>{!! $contract->status_formatted !!}</td>
+                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <td>
                                     <a href="{{ route('loan.contract.profile',$contract->uuid)}}">
                                     <button class="btn btn-primary btn-sm" title="User"> <i class="bx bx-user"></i> </button>
                                     </a>
                                 </td>
+                                @endif
                             </tr> 
                         @endforeach
                        </tbody>

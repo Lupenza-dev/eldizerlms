@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Loan\LoanContract;
 use App\Models\Management\College;
 use App\Traits\LoanTrait;
-
+use Illuminate\Support\Facades\Auth;
 
 class LoanContractController extends Controller
 {
@@ -15,6 +15,8 @@ class LoanContractController extends Controller
     
     public function index(Request $request){
         $requests  =$request->all();
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
+
         $contracts =LoanContract::with('customer','student')
                     ->latest()
                     ->when($requests,function($query) use ($requests){
@@ -23,8 +25,11 @@ class LoanContractController extends Controller
                     ->whereHas('customer',function ($query) use ($requests){
                         $query->withfilters($requests);
                     })
-                    ->whereHas('student',function ($query) use ($requests){
+                    ->whereHas('student',function ($query) use ($requests ){
                         $query->withfilters($requests);
+                    })
+                    ->when($filter,function ($query){
+                        $query->where('college_id',getCollegeId());
                     })
                     ->get();
         $universities =College::latest()->get();

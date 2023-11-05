@@ -39,7 +39,7 @@
                    <div class="d-flex align-items-center">
                        <div>
                            <p class="mb-0 text-danger">Rejected Application</p>
-                           <h4 class="my-1 text-danger">{{ number_format($loan_applications->where('level','REJECTED')->count())}}</h4>
+                           <h4 class="my-1 text-danger">{{ number_format($loan_applications->whereIn('level',['Rejected by Agent','Rejected by Admin'])->count())}}</h4>
                            {{-- <p class="mb-0 font-13">-4.5% from last week</p> --}}
                        </div>
                        <div class="widgets-icons-2 rounded-circle bg-gradient-burning text-white ms-auto"><i class='bx bx-error-alt' ></i>
@@ -64,68 +64,71 @@
             </div>
           </div> 
         </div><!--end row-->
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-           <div class="col">
+            <div class="col">
+              <div class="card radius-10 border-start border-0 border-4 border-info">
+                 <div class="card-body">
+                     <div class="d-flex align-items-center">
+                         <div>
+                             <p class="mb-0 text-secondary">Portofolio Size</p>
+                             <h4 class="my-1 text-info">{{ number_format($loan_contracts->sum('loan_amount'))}}</h4>
+                             {{-- <p class="mb-0 font-13">+2.5% from last week</p> --}}
+                         </div>
+                         <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-money'></i>
+                         </div>
+                     </div>
+                 </div>
+              </div>
+            </div>
+            <div class="col">
              <div class="card radius-10 border-start border-0 border-4 border-info">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
-                            <p class="mb-0 text-secondary">Portofolio Size</p>
-                            <h4 class="my-1 text-info">{{ number_format($loan_contracts->sum('loan_amount'))}}</h4>
-                            {{-- <p class="mb-0 font-13">+2.5% from last week</p> --}}
+                            <p class="mb-0 text-secondary">Granted Loans ({{ $loan_contracts->where('status','GRANTED')->count()}})</p>
+                            <h4 class="my-1 text-info">{{ number_format($loan_contracts->where('status','GRANTED')->sum('loan_amount'))}}</h4>
+                            {{-- <p class="mb-0 font-13">+5.4% from last week</p> --}}
                         </div>
-                        <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-money'></i>
+                        <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-list-ol'></i>
                         </div>
                     </div>
                 </div>
              </div>
            </div>
            <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-info">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-secondary">Granted Loans ({{ $loan_contracts->where('status','GRANTED')->count()}})</p>
-                           <h4 class="my-1 text-info">{{ number_format($loan_contracts->where('status','GRANTED')->sum('loan_amount'))}}</h4>
-                           {{-- <p class="mb-0 font-13">+5.4% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-list-ol'></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-success">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-secondary">Closed Loans ({{ $loan_contracts->where('status','CLOSED')->count()}})</p>
-                           <h4 class="my-1 text-success">{{ number_format($loan_contracts->where('status','CLOSED')->sum('loan_amount'))}}</h4>
-                           {{-- <p class="mb-0 font-13">-4.5% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bx-list-ol' ></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-warning">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-secondary">Collected Amount</p>
-                           <h4 class="my-1 text-warning">{{ number_format($loan_contracts->sum('current_balance'))}}</h4>
-                           {{-- <p class="mb-0 font-13">+8.4% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bx-money'></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div> 
-        </div><!--end row-->
+             <div class="card radius-10 border-start border-0 border-4 border-success">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Closed Loans ({{ $loan_contracts->where('status','CLOSED')->count()}})</p>
+                            <h4 class="my-1 text-success">{{ number_format($loan_contracts->where('status','CLOSED')->sum('loan_amount'))}}</h4>
+                            {{-- <p class="mb-0 font-13">-4.5% from last week</p> --}}
+                        </div>
+                        <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bx-list-ol' ></i>
+                        </div>
+                    </div>
+                </div>
+             </div>
+           </div>
+           <div class="col">
+             <div class="card radius-10 border-start border-0 border-4 border-warning">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Collected Amount</p>
+                            <h4 class="my-1 text-warning">{{ number_format($loan_contracts->sum('current_balance'))}}</h4>
+                            {{-- <p class="mb-0 font-13">+8.4% from last week</p> --}}
+                        </div>
+                        <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bx-money'></i>
+                        </div>
+                    </div>
+                </div>
+             </div>
+           </div> 
+         </div><!--end row--> 
+        @endif
+      
 
         <div class="row">
            <div class="col-12 col-lg-12 d-flex">
@@ -184,64 +187,67 @@
                   </div> --}}
               </div>
            </div>
+           @if (Auth::user()->hasRole(['Admin','Super Admin']))
            <div class="col-12 col-lg-6 d-flex">
-               <div class="card radius-10 w-100">
-                <div class="card-header">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h6 class="mb-0">Universtity Loan Distribution</h6>
-                        </div>
-                        {{-- <div class="dropdown ms-auto">
-                            <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                </li>
-                            </ul>
-                        </div> --}}
-                    </div>
+            <div class="card radius-10 w-100">
+             <div class="card-header">
+                 <div class="d-flex align-items-center">
+                     <div>
+                         <h6 class="mb-0">Universtity Loan Distribution</h6>
+                     </div>
+                     {{-- <div class="dropdown ms-auto">
+                         <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+                         </a>
+                         <ul class="dropdown-menu">
+                             <li><a class="dropdown-item" href="javascript:;">Action</a>
+                             </li>
+                             <li><a class="dropdown-item" href="javascript:;">Another action</a>
+                             </li>
+                             <li>
+                                 <hr class="dropdown-divider">
+                             </li>
+                             <li><a class="dropdown-item" href="javascript:;">Something else here</a>
+                             </li>
+                         </ul>
+                     </div> --}}
+                 </div>
+             </div>
+                <div class="card-body">
+                 <div id="chart8"></div>
                 </div>
-                   <div class="card-body">
-                    <div id="chart8"></div>
-                   </div>
-               </div>
-           </div>
-           <div class="col-12 col-lg-6 d-flex">
-               <div class="card radius-10 w-100">
-                <div class="card-header">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h6 class="mb-0">Loan Status Distribution</h6>
-                        </div>
-                        {{-- <div class="dropdown ms-auto">
-                            <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                </li>
-                            </ul>
-                        </div> --}}
-                    </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 d-flex">
+            <div class="card radius-10 w-100">
+             <div class="card-header">
+                 <div class="d-flex align-items-center">
+                     <div>
+                         <h6 class="mb-0">Loan Status Distribution</h6>
+                     </div>
+                     {{-- <div class="dropdown ms-auto">
+                         <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+                         </a>
+                         <ul class="dropdown-menu">
+                             <li><a class="dropdown-item" href="javascript:;">Action</a>
+                             </li>
+                             <li><a class="dropdown-item" href="javascript:;">Another action</a>
+                             </li>
+                             <li>
+                                 <hr class="dropdown-divider">
+                             </li>
+                             <li><a class="dropdown-item" href="javascript:;">Something else here</a>
+                             </li>
+                         </ul>
+                     </div> --}}
+                 </div>
+             </div>
+                <div class="card-body">
+                 <div id="chart81"></div>
                 </div>
-                   <div class="card-body">
-                    <div id="chart81"></div>
-                   </div>
-               </div>
-           </div>
+            </div>
+        </div> 
+           @endif
+          
         </div><!--end row-->
     </div>
 </div>    

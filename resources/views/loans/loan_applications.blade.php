@@ -73,6 +73,7 @@
                                
                             </select>
                         </div>
+                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
                         <div class="col-md-3">
                             <label for="">College</label>
                             <select name="college_id" class="form-control">
@@ -81,7 +82,8 @@
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div>  
+                        @endif
                     </div>
                     <div class="form-group row" style="margin-top: 10px">
                         <div class="col-md-3">
@@ -98,7 +100,9 @@
                         </div>
                         <div class="col-md-3" style="text-align: right; padding-top: 20px;">
                             <button class="btn btn-primary btn-sm" formaction="{{ route('loan.applications')}}" type="submit"><span class="bx bx-search"></span> Search</button>
+                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
                             <button class="btn btn-success btn-sm" formaction="{{ route('genderate.loan.application.report')}}"><span class="bx bx-file"></span> Generate </button>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -130,7 +134,7 @@
                                 <td>{{ number_format($loan->loan_amount) }}</td>
                                 <td>{{ number_format($loan->installment_amount) }}</td>
                                 <td>{{ $loan->plan }}</td>
-                                <td>{{ $loan->level }}</td>
+                                <td>{!! $loan->level_formatted !!}</td>
                                 <td>
                                     <a href="{{ route('loan.profile',$loan->uuid)}}">
                                     <button class="btn btn-primary btn-sm" title="User"> <i class="bx bx-user"></i> </button>

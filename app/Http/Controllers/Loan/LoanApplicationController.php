@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Loan;
 
+use App\Event\LoanApplied;
 use App\Http\Controllers\Controller;
 use App\Models\Entities\Region;
 use Illuminate\Http\Request;
 use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanContract;
 use App\Models\Loan\Installment;
+use App\Models\Loan\LoanApproval;
 use App\Models\Management\College;
 use App\Models\Payment\DisbursmentPayment;
 use Auth;
 use DB;
 use Str;
 use App\Traits\LoanTrait;
-
+use Carbon\Carbon;
 
 class LoanApplicationController extends Controller
 {
@@ -24,6 +26,7 @@ class LoanApplicationController extends Controller
         $regions   =Region::get();
         $colleges  =College::get();
         $requests  =$request->all();
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
         $loans =LoanApplication::with('customer','customer.student')
                 ->where('level','!=','Canceled')
                 ->where('level','!=','GRANTED')
@@ -31,8 +34,11 @@ class LoanApplicationController extends Controller
                 ->whereHas('customer',function($query) use ($requests){
                      $query->withfilters($requests);
                 })
-                ->whereHas('customer.student',function($query) use ($requests){
-                     $query->withfilters($requests);
+                ->whereHas('customer.student',function($query) use ($requests , $filter){
+                     $query->withfilters($requests); 
+                     if ($filter) {
+                        $query->where('college_id',getCollegeId());
+                    }
                 })
                 ->when($requests, function($query) use ($requests){
                     $query->withfilters($requests);
@@ -72,11 +78,52 @@ class LoanApplicationController extends Controller
         $loan_uuid  =$request->loan_uuid;
         $remark     =$request->remark;
 
+        $status   =Auth::user()->hasRole('Agent') ? "Rejected by Agent" : "Rejected by Admin";
+
         $loan =LoanApplication::where('uuid',$loan_uuid)->first();
         $loan->remark =$remark;
-        $loan->level  ="Rejected by Admin";
+        $loan->level  =$status;
         $loan->attended_by =Auth::user()->id;
         $loan->save();
+
+        $loan_approval =LoanApproval::where('loan_application_id',$loan->id)->first();
+        if ($loan_approval) {
+            $loan_approval->status =$status;
+            $loan_approval->remark =$remark;
+            $loan_approval->attended_date =Carbon::now();
+            $loan_approval->save();
+        }
+
+        event (new LoanApplied($loan,3));
+
+        return response()->json([
+            'success'  =>true,
+            'message'  =>"The Action Done Successfully",
+        ]);
+    }
+
+    public function agentApproveApplication(Request $request){
+        $loan_uuid  =$request->loan_uuid;
+        $remark     =$request->remark;
+
+        $status   ="Approved by Agent";
+
+        $loan =LoanApplication::where('uuid',$loan_uuid)->first();
+        $loan->remark =$remark;
+        $loan->level  =$status;
+        $loan->attended_by =Auth::user()->id;
+        $loan->save();
+
+        $loan_approval =LoanApproval::where('loan_application_id',$loan->id)->first();
+        if ($loan_approval) {
+            $loan_approval->status =$status;
+            $loan_approval->remark =$remark;
+            $loan_approval->attended_date =Carbon::now();
+            $loan_approval->save();
+        }
+
+        event (new LoanApplied($loan,2));
+
 
         return response()->json([
             'success'  =>true,
@@ -125,6 +172,7 @@ class LoanApplicationController extends Controller
                $loan_contract =LoanContract::create([
                 'customer_id' =>$loan->customer_id,
                 'loan_application_id'      =>$loan->id,
+                'college_id'               =>$loan->college_id,
                 'amount'                   =>$loan->amount,
                 'loan_amount'              =>$loan->loan_amount,
                 'installment_amount'       =>$loan->installment_amount,

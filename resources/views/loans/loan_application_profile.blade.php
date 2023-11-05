@@ -14,7 +14,7 @@
     <div class="page-content">
         <!--breadcrumb-->
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Loan Application</div>
+            <div class="breadcrumb-title pe-3">Loan Application </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
@@ -46,7 +46,7 @@
                     <div class="col-md-12" style="display: flex; flex-direction:row; justify-content: space-between; padding: 5px 5px 10px 5px">
                         <div>{{ date('d,M-Y')}}</div>
                         <div>
-                            <h6 class="mb-0 text-uppercase text-center">Loan Applications</h6>
+                            <h6 class="mb-0 text-uppercase text-center">Loan Applications </h6>
                         </div>
                         <div>
                             <div class="btn-group">
@@ -57,9 +57,16 @@
                                     <li>
                                         <button class="dropdown-item btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-x"></span> Reject Application </button>
                                     </li>
+                                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                     <li>
                                         <button class="dropdown-item btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal"> <span class="bx bx-check"></span> Approve Application </button>
-                                    </li>
+                                    </li>  
+                                    @else
+                                    <li>
+                                        <button class="dropdown-item btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModalApprove"> <span class="bx bx-check"></span> Approve Application </button>
+                                    </li> 
+                                    @endif
+                                   
                                 </ul>
                             </div>
                         </div>
@@ -134,7 +141,7 @@
                             <th>Application Date</th>
                             <td>{{ date('d,M-Y',strtotime($loan->created_at))}}</td>
                             <th>Level</th>
-                            <td>{{ $loan->level }}</td>
+                            <td>{!! $loan->level_formatted !!}</td>
                             <th>Loan Code</th>
                             <td>{{ $loan->loan_code }}</td>
                         </tr>
@@ -309,6 +316,38 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="exampleLargeModalApprove" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Approve Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="agent_approve_form">
+                    <input type="hidden" value="{{ $loan->uuid }}" name="loan_uuid">
+                    <div class="form-group row">
+                        
+                        <div class="col-md-12">
+                            <label for="">Remark</label>
+                           <textarea name="remark" class="form-control" placeholder="Write Remark...." required></textarea>
+                        </div>
+                        <div class="col-md-12" id="agent_approve_alert" style="margin-top: 10px">
+
+                        </div>
+                        <div class="col-md-12" style="text-align:right">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-x"></span> Close</button>
+                            <button type="submit" class="btn btn-primary" id="agent_approve_btn"> <span class="bx bx-save text-white"></span> Approve</button>
+                        </div>
+                    </div>
+                </form>
+                
+            </div>
+            
+        </div>
+    </div>
+</div>
     
 @endsection
 
@@ -417,6 +456,53 @@
               complete : function(){
                 $('#approve_btn').html('<i class="bx bx-check"></i> Approve');
                 $('#approve_btn').attr('disabled', false);
+              }
+      });
+  });
+  });
+</script>
+
+<script>
+    $(document).ready(function(){
+      $('#agent_approve_form').on('submit',function(e){ 
+          e.preventDefault();
+      $.ajaxSetup({
+      headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+           }
+          });
+      $.ajax({
+      type:'POST',
+      url:"{{ route('agent.approve.loan.application')}}",
+      data : new FormData(this),
+      contentType: false,
+      cache: false,
+      processData : false,
+      success:function(response){
+        console.log(response);
+        $('#agent_approve_alert').html('<div class="alert alert-success">'+response.message+'</div>');
+        setTimeout(function(){
+         location.reload();
+      },500);
+      },
+      error:function(response){
+          console.log(response.responseText);
+          if (jQuery.type(response.responseJSON.errors) == "object") {
+            $('#agent_approve_alert').html('');
+          $.each(response.responseJSON.errors,function(key,value){
+              $('#agent_approve_alert').append('<div class="alert alert-danger">'+value+'</div>');
+          });
+          } else {
+             $('#agent_approve_alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
+          }
+      },
+      beforeSend : function(){
+                   $('#agent_approve_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> Loading .........');
+                   $('#agent_approve_btn').attr('disabled', true);
+              },
+              complete : function(){
+                $('#agent_approve_btn').html('<i class="fa fa-save"></i> Reject');
+                $('#agent_approve_btn').attr('disabled', false);
               }
       });
   });

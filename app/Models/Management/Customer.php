@@ -99,6 +99,10 @@ class Customer extends Model
         return $this->hasMany(LoanContract::class,'customer_id','id')->where('status','GRANTED')->latest();
     }
 
+    public function getCustomerNameAttribute(){
+        return ucwords($this->first_name.' '.$this->last_name);
+    }
+
     public function scopeWithFilters($query,$request){
         
         $phone_number    =$request['phone_number'] ?? null;

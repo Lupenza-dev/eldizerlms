@@ -2,6 +2,9 @@
 
 
 //check_time
+
+use Illuminate\Support\Facades\Auth;
+
 if (!function_exists('greeting')) {
     function greeting()
     {
@@ -25,6 +28,13 @@ if (!function_exists('greeting')) {
             return "Good evening";
         }
     }
+}
+
+if (!function_exists('getCollegeId')) {
+    function getCollegeId(){
+        return Auth::user()->agent?->college_id;
+    }
+    # code...
 }
 
 

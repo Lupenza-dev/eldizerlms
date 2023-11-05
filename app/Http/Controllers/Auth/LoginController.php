@@ -70,7 +70,14 @@ class LoginController extends Controller
                     'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
                     'url'     =>URL::to('dashboard')
                 ]);
-               } else {
+               }else if($user->hasRole('Agent')){
+                return response()->json([
+                    'success' =>true,
+                    'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
+                    'url'     =>URL::to('dashboard')
+                ]);
+               }
+                else {
                 Auth::logout();
                 return response()->json([
                     'success' =>false,

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Loan\LoanContract;
+use App\Models\Management\Agent;
 use App\Models\Management\Customer;
 
 class User extends Authenticatable
@@ -54,5 +55,9 @@ class User extends Authenticatable
 
     public function customer(){
         return $this->hasOne(Customer::class,'id','customer_id');
+    }
+
+    public function agent(){
+        return $this->hasOne(Agent::class);
     }
 }

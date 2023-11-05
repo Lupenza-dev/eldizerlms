@@ -84,6 +84,7 @@
                                
                             </select>
                         </div>
+                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
                         <div class="col-md-3">
                             <label for="">College</label>
                             <select name="college_id" class="form-control">
@@ -102,11 +103,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        @endif
                     </div>
                     <div class="form-group row" style="margin-top: 10px">
                         <div class="col-md-12" style="text-align: right">
                             <button class="btn btn-primary btn-sm" formaction="{{ route('customers.index')}}" type="submit"><span class="bx bx-search"></span> Search</button>
+                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
                             <button class="btn btn-success btn-sm" formaction="{{ route('genderate.customer.report')}}"><span class="bx bx-file"></span> Generate </button>
+                            @endif
                         </div>
 
                     </div>

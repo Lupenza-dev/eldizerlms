@@ -50,6 +50,8 @@
                 <div class="menu-title">Loan Contracts</div>
             </a>
         </li>
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+            
         <li class="menu-label">Payment</li>
         <li>
             <a class="{{ Route::is('payment.disbursed') ? "li-active": ""}}" href="{{ route('payment.disbursed')}}">
@@ -88,6 +90,7 @@
                 <div class="menu-title">Users</div>
             </a>
         </li>
+        @endif
         <li>
             <a href="{{ route('logout')}}">
                 <div class="parent-icon"><i class="bx bx-log-out-circle"></i>

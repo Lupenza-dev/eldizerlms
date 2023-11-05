@@ -57,5 +57,33 @@ class LoanApplication extends Model
             });
            
            
+     }
+
+     public function getlevelFormattedAttribute(){
+        switch ($this->level) {
+          case 'Application':
+            $label ="<span class='badge bg-info text-white w-100'>".$this->level."</span>";
+            break;
+          case 'Rejected by Agent':
+            $label ="<span class='badge bg-danger text-white w-100'>".$this->level."</span>";
+            break;
+          case 'Rejected by Admin':
+            $label ="<span class='badge bg-danger text-white w-100'>".$this->level."</span>";
+            break;
+          case 'Approved By Agent':
+            $label ="<span class='badge bg-success text-white w-100'>".$this->level."</span>";
+            break;
+          case 'Granted':
+            $label ="<span class='badge bg-success text-white w-100'>".$this->level."</span>";
+            break;
+          case 'CLOSED':
+            $label ="<span class='badge bg-info text-white w-100'>".$this->level."</span>";
+            break;
+          default:
+          $label ="<span class='badge bg-info text-white w-100'>".$this->level."</span>";
+            break;
+        }
+    
+        return $label;
       }
 }

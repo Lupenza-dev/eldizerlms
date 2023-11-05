@@ -40,6 +40,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('loan/application/profile/{uuid}',[LoanApplicationController::class,'profile'])->name('loan.profile');
     Route::post('reject/loan/application',[LoanApplicationController::class,'rejectApplication'])->name('reject.loan.application');
     Route::post('approve/loan/application',[LoanApplicationController::class,'approveApplication'])->name('approve.loan.application');
+    Route::post('agent/approve/loan/application',[LoanApplicationController::class,'agentApproveApplication'])->name('agent.approve.loan.application');
     Route::get('loan/contracts',[LoanContractController::class,'index'])->name('loan.contracts');
     Route::get('loan/contract/profile/{uuid}',[LoanContractController::class,'profile'])->name('loan.contract.profile');
     Route::get('payments/disbursed',[PaymentController::class,'disbursments'])->name('payment.disbursed');

@@ -8,6 +8,7 @@ use App\Models\Management\College;
 use Illuminate\Http\Request;
 use App\Models\Management\Customer;
 use App\Traits\CustomerTrait;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -18,9 +19,13 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $requests =$request->all();
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
         $customers =Customer::with('region','district','ward','student')
-                    ->whereHas('student',function($query) use ($requests){
+                    ->whereHas('student',function($query) use ($requests , $filter){
                         $query->withfilters($requests);
+                        if ($filter) {
+                            $query->where('college_id',getCollegeId());
+                        }
                     })
                     ->when($requests,function ($query) use ($requests){
                         $query->withfilters($requests);

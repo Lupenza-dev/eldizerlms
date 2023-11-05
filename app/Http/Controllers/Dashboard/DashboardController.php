@@ -8,13 +8,21 @@ use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanContract;
 use DateTime;
 use App\Models\Management\College;
-
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index(){
-        $loan_applications =LoanApplication::where('level','!=','Canceled')->get();
-        $loan_contracts =LoanContract::get();
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
+        $loan_applications =LoanApplication::where('level','!=','Canceled')
+                            ->when($filter,function($query){
+                                $query->where('college_id',getCollegeId());
+                            })
+                            ->get();
+        $loan_contracts =LoanContract::when($filter,function($query){
+                            $query->where('college_id',getCollegeId());
+                        })
+        ->get();
         return view('dashboards.admin',compact('loan_applications','loan_contracts'));
     }
 
@@ -27,10 +35,13 @@ class DashboardController extends Controller
     }
 
     public function approvedApplication() {
-
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
         $monthly_sales = LoanApplication::
                          whereYear( 'created_at', date( 'Y' ) )
-                        ->where('level','Approved')
+                        ->where('level','GRANTED')
+                        ->when($filter,function($query){
+                            $query->where('college_id',getCollegeId());
+                        })
                         ->selectRaw('COUNT(id) as count, YEAR(created_at) year,MONTH(created_at) month ' )
                         ->groupBy('year', 'month' )
                         ->get( array( 'month', 'count' ));
@@ -67,10 +78,13 @@ class DashboardController extends Controller
     }
 
     public function rejectedApplication(){
-
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
         $monthly_sales = LoanApplication::
                         whereYear( 'created_at', date( 'Y' ) )
-                        ->where('level','Rejected')
+                        ->whereIn('level',['Rejected by Agent','Rejected by Admin'])
+                        ->when($filter,function($query){
+                            $query->where('college_id',getCollegeId());
+                        })
                         ->selectRaw('COUNT(id) as count, YEAR(created_at) year,MONTH(created_at) month ')
                         ->groupBy('year','month' )
                         ->get( array('month', 'count' ));
@@ -106,10 +120,13 @@ class DashboardController extends Controller
     }
 
     public function grantedLoans(){
-
+        $filter   =Auth::user()->hasRole('Agent') ? true : false;
         $monthly_sales = LoanContract::
                         whereYear( 'start_date', 2021 )
                         //->where('status','Rejected')
+                        ->when($filter,function($query){
+                            $query->where('college_id',getCollegeId());
+                        })
                         ->selectRaw('COUNT(id) as count, YEAR(start_date) year,MONTH(start_date) month ')
                         ->groupBy('year','month' )
                         ->get( array('month', 'count' ));
