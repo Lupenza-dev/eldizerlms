@@ -70,6 +70,7 @@ class CustomerStoreRequest extends FormRequest
             'study_year'     =>'required',
             'heslb_status'   =>'required',
             'course'         =>'required',
+            'index_no'       =>'required',
         ];
     }
 }

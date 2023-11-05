@@ -30,7 +30,7 @@ use App\Http\Controllers\Payment\PaymentController;
 // Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
-Route::post('user/autyentication',[LoginController::class,'authentication'])->name('authentication');
+Route::post('user/authentication',[LoginController::class,'authentication'])->name('authentication');
 
 Route::group(['middleware'=>'auth'],function(){
     Route::get('logout',[LoginController::class,'logout'])->name('logout');

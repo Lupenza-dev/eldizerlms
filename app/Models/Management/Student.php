@@ -9,7 +9,7 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable=['customer_id','college_id','position','study_year','student_reg_id','heslb_status','course','uuid'];
+    protected $fillable=['customer_id','form_four_index_no','college_id','position','study_year','student_reg_id','heslb_status','course','uuid'];
 
     public function customer(){
         return $this->belongsTo(Customer::class);

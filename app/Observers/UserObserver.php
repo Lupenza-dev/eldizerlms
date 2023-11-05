@@ -12,10 +12,15 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        $message ="You have successfully completed registration use password (123456) to start using our System";
+
+        $message ="You have successfully completed registration use the below Credentials <br>";
+        $message .="Username is ".$user->email.'<br>';
+        $message .=" Password is 123456 <br>";
+        $message .="start using our System and Enjoy the service";
         $receiver_email =$user->email;
         $receiver_name  =$user->name;
         $subject        ="System Registration";
+        SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
         SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
     }
 

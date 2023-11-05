@@ -59,8 +59,8 @@ class CustomerController extends Controller
             $student =Student::create([
                 'customer_id'  =>$customer_obj->id,
                 'college_id'   =>$valid_data['college_id'],
-               // 'position'     =>$valid_data['position'] ??,
-                'study_year'   =>$valid_data['study_year'],
+               'form_four_index_no' =>$valid_data['index_no'],
+                'study_year'      =>$valid_data['study_year'],
                 'student_reg_id'  =>$valid_data['student_reg_id'],
                 'heslb_status'    =>$valid_data['heslb_status'],
                 'course'          =>$valid_data['course'],

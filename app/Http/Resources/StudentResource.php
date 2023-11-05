@@ -18,6 +18,7 @@ class StudentResource extends JsonResource
            // 'customer'       =>new CustomerResource($this->customer),
             'college_name'   =>$this->college?->name,
             'position'       =>$this->position,
+            'index_no'       =>$this->form_four_index_no,
             'study_year'     =>$this->study_year,
             'student_reg_id' =>$this->student_reg_id,
             'heslb_status'   =>$this->heslb_status == 1 ? "Yes" : "No",
