@@ -14,6 +14,8 @@ use App\Http\Resources\AgentResource;
 use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
+use App\Http\Resources\TermResource;
+use App\Models\Management\Term;
 use App\Models\Payment\Payment;
 
 class HomeController extends Controller
@@ -74,4 +76,14 @@ class HomeController extends Controller
             'data'    =>PaymentResource::collection($payments),
         ]); 
     }
+
+    public function getTerms(){
+        $terms =Term::latest()->get();
+        return response()->json([
+            'success' =>true,
+            'data'    =>TermResource::collection($terms),
+        ]); 
+    }
+
+
 }
