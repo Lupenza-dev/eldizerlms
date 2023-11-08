@@ -11,10 +11,11 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Models\Loan\LoanContract;
 use App\Models\Management\Agent;
 use App\Models\Management\Customer;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -59,5 +60,21 @@ class User extends Authenticatable
 
     public function agent(){
         return $this->hasOne(Agent::class);
+    }
+
+    public function getStatusFormattedAttribute(){
+        switch ($this->active) {
+          case 1:
+            $label ="<span class='badge bg-success text-white'>Active</span>";
+            break;
+          case 2:
+            $label ="<span class='badge bg-danger text-white'>Inactive</span>";
+            break;
+          default:
+          $label ="<span class='badge bg-success text-white'>Active</span>";
+            break;
+        }
+    
+        return $label;
     }
 }

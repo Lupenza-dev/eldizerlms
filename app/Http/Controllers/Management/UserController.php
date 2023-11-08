@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserStoreRequest;
+use App\Models\Management\Agent;
 use Hash;
 use Str;
 
@@ -53,6 +54,21 @@ class UserController extends Controller
 
     }
 
+    public function userStatus(Request $request){
+        $uuid   =$request->uuid;
+        $action =$request->action;
+        $status =($action == "activate") ? 1 : 2;
+
+        $user =User::where('uuid',$uuid)->first();
+        $user->active    =$status;
+        $user->save();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -72,16 +88,42 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function userUpdate(Request $request)
     {
-        //
+        $valid_data =$this->validate($request,[
+            'name'           =>['required','min:3','max:50'],
+            'id'             =>['required'],
+            'phone_number'   =>['required','min:12','max:12'],
+        ]);
+
+        $user =User::where('uuid',$valid_data['id'])->update([
+            'name' =>ucwords($valid_data['name']),
+            'phone_number' =>$valid_data['phone_number']
+        ]);
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request  $request)
     {
-        //
+        $uuid   =$request->uuid;
+
+        $user   =User::where('uuid',$uuid)->first();
+        $agent  =Agent::where('user_id',$user->id)->first();
+        if ($agent) {
+            $agent->delete();
+        }
+        $user->delete();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
     }
 }
