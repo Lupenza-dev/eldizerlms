@@ -85,5 +85,12 @@ class HomeController extends Controller
         ]); 
     }
 
+    public function deleteUser(){
+        return response()->json([
+            'success' =>false,
+            'message' =>"User Not Found"
+        ]); 
+    }
+
 
 }
