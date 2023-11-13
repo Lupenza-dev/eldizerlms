@@ -25,5 +25,7 @@ class UserResource extends JsonResource
             'customer'           =>new CustomerResource($this->customer),
             
         ];
+
+      
     }
 }

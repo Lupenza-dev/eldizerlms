@@ -46,6 +46,13 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('payments/disbursed',[PaymentController::class,'disbursments'])->name('payment.disbursed');
     Route::post('loan/repayment',[PaymentController::class,'loanRepayment'])->name('loan.repayment');
     Route::get('payments',[PaymentController::class,'payments'])->name('payments');
+    Route::post('college/update',[UniversityController::class,'collegeUpdate'])->name('update.college');
+    Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
+    Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');
+    Route::post('college/status',[UniversityController::class,'collegeStatus'])->name('college.status');
+    Route::post('user/status',[UserController::class,'userStatus'])->name('user.status');
+    Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');
+    Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
 
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');

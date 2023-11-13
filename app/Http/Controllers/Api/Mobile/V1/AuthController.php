@@ -15,7 +15,6 @@ class AuthController extends Controller
 
 
   public function userLogin(Request $request){
-   // return Hash::make('admin@123');
         $validator = Validator::make(
             $request->all(), [
                 'email'     =>'required',

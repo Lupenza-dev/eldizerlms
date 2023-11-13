@@ -10,6 +10,7 @@ use App\Models\Management\College;
 use Storage;
 use Str;
 use Auth;
+use Illuminate\Support\Facades\Log;
 
 class UniversityController extends Controller
 {
@@ -66,6 +67,52 @@ class UniversityController extends Controller
         ],200);
     }
 
+    public function collegeUpdate(Request $request){
+        $valid_data =$this->validate($request,[
+            'id'     =>['required'],
+            'name'     =>['required'],
+            'location' =>['required'],
+            'rep_name' =>['required'],
+            'rep_phone_number' =>['required'],
+            'position'         =>['required'],
+        ]);
+
+        $college =College::where('uuid',$valid_data['id'])->first();
+        $college->name    =ucwords($valid_data['name']);
+        $college->location =ucwords($valid_data['location']);
+        $college->save();
+
+         $college_rep =CollegeRepresentative::where('college_id',$college->id)->updateOrCreate([
+            'college_id' =>$college->id
+         ],
+        [
+            'name'         =>ucwords($valid_data['rep_name']),
+            'phone_number' =>$valid_data['rep_phone_number'],
+            'position'     =>$valid_data['position'],
+            'uuid'         =>(string)Str::orderedUuid()  
+        ]);
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
+    }
+
+    public function collegeStatus(Request $request){
+        $uuid   =$request->uuid;
+        $action =$request->action;
+        $status =($action == "activate") ? "active" : "Inactive";
+
+        $college =College::where('uuid',$uuid)->first();
+        $college->status    =$status;
+        $college->save();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -93,8 +140,15 @@ class UniversityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request  $request)
     {
-        //
+        $uuid   =$request->uuid;
+
+        $college =College::where('uuid',$uuid)->delete();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
     }
 }

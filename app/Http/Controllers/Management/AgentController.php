@@ -8,6 +8,7 @@ use App\Models\Management\Agent;
 use App\Models\User;
 use App\Models\Management\College;
 use App\Http\Requests\AgentStoreRequest;
+use Carbon\Carbon;
 use Str;
 use DB;
 use Storage;
@@ -75,6 +76,34 @@ class AgentController extends Controller
             'success' =>true,
             'message' =>"Request Done Successfully"
         ],200);
+    }
+
+    public function agentUpdate(Request $request){
+        $valid_data =$this->validate($request,[
+            'name'           =>['required','min:3','max:50'],
+            'id'             =>['required'],
+            'student_reg_id' =>['required'],
+            'phone_number'   =>['required','min:12','max:12'],
+            'college_id'     =>['required'],
+            'email'           =>['required']
+        ]);
+
+        $agent =Agent::where('uuid',$valid_data['id'])->first();
+        $agent->student_reg_id =$valid_data['student_reg_id'];
+        $agent->college_id =$valid_data['college_id'];
+        $agent->save();
+
+        $user =User::where('id',$agent->user_id)->update([
+            'name' =>ucwords($valid_data['name']),
+            'phone_number' =>$valid_data['phone_number']
+        ]);
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
+
+
     }
 
     /**
