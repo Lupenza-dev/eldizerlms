@@ -80,7 +80,8 @@ class CustomerController extends Controller
             'data'    =>new CustomerResource($customer_obj),
            ],200
         );
-
+       
+      
 
     }
 
