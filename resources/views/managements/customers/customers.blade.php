@@ -130,8 +130,10 @@
                                 <th>Id Number</th>
                                 <th>Address</th>
                                 <th>College</th>
+                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <th>Role</th>
                                 <th>Action</th>
+                                @endif
 
                             </tr>
                         </thead>
@@ -145,6 +147,7 @@
                                 <td>{{ $customer->id_number }}</td>
                                 <td>{!! $customer->address !!}</td>
                                 <td>{{ $customer->student?->college?->name}}</td>
+                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <td>
                                     @foreach ($customer->user?->roles ?? [] as $role)
                                     {{ $role->name.' ,' }}
@@ -158,13 +161,14 @@
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="{{ $customer->id }}" data-name="{{ $customer->customer_name}}" data-email="{{ $customer->email }}">Roles</a>
                                             </li>
-                                            <li><a class="dropdown-item" href="#">Another action</a>
+                                            <li><a class="dropdown-item" href="#">Profile</a>
                                             </li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a>
-                                            </li>
+                                            {{-- <li><a class="dropdown-item" href="#">Something else here</a>
+                                            </li> --}}
                                         </ul>
                                     </div>
                                 </td>
+                                @endif
 
                             </tr> 
                         @endforeach
