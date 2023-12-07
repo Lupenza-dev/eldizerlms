@@ -43,6 +43,7 @@ class LoanApplicationController extends Controller
                 ->when($requests, function($query) use ($requests){
                     $query->withfilters($requests);
                 })
+                ->latest()
                 ->get();
         return view('loans.loan_applications',compact('loans','requests','regions','colleges'));
     }
