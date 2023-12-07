@@ -194,12 +194,22 @@
                             <label for="">Customer Email</label>
                             <input type="text" name="" id="email" class="form-control" readonly>
                         </div>
+                        <div class="col-md-12 divider">
+                            <label for="">College</label>
+                            <select name="college_id" class="form-control">
+                                <option value="">please choose College</option>
+                                @foreach ($colleges as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-12">
                             @foreach ($roles as $role)
                             <input type="checkbox" class="divider" id="vehicle1" name="role[]" value="{{ $role->id}}">
                             <label for="role"> {{ $role->name }}</label><br>    
                             @endforeach
                         </div>
+                       
                        
                         <div class="col-md-12 divider" id="update_alert" style="margin-top: 10px">
 

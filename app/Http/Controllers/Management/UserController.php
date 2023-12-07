@@ -9,6 +9,7 @@ use App\Http\Requests\UserStoreRequest;
 use App\Models\Management\Agent;
 use App\Models\Management\Customer;
 use Hash;
+use Illuminate\Support\Facades\DB;
 use Str;
 
 class UserController extends Controller
@@ -129,11 +130,36 @@ class UserController extends Controller
     }
 
     public function userUpdateRoles(Request $request){
-        $customer =Customer::find($request->id);
-        $user     =$customer->user ?? null;
-        if ($user) {
-            $user->syncRoles($request->role);
-        }
+       
+        DB::transaction(function () use ($request){
+            $customer =Customer::find($request->id);
+            $user     =$customer->user ?? null;
+
+    
+            foreach ($request->role as $key => $value) {
+                if ($value == 3) {
+                        $college_id =$request->college_id;
+    
+                        $agent =Agent::updateOrCreate(
+                            [
+                                'college_id' =>$college_id,
+                                'user_id'    =>$user->id,
+                            ],
+                            [
+                            'student_reg_id' =>$customer->student?->student_reg_id,
+                            'image'          =>$customer->image,
+                            'uuid'           =>(string)Str::orderedUuid(),
+                            'deleted_at'     =>null
+                        ]);
+                }
+            }
+
+
+            if ($user) {
+                $user->syncRoles($request->role);
+            }
+        });
+       
 
         return response()->json([
             'success' =>true,
