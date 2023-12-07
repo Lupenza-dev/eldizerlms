@@ -44,6 +44,7 @@ class SendEmailJob implements ShouldQueue
         $email_subject  =$this->subject;
         $receiver_name  =$this->receiver_name;
         $receiver_email =$this->receiver_email;
+       // $receiver_email ="elibarikidavid23@gmail.com";
 
         Mail::send('mails.mail_template',['data'=>$data],function($message) use ($email_subject,$receiver_name,$receiver_email) {
            $message->to($receiver_email, $receiver_name)->subject
