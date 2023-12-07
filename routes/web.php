@@ -49,6 +49,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('college/update',[UniversityController::class,'collegeUpdate'])->name('update.college');
     Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
     Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');
+    Route::post('user/update/roles',[UserController::class,'userUpdateRoles'])->name('update.user.roles');
     Route::post('college/status',[UniversityController::class,'collegeStatus'])->name('college.status');
     Route::post('user/status',[UserController::class,'userStatus'])->name('user.status');
     Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');

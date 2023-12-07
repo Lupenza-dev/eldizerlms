@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserStoreRequest;
 use App\Models\Management\Agent;
+use App\Models\Management\Customer;
 use Hash;
 use Str;
 
@@ -125,5 +126,19 @@ class UserController extends Controller
             'success' =>true,
             'message' =>"Request Done Successfully"
         ],200);
+    }
+
+    public function userUpdateRoles(Request $request){
+        $customer =Customer::find($request->id);
+        $user     =$customer->user ?? null;
+        if ($user) {
+            $user->syncRoles($request->role);
+        }
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
+
     }
 }

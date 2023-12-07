@@ -13,6 +13,7 @@ use App\Models\Entities\Region;
 use App\Models\Entities\District;
 use App\Models\Entities\Ward;
 use App\Models\Entities\MaritalStatus;
+use App\Models\User;
 
 class Customer extends Model
 {
@@ -137,4 +138,14 @@ class Customer extends Model
                     $query->where('gender_id',$gender_id);
                 });
     }
+
+    public function getAddressAttribute(){
+        return $this->region?->name ."<br>". $this->district?->name."  <br> ".$this->ward?->name;
+    }
+
+    public function user(){
+        return $this->hasOne(User::class,'customer_id','id');
+    }
+
+
 }

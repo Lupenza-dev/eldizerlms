@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Management\Customer;
 use App\Traits\CustomerTrait;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class CustomerController extends Controller
 {
@@ -20,7 +21,7 @@ class CustomerController extends Controller
     {
         $requests =$request->all();
         $filter   =Auth::user()->hasRole('Agent') ? true : false;
-        $customers =Customer::with('region','district','ward','student')
+        $customers =Customer::with('region','district','ward','student','student.college','gender','user')
                     ->whereHas('student',function($query) use ($requests , $filter){
                         $query->withfilters($requests);
                         if ($filter) {
@@ -34,7 +35,8 @@ class CustomerController extends Controller
                     ->get();
         $regions   =Region::get();
         $colleges  =College::get();
-        return view('managements.customers.customers',compact('customers','regions','colleges','requests'));
+        $roles     =Role::whereNotIn('id',[1,2])->get(['name','id']);
+        return view('managements.customers.customers',compact('customers','regions','colleges','requests','roles'));
     }
 
     public function generateExcelReport(Request $request){

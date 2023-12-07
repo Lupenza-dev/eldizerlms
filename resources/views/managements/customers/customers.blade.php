@@ -7,6 +7,9 @@
         justify-content: space-between;
         align-content: center
     }
+    .divider{
+        margin-top: 10px !important;
+    }
 </style>
 <div class="page-wrapper">
     <div class="page-content">
@@ -126,6 +129,10 @@
                                 <td>Gender</td>
                                 <th>Id Number</th>
                                 <th>Address</th>
+                                <th>College</th>
+                                <th>Role</th>
+                                <th>Action</th>
+
                             </tr>
                         </thead>
                        <tbody>
@@ -133,16 +140,79 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ date('d,M-Y',strtotime($customer->created_at))}}</td>
-                                <td>{{ $customer->first_name.' '.$customer->last_name }} <br>{{ $customer->phone_number}} <br> {{ $customer->email}} </td>
+                                <td>{{  $customer->customer_name }} <br>{{ $customer->phone_number}} <br> {{ $customer->email}} </td>
                                 <td>{{ $customer->gender?->name }}</td>
                                 <td>{{ $customer->id_number }}</td>
-                                <td>{{ $customer->region?->name }} <br>{{ $customer->district?->name }} <br>{{ $customer->ward?->name }}</td>
+                                <td>{!! $customer->address !!}</td>
+                                <td>{{ $customer->student?->college?->name}}</td>
+                                <td>
+                                    @foreach ($customer->user?->roles ?? [] as $role)
+                                    {{ $role->name.' ,' }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-primary">Actions</button>
+                                        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">	<span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="{{ $customer->id }}" data-name="{{ $customer->customer_name}}" data-email="{{ $customer->email }}">Roles</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#">Another action</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#">Something else here</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+
                             </tr> 
                         @endforeach
                        </tbody>
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="roleModel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Roles</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="update_form">
+                    <input type="hidden"  name="id" id="id">
+                    <div class="form-group row">
+                        <div class="col-md-12 divider">
+                            <label for="">Customer Name</label>
+                            <input type="text" name="" id="name" class="form-control" readonly>
+                        </div>
+                        <div class="col-md-12 divider">
+                            <label for="">Customer Email</label>
+                            <input type="text" name="" id="email" class="form-control" readonly>
+                        </div>
+                        <div class="col-md-12">
+                            @foreach ($roles as $role)
+                            <input type="checkbox" class="divider" id="vehicle1" name="role[]" value="{{ $role->id}}">
+                            <label for="role"> {{ $role->name }}</label><br>    
+                            @endforeach
+                        </div>
+                       
+                        <div class="col-md-12 divider" id="update_alert" style="margin-top: 10px">
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 divider" style="text-align:right">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
+                        <button type="submit" class="btn btn-primary btn-sm"  id="update_btn"> <span class="bx bx-save"></span> Submit</button>
+                    </div>
+                </form>
+                
+            </div>
+            
         </div>
     </div>
 </div>
@@ -153,6 +223,59 @@
     $('#filter-btn').on('click',function(){
         $('#submit-form').toggle();
     })
+
+    $('.role-btn').on('click',function(){
+        $('#id').val($(this).data('id'));
+        $('#name').val($(this).data('name'));
+        $('#email').val($(this).data('email'));
+    })
+</script>
+<script>
+    $(document).ready(function(){
+      $('#update_form').on('submit',function(e){ 
+          e.preventDefault();
+
+      $.ajaxSetup({
+      headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+           }
+          });
+      $.ajax({
+      type:'POST',
+      url:"{{ route('update.user.roles')}}",
+      data : new FormData(this),
+      contentType: false,
+      cache: false,
+      processData : false,
+      success:function(response){
+        console.log(response);
+        $('#update_alert').html('<div class="alert alert-success">'+response.message+'</div>');
+        setTimeout(function(){
+         location.reload();
+      },500);
+      },
+      error:function(response){
+          console.log(response.responseText);
+          if (jQuery.type(response.responseJSON.errors) == "object") {
+            $('#update_alert').html('');
+          $.each(response.responseJSON.errors,function(key,value){
+              $('#update_alert').append('<div class="alert alert-danger">'+value+'</div>');
+          });
+          } else {
+             $('#update_alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
+          }
+      },
+      beforeSend : function(){
+                   $('#update_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> Register .........');
+                   $('#update_btn').attr('disabled', true);
+              },
+              complete : function(){
+                $('#update_btn').html('<i class="fa fa-save"></i> Register');
+                $('#update_btn').attr('disabled', false);
+              }
+      });
+  });
+  });
 </script>
     
 @endpush
