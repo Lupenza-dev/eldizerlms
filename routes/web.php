@@ -35,6 +35,8 @@ Route::post('user/authentication',[LoginController::class,'authentication'])->na
 Route::group(['middleware'=>'auth'],function(){
     Route::get('logout',[LoginController::class,'logout'])->name('logout');
     Route::get('dashboard',[DashboardController::class,'index'])->name('dashboard');
+    Route::get('change/password',[LoginController::class,'changePassword'])->name('change.password');
+    Route::post('password/change',[LoginController::class,'passwordChange'])->name('password.change');
     Route::get('bar/chart',[DashboardController::class,'barChart'])->name('admin.bar.chart');
     Route::get('loan/applications',[LoanApplicationController::class,'index'])->name('loan.applications');
     Route::get('loan/application/profile/{uuid}',[LoanApplicationController::class,'profile'])->name('loan.profile');

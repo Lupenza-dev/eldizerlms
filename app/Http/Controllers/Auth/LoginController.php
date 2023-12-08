@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use Auth;
 use URL;
 use App\Models\User;
+use Carbon\Carbon;
 use Redirect;
+use Hash;
 
 class LoginController extends Controller
 {
@@ -68,13 +70,13 @@ class LoginController extends Controller
                 return response()->json([
                     'success' =>true,
                     'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
-                    'url'     =>URL::to('dashboard')
+                    'url'     =>$user->is_password_changed ? URL::to('dashboard') : URL::to('change/password')
                 ]);
                }else if($user->hasRole('Agent')){
                 return response()->json([
                     'success' =>true,
                     'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
-                    'url'     =>URL::to('dashboard')
+                    'url'     =>$user->is_password_changed ? URL::to('dashboard') : URL::to('change/password')
                 ]);
                }
                 else {
@@ -106,5 +108,38 @@ class LoginController extends Controller
     {
         Auth::logout();
         return Redirect::route('/');
+    }
+
+    public function changePassword(){
+        return view('auth.change_password');
+    }
+
+    public function passwordChange(Request $request){
+        $valid =$this->validate($request,[
+            'old_password' =>'required',
+            'password'     =>['required','confirmed','string','min:6','regex:/[a-z]/','regex:/[A-Z]/','regex:/[0-9]/','regex:/[@$!%*#?&]/',
+            ],
+        ]);
+
+        $user =Auth::user();
+        if (!Hash::check($valid['old_password'],$user->password)) {
+            return response()->json([
+                'success' =>false,
+                'errors'  =>"Old Password is not correct",
+            ],500);
+        }
+
+        $user->password =Hash::make($valid['password']);
+        $user->is_password_changed =true;
+        $user->password_change_date =Carbon::now();
+        $user->save();
+        
+        return response()->json([
+            'success' =>true,
+            'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
+            'url'     =>URL::to('dashboard')
+        ]);
+
+
     }
 }
