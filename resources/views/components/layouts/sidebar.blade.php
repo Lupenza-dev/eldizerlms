@@ -37,14 +37,14 @@
             </a>
         </li>
         <li>
-            <a class="{{ Route::is('loan.applications') ? "li-active": ""}}" href="{{ route('loan.applications')}}">
+            <a class="{{ (Route::is('loan.applications') or Route::is('loan.profile')) ? "li-active": ""}}" href="{{ route('loan.applications')}}">
                 <div class="parent-icon"><i class='bx bx-envelope'></i>
                 </div>
                 <div class="menu-title">Loan Applications</div>
             </a>
         </li>
         <li>
-            <a class="{{ Route::is('loan.contracts') ? "li-active": ""}}" href="{{ route('loan.contracts')}}">
+            <a class="{{ (Route::is('loan.contracts') or Route::is('loan.contract.profile')) ? "li-active": ""}}" href="{{ route('loan.contracts')}}">
                 <div class="parent-icon"><i class='bx bx-list-ol'></i>
                 </div>
                 <div class="menu-title">Loan Contracts</div>

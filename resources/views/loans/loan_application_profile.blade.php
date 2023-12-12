@@ -6,8 +6,7 @@
         align-content: center;
     }
     .table th{
-        background-color: #b5dddd;
-        color: #2c2727
+        background-color: aliceblue;
     }
 </style>
 <div class="page-wrapper">

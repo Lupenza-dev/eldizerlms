@@ -93,13 +93,13 @@ class LoanContract extends Model
   public function getStatusFormattedAttribute(){
     switch ($this->status) {
       case 'GRANTED':
-        $label ="<span class='badge bg-info text-white w-100'>GRANTED</span>";
+        $label ="<span class='badge bg-info text-white'>GRANTED</span>";
         break;
       case 'CLOSED':
-        $label ="<span class='badge bg-success text-white w-100'>CLOSED</span>";
+        $label ="<span class='badge bg-success text-white'>CLOSED</span>";
         break;
       default:
-      $label ="<span class='badge bg-info text-white w-100'>GRANTED</span>";
+      $label ="<span class='badge bg-info text-white'>GRANTED</span>";
         break;
     }
 
