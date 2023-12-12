@@ -20,13 +20,14 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $requests =$request->all();
-        $filter   =Auth::user()->hasRole('Agent') ? true : false;
+        //$filter   =Auth::user()->hasRole('Agent') ? true : false;
+       // return getCollegeId();
         $customers =Customer::with('region','district','ward','student','student.college','gender','user')
-                    ->whereHas('student',function($query) use ($requests , $filter){
+                    ->whereHas('student',function($query) use ($requests){
                         $query->withfilters($requests);
-                        if ($filter) {
-                            $query->where('college_id',getCollegeId());
-                        }
+                        // if ($filter) {
+                        //     $query->where('college_id',getCollegeId());
+                        // }
                     })
                     ->when($requests,function ($query) use ($requests){
                         $query->withfilters($requests);
