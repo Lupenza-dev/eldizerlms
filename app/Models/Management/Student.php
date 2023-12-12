@@ -4,6 +4,7 @@ namespace App\Models\Management;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class Student extends Model
 {
@@ -27,11 +28,15 @@ class Student extends Model
         
         $student_reg_id  =$request['student_reg_id'] ?? null;
         $college_id  =$request['college_id'] ?? null;
+        $filter   =Auth::user()->hasRole('Agent') ? "Agent" : null;
         return $query->when($student_reg_id,function($query) use ($student_reg_id){
                 $query->where('student_reg_id','like','%'.$student_reg_id.'%');
                 })
                 ->when($college_id,function($query) use ($college_id){
                     $query->where('college_id',$college_id);
+                })
+                ->when($filter,function($query){
+                    $query->where('college_id',5);
                 });
     }
 
