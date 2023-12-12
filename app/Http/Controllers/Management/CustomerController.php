@@ -74,9 +74,12 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $uuid)
     {
-        //
+        $customer =Customer::with('region','district','ward','marital_status','student','student.college')
+        ->where('uuid',$uuid)
+        ->first();
+        return view('managements.customers.profile',compact('customer'));
     }
 
     /**

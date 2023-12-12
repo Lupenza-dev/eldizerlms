@@ -161,7 +161,7 @@
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="{{ $customer->id }}" data-name="{{ $customer->customer_name}}" data-email="{{ $customer->email }}">Roles</a>
                                             </li>
-                                            <li><a class="dropdown-item" href="#">Profile</a>
+                                            <li><a class="dropdown-item" href="{{ route('customers.show',$customer->uuid)}}">Profile</a>
                                             </li>
                                             {{-- <li><a class="dropdown-item" href="#">Something else here</a>
                                             </li> --}}

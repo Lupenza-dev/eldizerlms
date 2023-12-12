@@ -35,4 +35,17 @@ class Student extends Model
                 });
     }
 
+    public function getheslbStatusFormattedAttribute(){
+        switch ($this->heslb_status) {
+            case 1:
+              $label ="<span class='badge bg-success text-white'>Yes</span>";
+              break;
+            default:
+            $label ="<span class='badge bg-warning text-white'>No</span>";
+              break;
+          }
+      
+          return $label;
+    }
+
 }
