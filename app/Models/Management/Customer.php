@@ -143,6 +143,10 @@ class Customer extends Model
         return $this->region?->name ."<br>". $this->district?->name."  <br> ".$this->ward?->name;
     }
 
+    public function getAddressLocationAttribute(){
+        return $this->region?->name ." , ". $this->district?->name."  , ".$this->ward?->name;
+    }
+
     public function user(){
         return $this->hasOne(User::class,'customer_id','id');
     }

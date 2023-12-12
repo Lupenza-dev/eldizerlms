@@ -169,19 +169,19 @@
                     <tbody>
                         <tr>
                             <th>Agent Name</th>
-                            <td>{{ $loan->loan_approval->agent->name }}</td>
+                            <td>{{ $loan->loan_approval?->agent?->name }}</td>
                             <th>Agent College</th>
                             <td>{{ $loan->customer?->student->college?->name  }}</td>
                             <th>Phone Number</th>
-                            <td>{{ $loan->loan_approval->agent->phone_number}}</td>
+                            <td>{{ $loan->loan_approval?->agent?->phone_number}}</td>
                         </tr>
                         <tr>
                             <th>Status</th>
-                            <td>{{ $loan->loan_approval->status }}</td>
+                            <td>{{ $loan->loan_approval?->status }}</td>
                             <th>Remark</th>
-                            <td>{{ $loan->loan_approval->remark}}</td>
+                            <td>{{ $loan->loan_approval?->remark}}</td>
                             <th>Attended Date</th>
-                            <td>{{ $loan->loan_approval->attended_date ? date('d,M-Y',strtotime($loan->loan_approval->attended_date)) : ""}}</td>
+                            <td>{{ $loan->loan_approval?->attended_date ? date('d,M-Y',strtotime($loan->loan_approval->attended_date)) : ""}}</td>
                         </tr>
                     </tbody>
                 </table>
