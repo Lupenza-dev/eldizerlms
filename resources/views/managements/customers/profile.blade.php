@@ -60,7 +60,7 @@
                                 </tr>
                                 <tr>
                                     <th>Phone</th>
-                                    <td>{{ $customer->phone }}</td>
+                                    <td>{{ $customer->phone_number }}</td>
                                 </tr>
                                 <tr>
                                     <th>Nida Number</th>

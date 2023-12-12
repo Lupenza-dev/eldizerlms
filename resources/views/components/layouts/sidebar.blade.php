@@ -30,7 +30,7 @@
         </li>
         <li class="menu-label">Loan Management</li>
         <li>
-            <a  class="{{ (Route::is('customers.index') or Route::is('customers.show')) ? "li-active": ""}}" href="{{ route('customers.index')}}">
+            <a  class="{{ (Route::is('customers.index') or Route::is('customers.show') or Route::is('customers.edit')) ? "li-active": ""}}" href="{{ route('customers.index')}}">
                 <div class="parent-icon"><i class='bx bx-user'></i>
                 </div>
                 <div class="menu-title">Customers</div>

@@ -10,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
 	<!--favicon-->
-	<link rel="icon" href="assets/images/favicon_el.jpeg" type="image/png"/>
+	<link rel="icon" href="{{ asset('assets/images/favicon_el.jpeg')}}" type="image/png"/>
 	<!--plugins-->
 	<link href="{{ asset('assets/plugins/vectormap/jquery-jvectormap-2.0.2.css')}}" rel="stylesheet"/>
 	<link href="{{ asset('assets/plugins/simplebar/css/simplebar.css')}}" rel="stylesheet" />

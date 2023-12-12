@@ -27,14 +27,6 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-user-plus"></span> Add User</button> --}}
-                    {{-- <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
-                        <a class="dropdown-item" href="javascript:;">Another action</a>
-                        <a class="dropdown-item" href="javascript:;">Something else here</a>
-                        <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
-                    </div> --}}
                 </div>
             </div>
         </div>
@@ -163,6 +155,10 @@
                                             </li>
                                             <li><a class="dropdown-item" href="{{ route('customers.show',$customer->uuid)}}">Profile</a>
                                             </li>
+                                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                            <li><a class="dropdown-item" href="{{ route('customers.edit',$customer->uuid)}}">Edit</a>
+                                            </li>   
+                                            @endif
                                             {{-- <li><a class="dropdown-item" href="#">Something else here</a>
                                             </li> --}}
                                         </ul>

@@ -56,7 +56,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('user/status',[UserController::class,'userStatus'])->name('user.status');
     Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');
     Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
-
+    Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
