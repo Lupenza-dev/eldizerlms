@@ -17,7 +17,7 @@ class UserResource extends JsonResource
         return [
             'name'         =>$this->name,
             'email'        =>$this->email,
-            'is_password_changed'          =>$this->is_password_changed,
+            'is_password_changed'          =>$this->is_password_changed ? "Yes" : "No",
             'total_amount'                 =>$this->loan_contracts->sum('loan_amount') ?? 0,
             'amount'                       =>$this->loan_contracts->sum('amount') ?? 0,
             'outstanding_amount' =>$this->loan_contracts->sum('outstanding_amount')?? 0,
