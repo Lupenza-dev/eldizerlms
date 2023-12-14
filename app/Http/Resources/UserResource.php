@@ -15,10 +15,11 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' =>$this->name,
-            'email' =>$this->email,
-            'total_amount' =>$this->loan_contracts->sum('loan_amount') ?? 0,
-            'amount' =>$this->loan_contracts->sum('amount') ?? 0,
+            'name'         =>$this->name,
+            'email'        =>$this->email,
+            'is_password_changed'          =>$this->is_password_changed,
+            'total_amount'                 =>$this->loan_contracts->sum('loan_amount') ?? 0,
+            'amount'                       =>$this->loan_contracts->sum('amount') ?? 0,
             'outstanding_amount' =>$this->loan_contracts->sum('outstanding_amount')?? 0,
             'payment_date'       =>$this->loan_contracts->first()->next_payment_date ?? "",   
             'loan_count'         =>$this->loan_contracts->count(),
