@@ -9,6 +9,7 @@ use App\Models\User;
 use Validator;
 use Hash;
 use App\Http\Resources\UserResource;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
