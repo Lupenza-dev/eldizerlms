@@ -72,7 +72,7 @@ class AuthController extends Controller
             return response()->json(
                 [
                     'success' => false,
-                    'error_message' => "Password Must Contain Special Character",
+                    'error_message' => "Password Must Contain Special Character and number",
                 ], 500
             );
         }
