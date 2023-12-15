@@ -71,7 +71,7 @@ class LoanApplicationController extends Controller
     }
 
     public function profile($uuid){
-        $loan =LoanApplication::with('customer')->where('uuid',$uuid)->first();
+        $loan =LoanApplication::with('customer','guarantors')->where('uuid',$uuid)->first();
         return view('loans.loan_application_profile',compact('loan'));
     }
 

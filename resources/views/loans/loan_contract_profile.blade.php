@@ -170,6 +170,15 @@
                                         </div>
                                     </a>
                                 </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#guarantorTab" role="tab" aria-selected="false">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tab-icon"><i class='bx bx-user font-18 me-1'></i>
+                                            </div>
+                                            <div class="tab-title">Loan Guarantor's</div>
+                                        </div>
+                                    </a>
+                                </li>
                             </ul>
                             <div class="tab-content py-3">
                                 <div class="tab-pane fade show active" id="successhome" role="tabpanel">
@@ -340,6 +349,34 @@
                                                 <td>{{ $contract->loan_approval?->attended_date ? date('d,M-Y',strtotime($contract->loan_approval?->attended_date)) : ""}}</td>
                                             </tr>
                                         </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="guarantorTab" role="tabpanel">
+                                    <h6 class="mb-0 text-center">Loan Guarantor's</h6>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Guarantor Name</th>
+                                                <th>Relationship</th>
+                                                <th>Phone Number</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($contract->guarantors as $item)
+                                            <tr>
+                                                <td>{{ $loop->iteration}}</td>
+                                                <td>{{ ucwords($item->full_name)}}</td>
+                                                <td>{{ ucwords($item->relationship)}}</td>
+                                                <td>{{ $item->phone_number }}</td>
+                                            </tr>  
+                                            @empty
+                                               <tr class="text-center">
+                                                <td colspan="4">No Data Available</td>
+                                            </tr> 
+                                            @endforelse
+                                        </tbody>
+                    
                                     </table>
                                 </div>
                             </div>

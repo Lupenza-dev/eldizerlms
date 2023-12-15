@@ -184,6 +184,33 @@
                         </tr>
                     </tbody>
                 </table>
+                <h6 class="mb-0 text-uppercase text-center">Guarantor's Detail</h6>
+                <hr/>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Guarantor Name</th>
+                            <th>Relationship</th>
+                            <th>Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($loan->guarantors as $item)
+                        <tr>
+                            <td>{{ $loop->iteration}}</td>
+                            <td>{{ ucwords($item->full_name)}}</td>
+                            <td>{{ ucwords($item->relationship)}}</td>
+                            <td>{{ $item->phone_number }}</td>
+                        </tr>  
+                        @empty
+                        <tr class="text-center">
+                            <td colspan="4">No Data Available</td>
+                        </tr> 
+                        @endforelse
+                    </tbody>
+
+                </table>
                 <h6 class="mb-0 text-uppercase text-center">Loan Bond Details</h6>
                 <hr/>
                 <table class="table table-bordered" style="width:100%">
