@@ -23,13 +23,14 @@ class CustomerController extends Controller
     public function store(CustomerStoreRequest $request){
          $valid_data =$request->validated();
          $other_name =$request->other_name;
+        
          $customer_obj =null;
 
          Log::debug($request->all());
 
         try {
             DB::transaction(function() use ($valid_data,$other_name,&$customer_obj,$request){
-
+            $expo_push_token =$request->expo_push_token;
             $customer_obj =Customer::StoreCustomer($valid_data,$other_name);
                 Log::debug('step 1');
             if ($request->hasfile('image')) {
@@ -50,6 +51,7 @@ class CustomerController extends Controller
                 'phone_number' =>$valid_data['phone_number'],
                 'password'     =>Hash::make(123456),
                 'uuid'         =>(string)Str::orderedUuid(),
+                'device_token' =>$expo_push_token,
                 'customer_id'  =>$customer_obj->id,
             ]);
             Log::debug('step 2');

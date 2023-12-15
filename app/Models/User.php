@@ -28,7 +28,8 @@ class User extends Authenticatable
         'password',
         'uuid',
         'phone_number',
-        'customer_id'
+        'customer_id',
+        'device_token'
     ];
 
     /**
