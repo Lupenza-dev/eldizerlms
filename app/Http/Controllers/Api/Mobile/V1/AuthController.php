@@ -58,4 +58,44 @@ class AuthController extends Controller
         }
     }
 
+    public function changePassword(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+             [
+                'old_password' =>'required',
+                'password'     =>['required','confirmed','string','min:6','regex:/[a-z]/','regex:/[A-Z]/','regex:/[0-9]/','regex:/[@$!%*#?&]/',
+                ],
+            ]
+        );
+
+        if ($validator->fails() ) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' => $validator->errors(),
+                ], 500
+            );
+        }
+
+        $valid =$validator->valid();
+
+        $user =Auth::user();
+        if (!Hash::check($valid['old_password'],$user->password)) {
+            return response()->json([
+                'success'        =>false,
+                'error_message'  =>"Old Password is not correct",
+            ],500);
+        }
+
+        $user->password =Hash::make($valid['password']);
+        $user->is_password_changed =true;
+        $user->password_change_date =Carbon::now();
+        $user->save();
+        
+        return response()->json([
+            'success' =>true,
+            'message' =>'Password Change Successfully',
+        ],200);
+    }
+
 }

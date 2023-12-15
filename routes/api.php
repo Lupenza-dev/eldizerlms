@@ -42,4 +42,5 @@ Route::group(['prefix'=>'V1','middleware'=>'auth:api'], function(){
     Route::post('get-loans',[HomeController::class,'getLoans']);
     Route::post('get-payments',[HomeController::class,'getPayments']);
     Route::get('get-agents',[HomeController::class,'getAgents']);
+    Route::post('change-password',[AuthController::class,'changePassword']);
 });
