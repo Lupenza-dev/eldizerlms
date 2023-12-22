@@ -37,6 +37,11 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $user_request['email'], 'password' => $user_request['password']])) {
             $user = User::find(Auth()->user()->id);
             if ($user->active == 1) { 
+                if ($request->expo_push_token ?? null) {
+                    $user->device_token =$request->expo_push_token;
+                    $user->save();
+                }
+
                 return response()->json([
                     'success'  =>true,
                     'message'  =>$user->name.' Welcome at Chuo Credit Application',
