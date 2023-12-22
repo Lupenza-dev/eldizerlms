@@ -33,12 +33,12 @@ class AuthController extends Controller
         }
 
         $user_request =$validator->valid();
-
+        $expo_push_token =$request->expo_push_token ?? null;
         if (Auth::attempt(['email' => $user_request['email'], 'password' => $user_request['password']])) {
             $user = User::find(Auth()->user()->id);
             if ($user->active == 1) { 
-                if ($request->expo_push_token ?? null) {
-                    $user->device_token =$request->expo_push_token;
+                if ($expo_push_token) {
+                    $user->device_token =$expo_push_token;
                     $user->save();
                 }
 
