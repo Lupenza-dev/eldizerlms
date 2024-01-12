@@ -67,7 +67,7 @@
                             <th>Customer Name</th>
                             <td>{{ $contract->customer->first_name.' '.$contract->customer->last_name }}</td>
                             <th>Gender</th>
-                            <td>{{ $contract->customer?->gender->name }}</td>
+                            <td>{{ $contract->customer?->gender?->name }}</td>
                             <td colspan="2" rowspan="5" class="text-center">
                                 @if ($contract->customer->image)
                                 <img style="height: 170px; width: 170px; border-radius: 50%; " src="{{ asset('storage').'/'.$contract->customer->image}}" alt="">   
