@@ -4,6 +4,7 @@
 //check_time
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 if (!function_exists('greeting')) {
     function greeting()
@@ -35,6 +36,20 @@ if (!function_exists('getCollegeId')) {
         return Auth::user()->agent?->college_id;
     }
     # code...
+}
+
+if (!function_exists('mobileNotification')) {
+    function mobileNotification($token,$message){
+
+        $response =Http::post('https://exp.host/--/api/v2/push/send',[
+            'to'=>$token,
+            'title'=>'Chuo Credit',
+            'body'=>$message,
+            'sound' =>'default'
+        ]);
+
+        return $response;
+    }
 }
 
 
