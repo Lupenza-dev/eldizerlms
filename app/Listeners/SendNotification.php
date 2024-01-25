@@ -49,8 +49,8 @@ class SendNotification
             $customer_name   =$event->loanApplication->customer?->customer_name;
             $agent_name      =$event->loanApplication->loan_approval?->agent?->name;
             $message         ="Your loan Application with code ".$event->loanApplication->loan_code." has been Rejected please Login to application to know the reason";
-           // $receiver_email  =$event->loanApplication->customer?->email;
-            $receiver_email  ="luhaboy@gmail.com";
+            $receiver_email  =$event->loanApplication->customer?->email;
+            //$receiver_email  ="luhaboy@gmail.com";
             $receiver_name   =$customer_name;
             $subject         ="Loan Application Status";
             SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
