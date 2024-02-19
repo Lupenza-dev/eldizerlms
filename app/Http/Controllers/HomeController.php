@@ -137,24 +137,31 @@ class HomeController extends Controller
             ### create loan application
             $code_generator =new LoanCalculatorService;
 
-            $loan_application =LoanApplication::create([
-                'customer_id' =>$customer->id,
-                'amount'      =>$amount,
-                'loan_amount' =>$amount*1.25,
-                'plan'        =>1,
-                'installment_amount'  =>$amount*1.25,
-                'interest_rate'       =>0.25,
-                'interest_amount'     =>0.25 * $amount,
-                'loan_code'           =>$code_generator->loanCode(),
-                'uuid'                =>(string)Str::orderedUuid(),
-                'start_date'          =>$start_date,
-                'level'               =>"CLOSED",
-                'college_id'          =>$college->id,
-                
-            ]);
+            // check if loan contract exist 
 
+            $check_loan =LoanContract::where('customer_id',$customer->id)
+                         ->where('start_date',$start_date)
+                         ->where('amount',$amount)
+                         ->first();
 
-            ### create loan contract
+            if (!$check_loan) {
+                $loan_application =LoanApplication::create([
+                    'customer_id' =>$customer->id,
+                    'amount'      =>$amount,
+                    'loan_amount' =>$amount*1.25,
+                    'plan'        =>1,
+                    'installment_amount'  =>$amount*1.25,
+                    'interest_rate'       =>0.25,
+                    'interest_amount'     =>0.25 * $amount,
+                    'loan_code'           =>$code_generator->loanCode(),
+                    'uuid'                =>(string)Str::orderedUuid(),
+                    'start_date'          =>$start_date,
+                    'level'               =>"CLOSED",
+                    'college_id'          =>$college->id,
+                    
+                ]);
+
+                 ### create loan contract
 
             $loan_contract =LoanContract::create([
                 'customer_id' =>$customer->id,
@@ -228,6 +235,12 @@ class HomeController extends Controller
             $details['message'] ='Action done successfuly';
             
             return $details;
+            }
+
+           
+
+
+           
          });
  
          $details['success'] =1;
