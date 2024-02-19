@@ -18,7 +18,7 @@ class LoanContractController extends Controller
         $filter   =Auth::user()->hasRole('Agent') ? true : false;
 
         $contracts =LoanContract::with('customer','student')
-                    ->latest()
+                    ->orderBy('start_date','DESC')
                     ->when($requests,function($query) use ($requests){
                         $query->withfilters($requests);
                     })

@@ -15,12 +15,12 @@ use Str;
 class PaymentController extends Controller
 {
     public function disbursments(Request $request){
-        $payments =DisbursmentPayment::with('loan_contract','loan_contract.customer')->latest()->get();
+        $payments =DisbursmentPayment::with('loan_contract','loan_contract.customer')->orderBy('payment_date','DESC')->get();
         return view('payments.disbursments',compact('payments'));
     }
 
     public function payments(){
-        $payments =Payment::with('loan_contract','loan_contract.customer')->latest()->get();
+        $payments =Payment::with('loan_contract','loan_contract.customer')->orderBy('payment_date','DESC')->get();
         return view('payments.payments',compact('payments'));
     }
 
