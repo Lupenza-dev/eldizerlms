@@ -21,13 +21,24 @@
      </div>
     <!--navigation-->
     <ul class="metismenu" id="menu">
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        <li>
+            <a class="{{ Route::is('admin.dashboard') ? "li-active": ""}}" href="{{ route('admin.dashboard')}}">
+                <div class="parent-icon"><i class='bx bx-home-alt'></i>
+                </div>
+                <div class="menu-title">Home</div>
+            </a>
+        </li>
+        @else
         <li>
             <a class="{{ Route::is('dashboard') ? "li-active": ""}}" href="{{ route('dashboard')}}">
                 <div class="parent-icon"><i class='bx bx-home-alt'></i>
                 </div>
                 <div class="menu-title">Home</div>
             </a>
-        </li>
+        </li>  
+        @endif
+       
         <li class="menu-label">Loan Management</li>
         <li>
             <a  class="{{ (Route::is('customers.index') or Route::is('customers.show') or Route::is('customers.edit')) ? "li-active": ""}}" href="{{ route('customers.index')}}">
