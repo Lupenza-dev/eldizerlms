@@ -70,7 +70,7 @@ class LoginController extends Controller
                 return response()->json([
                     'success' =>true,
                     'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',
-                    'url'     =>$user->is_password_changed ? URL::to('dashboard') : URL::to('change/password')
+                    'url'     =>$user->is_password_changed ? URL::to('admin/dashboard') : URL::to('change/password')
                 ]);
                }else if($user->hasRole('Agent')){
                 return response()->json([
