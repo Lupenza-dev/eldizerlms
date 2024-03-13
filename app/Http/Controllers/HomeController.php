@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\LoanPenaltCalculation;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -43,6 +44,11 @@ class HomeController extends Controller
     public function index()
     {
         return view('auth.login');
+    }
+
+    public function dueDays(){
+        LoanPenaltCalculation::dispatch()->onQueue('emails');
+        return true;
     }
 
     public function uploadLoans(Request $request){

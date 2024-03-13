@@ -30,6 +30,7 @@ use App\Http\Controllers\Payment\PaymentController;
 // Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
+Route::get('due-days', [HomeController::class, 'dueDays'])->name('due.days');
 Route::post('user/authentication',[LoginController::class,'authentication'])->name('authentication');
 
 Route::group(['middleware'=>'auth'],function(){
