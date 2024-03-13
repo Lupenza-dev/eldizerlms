@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class LoanPenaltCalculation implements ShouldQueue
 {
@@ -31,6 +32,7 @@ class LoanPenaltCalculation implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('Penalty Calculation Job Started');
         $installments =Installment::where('status','OPEN')
         ->where('payment_date','<',Carbon::now())
         ->get();
