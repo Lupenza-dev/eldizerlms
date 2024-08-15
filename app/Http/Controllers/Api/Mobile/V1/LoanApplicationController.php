@@ -18,10 +18,18 @@ use App\Models\Management\Customer;
 class LoanApplicationController extends Controller
 {
     public function loanCalculator(Request $request){
+       
         $amount =$request->amount;
+        $plan =$request->plan;
+        $loan_type =$request->loan_type;
+        $device_name =$request->device_name;
+        $device_id =$request->device_id;
         $data =[
             'amount' =>$amount,
-            'plan'   =>1
+            'plan'   =>$plan,
+            'loan_type' =>$loan_type,
+            'device_name' =>$device_name,
+            'device_id' =>$device_id
         ];
 
         $calculator =LoanCalculatorService::calculator($data);
