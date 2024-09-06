@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             LoanPenaltCalculation::dispatch()->onQueue('emails');
-        })->dailyAt('12:35');
+        })->dailyAt('23:55');
     }
 
     /**
