@@ -10,6 +10,7 @@ use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanContractController;
+use App\Http\Controllers\Management\DeviceController;
 use App\Http\Controllers\Payment\PaymentController;
 
 /*
@@ -61,6 +62,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');
     Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
     Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
+    Route::post('delete/device',[DeviceController::class,'destroyDevice'])->name('device.delete');
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
@@ -71,5 +73,6 @@ Route::group(['middleware'=>'auth'],function(){
         'colleges'       =>UniversityController::class,
         'agents'         =>AgentController::class,
         'customers'      =>CustomerController::class,
+        'devices'        =>DeviceController::class,
     ]);
 });

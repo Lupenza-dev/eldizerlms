@@ -35,7 +35,7 @@ Route::get('V1/get-wards/{district_id}',[HomeController::class,'getWards']);
 Route::get('V1/get-terms',[HomeController::class,'getTerms']);
 Route::post('V1/delete-user',[HomeController::class,'deleteUser']);
 Route::group(['prefix'=>'V1','middleware'=>'auth:api'], function(){
-   
+    Route::get('get-devices',[HomeController::class,'getDevices']);
     Route::post('student-registration',[CustomerController::class,'storeStudent']);
     Route::post('loan-application',[LoanApplicationController::class,'loanApplication']);
     Route::post('loan-calculator',[LoanApplicationController::class,'loanCalculator']);

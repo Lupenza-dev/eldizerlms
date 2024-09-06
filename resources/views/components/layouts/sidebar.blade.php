@@ -80,6 +80,13 @@
         </li>
         <li class="menu-label">Managements</li>
         <li>
+            <a class="{{ Route::is('devices.index') ? "li-active": ""}}" href="{{ route('devices.index')}}">
+                <div class="parent-icon"> <i class="bx bx-phone"></i>
+                </div>
+                <div class="menu-title">Devices</div>
+            </a>
+        </li>
+        <li>
             <a class="{{ Route::is('colleges.index') ? "li-active": ""}}" href="{{ route('colleges.index')}}">
                 <div class="parent-icon"> <i class="bx bx-buildings"></i>
                 </div>

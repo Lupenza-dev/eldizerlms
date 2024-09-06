@@ -11,10 +11,14 @@ use App\Models\Management\College;
 use App\Models\Management\Student;
 use Auth;
 use App\Http\Resources\AgentResource;
+use App\Http\Resources\DeviceCategoryResource;
+use App\Http\Resources\DeviceResource;
 use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\TermResource;
+use App\Models\Management\Device;
+use App\Models\Management\DeviceCategory;
 use App\Models\Management\Term;
 use App\Models\Payment\Payment;
 
@@ -90,6 +94,17 @@ class HomeController extends Controller
             'success' =>false,
             'message' =>"User Not Found"
         ]); 
+    }
+
+    public function getDevices(){
+        $devices =Device::with('device_category')->get();
+        $categories =DeviceCategory::get();
+        return response()->json([
+            'success' =>true,
+            'data'    =>DeviceResource::collection($devices),
+            'categories' =>DeviceCategoryResource::collection($categories)
+        ]); 
+
     }
 
 
