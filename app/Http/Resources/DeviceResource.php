@@ -21,6 +21,7 @@ class DeviceResource extends JsonResource
             'plan' =>$this->plan,
             'initial_deposit' =>$this->initial_deposit,
             'device_category' =>$this->device_category?->name,
+            'image'         =>asset('storage/attachments').'/'.$this->image,
         ];
     }
 }
