@@ -31,7 +31,7 @@ class CustomerResource extends JsonResource
             'ward'          =>$this->ward?->name,
             'street'        =>$this->street,
             'resident_since'=>$this->resident_since ?? "N/A",
-            'image'         =>asset('storage').'/'.$this->image,
+            'image'         =>asset('storage/attachments').'/'.$this->image,
             'customer_id'   =>$this->uuid,
             'student'       =>new StudentResource($this->student),
         ];
