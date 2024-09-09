@@ -96,6 +96,7 @@ class LoanApplicationController extends Controller
             'college_id'          =>$customer->student?->college_id,
             'loan_type'           =>$valid_data['loan_type'],
             'device_id'           =>$request->device_id ?? null,
+            'initial_deposit'     =>$calculator['initial_deposit'] ?? 0,
             
         ]);
 

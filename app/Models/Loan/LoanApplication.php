@@ -13,7 +13,7 @@ class LoanApplication extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable=['customer_id','college_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'level','loan_code','uuid','start_date','loan_type','device_id'];
+    'level','loan_code','uuid','start_date','loan_type','device_id','initial_deposit'];
 
     public function customer(){
         return $this->belongsTo(Customer::class);
