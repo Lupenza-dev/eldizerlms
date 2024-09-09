@@ -17,9 +17,9 @@ class DeviceResource extends JsonResource
         return [
             'id' =>$this->id,
             'name' =>$this->name,
-            'price' =>number_format($this->price),
+            'price' =>$this->price,
             'plan' =>$this->plan,
-            'initial_deposit' =>number_format($this->initial_deposit),
+            'initial_deposit' =>$this->initial_deposit,
             'device_category' =>$this->device_category?->name,
             'image'         =>asset('storage/attachments').'/'.$this->image,
         ];
