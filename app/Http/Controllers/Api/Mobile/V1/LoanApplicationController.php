@@ -93,7 +93,9 @@ class LoanApplicationController extends Controller
             'loan_code'           =>$code_generator->loanCode(),
             'uuid'                =>(string)Str::orderedUuid(),
             'level'               =>"Application",
-            'college_id'          =>$customer->student?->college_id
+            'college_id'          =>$customer->student?->college_id,
+            'loan_type'           =>$valid_data['loan_type'],
+            'device_id'           =>$request->device_id ?? null,
             
         ]);
 

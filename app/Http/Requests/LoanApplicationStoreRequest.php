@@ -46,6 +46,7 @@ class LoanApplicationStoreRequest extends FormRequest
             'amount'      =>['required'],
             'plan'        =>['required'],
             'agent_id'    =>['required'],
+            'loan_type'    =>['required'],
         ];
     }
 }

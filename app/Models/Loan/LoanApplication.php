@@ -6,13 +6,14 @@ use App\Models\Management\College;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Management\Customer;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LoanApplication extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable=['customer_id','college_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'level','loan_code','uuid','start_date'];
+    'level','loan_code','uuid','start_date','loan_type','device_id'];
 
     public function customer(){
         return $this->belongsTo(Customer::class);
