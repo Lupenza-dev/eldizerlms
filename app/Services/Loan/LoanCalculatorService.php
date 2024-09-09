@@ -22,8 +22,8 @@ class LoanCalculatorService
         $details['interest_amount']    =$details['total_amount'] - $amount;
         $details['amount']             =$amount;
         $details['plan']               =$plan;
-        $details['device_name']        =$data['device_name'];
-        $details['device_id']          =$data['device_id'];
+        $details['device_name']        =$data['device_name'] ?? null;
+        $details['device_id']          =$data['device_id'] ?? null;
         $details['initial_deposit']    =($data['loan_type'] == 2)? $details['total_amount'] * 0.40 : 0;
 
         return $details;
