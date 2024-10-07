@@ -26,6 +26,8 @@ use App\Http\Controllers\HomeController as TestController;
 Route::post('upload-loans',[TestController::class,'uploadLoans']);
 
 Route::post('V1/user-authentication',[AuthController::class,'userLogin']);
+Route::post('V1/recover-password',[AuthController::class,'recoverPassword']);
+Route::post('V1/reset-password',[AuthController::class,'resetPassword']);
 Route::post('V1/customer-registration',[CustomerController::class,'store']);
 Route::post('V1/loan-calculator',[LoanApplicationController::class,'loanCalculator']);
 Route::get('V1/get-colleges',[HomeController::class,'getColleges']);

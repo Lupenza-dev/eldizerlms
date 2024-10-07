@@ -119,6 +119,7 @@
                                 <th>Total Loan</th>
                                 <th>Installment</th>
                                 <th>Plan</th>
+                                <th>Loan Type</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -134,6 +135,12 @@
                                 <td>{{ number_format($loan->loan_amount) }}</td>
                                 <td>{{ number_format($loan->installment_amount) }}</td>
                                 <td>{{ $loan->plan }}</td>
+                                <td>{!! $loan->loan_type_format  !!}
+                                    <br>
+                                    {{ $loan->get_device?->name }}
+                                    <br>
+                                    <b>ID</b>: {{ number_format($loan->initial_deposit) }}
+                                </td>
                                 <td>{!! $loan->level_formatted !!}</td>
                                 <td>
                                     <a href="{{ route('loan.profile',$loan->uuid)}}">

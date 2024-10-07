@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\User;
+use App\Models\PasswordReset;
 use Validator;
 use Hash;
 use App\Http\Resources\UserResource;
 use Carbon\Carbon;
+use App\Jobs\SendEmailJob;
+use Str;
 
 class AuthController extends Controller
 {
@@ -101,6 +104,97 @@ class AuthController extends Controller
         return response()->json([
             'success' =>true,
             'message' =>'Password Change Successfully',
+        ],200);
+    }
+
+    public function recoverPassword(Request $request){
+        $validator = Validator::make(
+            $request->all(), [
+                'user_name'     =>'required',
+            ]
+        );
+
+        if ($validator->fails() ) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' => $validator->errors(),
+                ], 500
+            );
+        }
+
+        $user_name =$request->user_name;
+
+        $user =User::where('email',$user_name)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' =>false,
+                'error_message'  =>'You have provided invalid username'
+            ],500);
+        }
+
+        $password =PasswordReset::create(
+            [
+                'email'    =>$user->email,
+                'token'    =>mt_rand(100000,999999),
+                'status'   =>0,
+                'uuid'     =>(string)Str::orderedUuid(),
+            ]
+        );
+
+        $message ="Hello ".$user->name." please use this code ".$password->token." to reset the password";
+        $receiver_email =$user->email;
+        // $receiver_email ='lupenza10@gmail.com';
+        $receiver_name  =$user->name;
+        $subject        ="Recover Password";
+        SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
+        return response()->json([
+            'success'=>true,
+            'message' =>"Code (OTP) has been sent to your Email",
+            'otp'     =>$password->token,
+        ],200);
+
+    }
+
+    public function resetPassword(Request $request){
+        $validator = Validator::make(
+            $request->all(), [
+                'user_name'     =>'required',
+                'password'     =>'required',
+            ]
+        );
+
+        if ($validator->fails() ) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' => $validator->errors(),
+                ], 500
+            );
+        } 
+        
+        $user_name =$request->user_name;
+        $password =$request->password;
+
+        $user =User::where('email',$user_name)->first();
+        if (!$user) {
+            return response()->json([
+                'success' =>false,
+                'error_message'  =>'You have provided invalid username'
+            ],500);
+        }
+        $user->password =Hash::make($password);
+        $user->password_change_date =Carbon::now();
+        $user->is_password_changed =1;
+        $user->save();
+
+        PasswordReset::where('email',$user_name)->update(['status' => true]);
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Password reseted successfully",
+            'password_set' =>true
         ],200);
     }
 

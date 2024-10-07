@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Management\Customer;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use  App\Models\Management\Device;
 
 class LoanApplication extends Model
 {
@@ -90,5 +91,18 @@ class LoanApplication extends Model
         }
     
         return $label;
+      }
+
+      public function getLoanTypeFormatAttribute(){
+        if ($this->loan_type == 1) {
+          return "<span class='badge bg-success text-white'>Cash</span>";
+        } else {
+          return "<span class='badge bg-success text-white'>Pay Later</span>";
+        }
+        
+      }
+
+      public function get_device(){
+        return $this->hasOne(Device::class,'id','device_id');
       }
 }
