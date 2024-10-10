@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Mobile\V1\CustomerController;
 use App\Http\Controllers\Api\Mobile\V1\LoanApplicationController;
 use App\Http\Controllers\Api\Mobile\V1\AuthController;
 use App\Http\Controllers\Api\Mobile\V1\HomeController;
+use App\Http\Controllers\Api\Mobile\V2\RegistrationController;
 use App\Http\Controllers\HomeController as TestController;
 
 
@@ -45,4 +46,19 @@ Route::group(['prefix'=>'V1','middleware'=>'auth:api'], function(){
     Route::post('get-payments',[HomeController::class,'getPayments']);
     Route::get('get-agents',[HomeController::class,'getAgents']);
     Route::post('change-password',[AuthController::class,'changePassword']);
+});
+
+Route::group(['prefix'=>'V2'], function(){
+    Route::post('user-registration',[RegistrationController::class,'registerUser']);
+    Route::group(['middleware'=>'auth:api'], function(){
+        Route::get('get-devices',[HomeController::class,'getDevices']);
+        Route::post('student-registration',[CustomerController::class,'storeStudent']);
+        Route::post('loan-application',[LoanApplicationController::class,'loanApplication']);
+        Route::post('loan-calculator',[LoanApplicationController::class,'loanCalculator']);
+        Route::post('get-loans',[HomeController::class,'getLoans']);
+        Route::post('get-payments',[HomeController::class,'getPayments']);
+        Route::get('get-agents',[HomeController::class,'getAgents']);
+        Route::post('change-password',[AuthController::class,'changePassword']);
+    });
+  
 });
