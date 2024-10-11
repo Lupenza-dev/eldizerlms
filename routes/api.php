@@ -50,6 +50,9 @@ Route::group(['prefix'=>'V1','middleware'=>'auth:api'], function(){
 
 Route::group(['prefix'=>'V2'], function(){
     Route::post('user-registration',[RegistrationController::class,'registerUser']);
+    Route::post('user-registration-address',[RegistrationController::class,'registerUserAddress']);
+    Route::post('user-registration-college',[RegistrationController::class,'registerUserCollege']);
+    Route::post('user-registration-image',[RegistrationController::class,'registerUserImage']);
     Route::group(['middleware'=>'auth:api'], function(){
         Route::get('get-devices',[HomeController::class,'getDevices']);
         Route::post('student-registration',[CustomerController::class,'storeStudent']);

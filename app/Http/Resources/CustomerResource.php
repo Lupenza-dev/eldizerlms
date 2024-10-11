@@ -30,6 +30,7 @@ class CustomerResource extends JsonResource
             'district'      =>$this->district?->name,
             'ward'          =>$this->ward?->name,
             'street'        =>$this->street,
+            'registration_stage'        =>$this->registration_stage,
             'resident_since'=>$this->resident_since ?? "N/A",
             'image'         =>asset('storage').'/'.$this->image,
             'customer_id'   =>$this->uuid,
