@@ -14,13 +14,14 @@ use App\Models\Entities\District;
 use App\Models\Entities\Ward;
 use App\Models\Entities\MaritalStatus;
 use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable=['first_name','middle_name','last_name','phone_number','email','dob','gender_id','marital_status_id','region_id','district_id',
-    'ward_id','street','resident_since','image','uuid','other_name','id_number'];
+    'ward_id','street','resident_since','image','uuid','other_name','id_number','registration_stage'];
 
 
     public static function StoreCustomer($valid_data,$other_name){
