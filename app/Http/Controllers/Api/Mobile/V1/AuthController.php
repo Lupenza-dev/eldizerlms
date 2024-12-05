@@ -13,6 +13,7 @@ use App\Http\Resources\UserResource;
 use Carbon\Carbon;
 use App\Jobs\SendEmailJob;
 use Str;
+use Log;
 
 class AuthController extends Controller
 {
@@ -126,6 +127,7 @@ class AuthController extends Controller
         $user_name =$request->user_name;
 
         $user =User::where('email',$user_name)->first();
+        Log::debug($user);
 
         if (!$user) {
             return response()->json([
