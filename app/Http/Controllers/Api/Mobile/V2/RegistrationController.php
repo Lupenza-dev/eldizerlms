@@ -25,6 +25,7 @@ class RegistrationController extends Controller
                 'last_name'        =>'required',
                 'phone_number'     =>'required',
                 'password'        =>'required',
+                'reg_type'        =>'required',
                 'email'           => ['required','unique:users,email']
             ]
         );
@@ -48,6 +49,7 @@ class RegistrationController extends Controller
                 'last_name'    =>$valid['last_name'],
                 'phone_number' =>'255'.''.$valid['phone_number'],
                 'email'        =>$valid['email'],
+                'customer_type'   =>$valid['reg_type'],
                 'registration_stage' =>1,
                 'uuid'               =>(string)Str::orderedUuid()
             ]);
@@ -60,6 +62,8 @@ class RegistrationController extends Controller
                 'uuid'         =>(string)Str::orderedUuid(),
                 'device_token' =>$expo_push_token,
                 'customer_id'  =>$customer_obj->id,
+                'is_password_changed' =>true,
+                'password_change_date' =>Carbon::now()
             ]);
     
             $user->assignRole('Customer');
