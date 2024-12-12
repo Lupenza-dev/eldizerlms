@@ -97,7 +97,7 @@
             <a class="{{ Route::is('beneficaries.index') ? "li-active": ""}}" href="{{ route('beneficaries.index')}}">
                 <div class="parent-icon"><i class="bx bx-list-ul"></i>
                 </div>
-                <div class="menu-title">Loan Beneficaries</div>
+                <div class="menu-title">HESLB Beneficaries</div>
             </a>
         </li>
         <li>
