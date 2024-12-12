@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->integer('customer_type')->default(1);
-            $table->softDeletes();
+        // Schema::table('customers', function (Blueprint $table) {
+        //     $table->integer('customer_type')->default(1);
+        //     $table->softDeletes();
             
-        });
+        // });
     }
 
     /**
@@ -23,9 +23,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-             $table->integer('customer_type')->default(1);
+        // Schema::table('customers', function (Blueprint $table) {
+        //      $table->integer('customer_type')->default(1);
             
-        });
+        // });
     }
 };
