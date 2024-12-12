@@ -20,10 +20,11 @@ return new class extends Migration
             $table->string('reg_no');
             $table->integer('year_of_study');
             $table->string('academic_year');
+            $table->integer('college_id');
             $table->boolean('status')->default(true);
             $table->uuid();
             $table->timestamps();
-            $table->softDelete();
+            $table->softDeletes();
         });
     }
 

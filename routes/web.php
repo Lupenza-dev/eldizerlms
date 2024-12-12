@@ -10,6 +10,7 @@ use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanContractController;
+use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
 use App\Http\Controllers\Payment\PaymentController;
 
@@ -63,6 +64,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
     Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
     Route::post('delete/device',[DeviceController::class,'destroyDevice'])->name('device.delete');
+    Route::get('beneficaries/data',[BenefeciariesController::class,'getBeneficariesData'])->name('beneficaries.data');
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
@@ -74,5 +76,6 @@ Route::group(['middleware'=>'auth'],function(){
         'agents'         =>AgentController::class,
         'customers'      =>CustomerController::class,
         'devices'        =>DeviceController::class,
+        'beneficaries'   =>BenefeciariesController::class,
     ]);
 });
