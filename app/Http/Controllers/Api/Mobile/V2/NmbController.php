@@ -1,0 +1,166 @@
+<?php
+
+namespace App\Http\Controllers\Api\Mobile\V2;
+
+use App\Http\Controllers\Controller;
+use App\Models\Management\NMBConsentRequest;
+use App\Models\Management\NMBSubscription;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Validator;
+use Str;
+
+class NmbController extends Controller
+{
+    public function subscribe(Request $request){
+        $validator = Validator::make(
+            $request->all(), [
+                'username'       =>'required',
+                'password'      =>'required',
+            ]
+        );
+
+        if ($validator->fails() ) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' => $validator->errors(),
+                ], 500
+            );
+        }
+
+
+        return $this->directLogin($request->all()); 
+    }
+
+    public function directLogin($input){
+        $consumer_key =env('CONSUMER_KEY');
+        $username = $input['username'];
+        $password = $input['password'];
+        $cookie = env('COOKIE');
+        // Make the request
+        $response = Http::withHeaders([
+            'Authorization' => "DirectLogin username=\"$username\",password=\"$password\",consumer_key=$consumer_key",
+            'Cookie'        => $cookie,
+            'Content-Type'  => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+        ])->post(env('BASE_URL').'/'."my/logins/direct");
+
+        if ($response['token']) {
+            $nmb =NMBSubscription::updateOrCreate([
+                'nmb_username' =>$username,
+                'nmb_password' =>$password,
+            ],[
+                'token'        =>$response['token'],
+                'uuid'         =>(string)Str::orderedUuid(),
+            ]);
+            return $this->consentRequest($input['account_number'],$response['token'],$nmb);
+        }
+
+    }
+
+    public function consentRequest($account,$token,$nmb_request){
+        $data =[
+            "consent_type"=> "VRP",
+            "from_account"=> [
+               "bank_routing"=> [
+                    "scheme"=> "OBP",
+                    "address"=> "nmbb.01.tz.nmbb"
+                ],
+                "account_routing"=> [
+                    "scheme"=> "OBP",
+                    "address"=> $account
+                ],
+                "branch_routing"=> [
+                    "scheme"=> "",
+                    "address"=> ""
+                ]
+            ],
+            "to_account"=> [
+                "counterparty_name"=>env('ELDIZER_COUNTERPART'),
+                "bank_routing"=> [
+                    "scheme"=> "OBP",
+                    "address"=> env('ELDIZER_BANK')
+                ],
+                "account_routing"=> [
+                    "scheme"=> "OBP",
+                    "address"=> env('ELDIZER_ACCOUNT')
+                ],
+                "branch_routing"=> [
+                    "scheme"=> "",
+                    "address"=> ""
+                ],
+                "limit"=> [
+                    "currency"=> "TZS",
+                    "max_single_amount"=> 5000,
+                    "max_monthly_amount"=> 50000,
+                    "max_number_of_monthly_transactions"=> 3,
+                    "max_yearly_amount"=> 50000,
+                    "max_number_of_yearly_transactions"=> 25,
+                    "max_total_amount"=> 300000,
+                    "max_number_of_transactions"=> 100
+                ]
+            ],
+            "valid_from" => "2024-12-19T10:19:06Z",
+            "time_to_live"=> 1000000,
+            "email"=> "lupenza10@gmail.com",
+            "phone_number"=> "255683130185"
+        ];
+        Log::debug($data);
+        $response = Http::withHeaders([
+            'Authorization' => 'DirectLogintoken='.$token.'',
+            'Cookie'        => env('COOKIE'),
+            'Content-Type'  => 'application/json',
+        ])->post(env('BASE_URL').'/'."obp/v5.1.0/consumer/vrp-consent-requests",$data);
+
+       if ($response['consent_request_id']) {
+        // return $response['payload']['consent_type'];
+        $consent =NMBConsentRequest::create([
+            'nmb_subscriber_id' =>$nmb_request->id,
+            'consent_request_id' =>$response['consent_request_id'],
+        // ],[
+            'consent_type' =>$response['payload']['consent_type'] ?? null,
+            'from_account_bank_scheme' =>$response['payload']['from_account']['bank_routing']['scheme'] ?? null,
+            'from_bank_id'             =>$response['payload']['from_account']['bank_routing']['address'] ?? null,
+            'from_account_scheme'      =>$response['payload']['from_account']['account_routing']['scheme'] ?? null,
+            'from_account_number'      =>$response['payload']['from_account']['account_routing']['address'] ?? null,
+            'to_account_counterparty_name' =>$response['payload']['to_account']['counterparty_name'] ?? null,
+            'to_account_bank_scheme' =>$response['payload']['to_account']['bank_routing']['scheme'] ?? null,
+            'to_bank_id'             =>$response['payload']['to_account']['bank_routing']['address'] ?? null,
+            'to_account_scheme'      =>$response['payload']['to_account']['account_routing']['scheme'] ?? null,
+            'to_account_number'      =>$response['payload']['to_account']['account_routing']['address'] ?? null,
+            'currency'                =>$response['payload']['to_account']['limit']['currency'] ?? null,
+            'max_single_amount'       =>$response['payload']['to_account']['limit']['max_single_amount'] ?? null,
+            'max_monthly_amount'      =>$response['payload']['to_account']['limit']['max_monthly_amount'] ?? null,
+            'max_number_of_monthly_transactions'      =>$response['payload']['to_account']['limit']['max_number_of_monthly_transactions'] ?? null,
+            'max_yearly_amount'                       =>$response['payload']['to_account']['limit']['max_yearly_amount'] ?? null,
+            'max_number_of_yearly_transactions'      =>$response['payload']['to_account']['limit']['max_number_of_yearly_transactions'] ?? null,
+            'max_total_amount'                       =>$response['payload']['to_account']['limit']['max_total_amount'] ?? null,
+            'max_number_of_transactions'             =>$response['payload']['to_account']['limit']['max_number_of_transactions'] ?? null,
+            'valid_from'      =>$response['payload']['valid_from'] ?? null,
+            'time_to_live'      =>$response['payload']['time_to_live'] ?? null,
+            'phone_number'      =>$response['payload']['phone_number'] ?? null,
+            'email'      =>$response['payload']['email'] ?? null,
+            'consumer_id'      =>$response['consumer_id'] ?? null,
+            'uuid'        =>(string)Str::orderedUuid(),
+        ]);
+
+        return $this->getConsentId($token,$consent);
+       // return $consent;
+       }
+       
+    }
+
+    public function getConsentId($token,$consent){
+        $response = Http::withHeaders([
+            'Authorization' => 'DirectLogintoken='.$token.'',
+            'Cookie'        => env('COOKIE'),
+            'Content-Type'  => 'application/json',
+        ])->post(env('BASE_URL').'/'."obp/v5.1.0/consumer/consent-requests/".$consent->consent_request_id."/IMPLICIT/consents");
+
+        return $response;
+    }
+
+
+
+}

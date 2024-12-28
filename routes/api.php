@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Mobile\V1\CustomerController;
 use App\Http\Controllers\Api\Mobile\V1\LoanApplicationController;
 use App\Http\Controllers\Api\Mobile\V1\AuthController;
 use App\Http\Controllers\Api\Mobile\V1\HomeController;
+use App\Http\Controllers\Api\Mobile\V2\NmbController;
 use App\Http\Controllers\Api\Mobile\V2\RegistrationController;
 use App\Http\Controllers\HomeController as TestController;
 
@@ -54,6 +55,7 @@ Route::group(['prefix'=>'V2'], function(){
     Route::post('user-registration-address',[RegistrationController::class,'registerUserAddress']);
     Route::post('user-registration-college',[RegistrationController::class,'registerUserCollege']);
     Route::post('user-registration-image',[RegistrationController::class,'registerUserImage']);
+    Route::post('subscribe',[NmbController::class,'subscribe']);
     Route::group(['middleware'=>'auth:api'], function(){
         Route::get('get-devices',[HomeController::class,'getDevices']);
         Route::post('student-registration',[CustomerController::class,'storeStudent']);
