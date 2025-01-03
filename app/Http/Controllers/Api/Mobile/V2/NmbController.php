@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Mobile\V2;
 use App\Http\Controllers\Controller;
 use App\Models\Management\NMBConsentRequest;
 use App\Models\Management\NMBSubscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -108,8 +109,8 @@ class NmbController extends Controller
                     "max_number_of_transactions"=> 100
                 ]
             ],
-            "valid_from" => "2024-12-19T10:19:06Z",
-            "time_to_live"=> 1000000,
+            "valid_from" =>Carbon::now()->toIso8601String(),
+            "time_to_live"=> 31536000,
             "email"=> "lupenza10@gmail.com",
             "phone_number"=> "255683130185"
         ];
