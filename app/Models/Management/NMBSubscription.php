@@ -12,4 +12,8 @@ class NMBSubscription extends Model
 
     public $table='nmb_subscriptions';
     public $fillable=['nmb_account','nmb_username','nmb_password','token','uuid'];
+
+    public function consent_request(){
+        return $this->hasOne(NMBConsentRequest::class,'nmb_subscriber_id','id')->latest();
+    }
 }

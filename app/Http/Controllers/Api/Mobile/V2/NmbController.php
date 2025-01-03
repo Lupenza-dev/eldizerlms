@@ -55,6 +55,13 @@ class NmbController extends Controller
                 'uuid'         =>(string)Str::orderedUuid(),
             ]);
             return $this->consentRequest($input['account_number'],$response['token'],$nmb);
+        }else{
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' =>"Failed To Authenticate",
+                ], 500
+            );
         }
 
     }
@@ -147,6 +154,13 @@ class NmbController extends Controller
 
         return $this->getConsentId($token,$consent);
        // return $consent;
+       }else{
+        return response()->json(
+            [
+                'success' => false,
+                'error_message' =>"Failed To Get Consent Request",
+            ], 500
+        );
        }
        
     }
@@ -158,8 +172,59 @@ class NmbController extends Controller
             'Content-Type'  => 'application/json',
         ])->post(env('BASE_URL').'/'."obp/v5.1.0/consumer/consent-requests/".$consent->consent_request_id."/IMPLICIT/consents");
 
-        return $response;
+        if ($response['consent_id']) {
+           $consent->consent_id =$response['consent_id'];
+           $consent->jwt =$response['jwt'];
+           $consent->status =$response['status'];
+           $consent->view_id    =$response['account_access']['view_id'];
+           $consent->counterparty_id =$response['account_access']['helper_info']['counterparty_id'];
+           $consent->save();
+
+           return $this->verifyConsentId($token,$consent);
+        }else{
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' =>"Failed To Get Consent ID",
+                ], 500
+            );
+        }
+
+       // return $response;
     }
+
+    public function verifyConsentId($token,$consent){
+        $response = Http::withHeaders([
+            'Authorization' => 'DirectLogintoken='.$token.'',
+            'Cookie'        => env('COOKIE'),
+            'Content-Type'  => 'application/json',
+        ])
+        ->withBody(json_encode(['answer' => '78836665']), 'application/json')
+        ->post(env('BASE_URL').'/'."obp/v5.1.0/banks/gh.29.uk/consents/".$consent->consent_id."/challenge");
+        
+        if ($response['consent_id']) {
+            $consent->consent_id =$response['consent_id'];
+            $consent->jwt =$response['jwt'];
+            $consent->status =$response['status'];
+            $consent->save();
+
+            return response()->json([
+                'success' =>true,
+                'message' =>'You have Successfully Link your NMB Account with ELDIZER Finance Ltd',
+               ],200
+            );
+
+        }else{
+            return response()->json(
+                [
+                    'success' => false,
+                    'error_message' =>"Failed To Verify Consent ID",
+                ], 500
+            );
+        }
+    }
+
+   
 
 
 

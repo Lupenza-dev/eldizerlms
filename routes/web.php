@@ -54,6 +54,8 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('payments/disbursed',[PaymentController::class,'disbursments'])->name('payment.disbursed');
     Route::post('loan/repayment',[PaymentController::class,'loanRepayment'])->name('loan.repayment');
     Route::get('payments',[PaymentController::class,'payments'])->name('payments');
+    Route::get('nmb/subscribers',[PaymentController::class,'nmbSubscribers'])->name('nmb.subscribers');
+    Route::post('nmb/create/transaction',[PaymentController::class,'nmbCreateTransaction'])->name('create.transaction');
     Route::post('college/update',[UniversityController::class,'collegeUpdate'])->name('update.college');
     Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
     Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');

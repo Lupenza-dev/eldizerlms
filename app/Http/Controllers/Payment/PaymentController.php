@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\Payment\DisbursmentPayment;
 use App\Models\Payment\Payment;
 use App\Models\Loan\LoanContract;
+use App\Models\Management\NMBConsentRequest;
+use App\Models\Management\NMBSubscription;
 use App\Services\Loan\InstallmentService;
 use Auth;
+use Illuminate\Support\Facades\Http;
 use Str;
 
 
@@ -75,5 +78,71 @@ class PaymentController extends Controller
 
         
         
+    }
+
+    public function nmbSubscribers(){
+        $subscribers =NMBSubscription::with('consent_request')->get();
+        return view('payments.nmb_subscribers',compact('subscribers'));
+    }
+
+    public function nmbCreateTransaction(Request $request){
+        $consent =NMBConsentRequest::where(['uuid'=>$request->uuid,'Status'=>'ACCEPTED'])->first();
+
+        if(!$consent){
+            return response()->json([
+                'success' =>false,
+                'errors'  =>'Customer Doesnot Consent',
+            ],500);
+        }
+
+        $base_url     =env('BASE_URL');
+        $my_bank_id   =env('ELDIZER_BANK');
+        $user_account =$consent->from_account_number;
+        $view_id      =$consent->view_id;
+        $response = Http::withHeaders([
+            'Consent-Id' => $consent->consent_id,
+            'Consent-JWT' => $consent->jwt,
+            'Cookie' =>  env('COOKIE'),
+        ])
+        ->withBody(json_encode([
+            'to' => [
+                'counterparty_id' => $consent->counterparty_id,
+            ],
+            'value' => [
+                'currency' => 'TZS',
+                'amount' => $request->amount,
+            ],
+            'description' => 'This is a good test',
+            'charge_policy' => 'RECEIVER',
+            'attributes' => [
+                [
+                    'name' => 'Reference_number',
+                    'attribute_type' => 'STRING',
+                    'value' => '123',
+                ],
+                [
+                    'name' => 'invoice_number_dog',
+                    'attribute_type' => 'STRING',
+                    'value' => '789',
+                ],
+            ],
+        ]), 'application/json')
+        ->post("$base_url/obp/v5.1.0/banks/$my_bank_id/accounts/$user_account/$view_id/transaction-request-types/COUNTERPARTY/transaction-requests");
+
+        // Handle the response
+        if ($response->successful()) {
+            // Success: Process the response
+            return response()->json([
+                'success' =>true,
+                'message' =>'Transaction created Successfully',
+            ],200);
+        } else {
+            $error = $response->json();
+            return response()->json([
+                'error_code' => $error['code'] ?? 'Unknown error code',
+                'errors' => $error['message'] ?? 'Unknown error message',
+            ],500);
+        }
+
     }
 }

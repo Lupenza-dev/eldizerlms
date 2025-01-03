@@ -78,6 +78,13 @@
                 <div class="menu-title">Repayments</div>
             </a>
         </li>
+        <li>
+            <a class="{{ Route::is('nmb.subscribers') ? "li-active": ""}}" href="{{ route('nmb.subscribers')}}">
+                <div class="parent-icon"><i class='lni lni-money-location'></i>
+                </div>
+                <div class="menu-title">NMB-Subscribers</div>
+            </a>
+        </li>
         <li class="menu-label">Managements</li>
         <li>
             <a class="{{ Route::is('devices.index') ? "li-active": ""}}" href="{{ route('devices.index')}}">
