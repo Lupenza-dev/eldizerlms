@@ -109,7 +109,7 @@ class NmbController extends Controller
                     "max_number_of_transactions"=> 100
                 ]
             ],
-            "valid_from" =>Carbon::now()->toIso8601String(),
+            "valid_from" =>Carbon::now('UTC')->toIso8601ZuluString(),
             "time_to_live"=> 31536000,
             "email"=> "lupenza10@gmail.com",
             "phone_number"=> "255683130185"
