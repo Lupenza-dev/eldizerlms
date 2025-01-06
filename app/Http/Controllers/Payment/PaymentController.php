@@ -107,7 +107,7 @@ class PaymentController extends Controller
         ])
         ->withBody(json_encode([
             'to' => [
-                'counterparty_id' => $consent->counterparty_id,
+                'counterparty_id' =>implode('', $consent->counterparty_id),
             ],
             'value' => [
                 'currency' => 'TZS',
