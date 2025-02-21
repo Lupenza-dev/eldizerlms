@@ -96,7 +96,6 @@ class PaymentController extends Controller
         }
 
         $base_url     =env('BASE_URL');
-        // $my_bank_id   =env('ELDIZER_BANK');
         $my_bank_id =$consent->from_bank_id;
         $user_account =$consent->from_account_number;
         $view_id      =$consent->view_id;

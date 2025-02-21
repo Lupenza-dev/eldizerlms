@@ -19,6 +19,7 @@ class NmbController extends Controller
             $request->all(), [
                 'username'       =>'required',
                 'password'      =>'required',
+                'account_number' =>'required',
             ]
         );
 
@@ -50,7 +51,6 @@ class NmbController extends Controller
         if ($response['token']) {
             $nmb =NMBSubscription::updateOrCreate([
                 'nmb_username' =>$username,
-                'nmb_password' =>$password,
             ],[
                 'token'        =>$response['token'],
                 'uuid'         =>(string)Str::orderedUuid(),
