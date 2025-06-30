@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('assignment_questions', function (Blueprint $table) {
             $table->id();
+            $table->text('name');
+            $table->text('choices');
+            $table->string('correct_answer');
+            $table->integer('user_id');
+            $table->integer('assignment_id');
+            $table->boolean('status')->default(true);
+            $table->uuid();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

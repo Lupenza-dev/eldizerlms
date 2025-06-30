@@ -26,4 +26,22 @@ class Assignment extends Model implements HasMedia
     
         return $label;
     }
+
+    public function questions(){
+      return $this->hasMany(AssignmentQuestion::class);
+    }
+
+    public function getProgressFormatAttribute(){
+      $now = now(); 
+      $start = \Carbon\Carbon::parse($this->start_time);
+      $end = \Carbon\Carbon::parse($this->end_time);
+  
+      if ($now->lt($start)) {
+          return 'Not Started';
+      } elseif ($now->between($start, $end)) {
+          return 'On Progress';
+      } else {
+          return 'Completed';
+      }
+    }
 }

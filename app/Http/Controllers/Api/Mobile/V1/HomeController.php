@@ -11,12 +11,14 @@ use App\Models\Management\College;
 use App\Models\Management\Student;
 use Auth;
 use App\Http\Resources\AgentResource;
+use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\DeviceCategoryResource;
 use App\Http\Resources\DeviceResource;
 use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\TermResource;
+use App\Models\Management\Assignment;
 use App\Models\Management\Device;
 use App\Models\Management\DeviceCategory;
 use App\Models\Management\Term;
@@ -106,6 +108,13 @@ class HomeController extends Controller
             'categories' =>DeviceCategoryResource::collection($categories)
         ]); 
 
+    }
+
+    public function getAssignments(){
+        return response()->json([
+            'success' =>true,
+            'data'    =>AssignmentResource::collection(Assignment::latest()->get()),
+        ]);  
     }
 
 

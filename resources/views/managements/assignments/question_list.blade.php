@@ -44,35 +44,25 @@
                                 <th>#</th>
                                 <th>Reg Date</th>
                                 <th>Name</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Questions</th>
+                                <th>Choices</th>
+                                <th>Answer</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                        <tbody>
-                        {{-- @foreach ($assignments as $assignment)
+                        @foreach ($questions as $question)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ date('d,M-Y',strtotime($assignment->created_at))}}</td>
-                                <td>{{ $assignment->name }}</td>
-                                <td>{!! $assignment->start_time !!}</td>
-                                <td>{!! $assignment->end_time !!}</td>
-                                <td>
-                                    <a href="{{ route('questions.list',$assignment)}}">
-                                        <button class="btn btn-primary">Questions</button>
-                                    </a>
-                                </td>
-                                <td>{!! $assignment->status_formatted !!}</td>
+                                <td>{{ date('d,M-Y',strtotime($question->created_at))}}</td>
+                                <td>{{ $question->name }}</td>
+                                <td>{!! $question->choices !!}</td>
+                                <td>{!! $question->correct_answer !!}</td>
+                                <td>{!! $question->status_formatted !!}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm edit-btn"  data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
-                                     data-id="{{ $assignment->uuid}}" 
-                                        data-name ="{{ $assignment->name}}"
-                                        data-location ="{{ $assignment->location}}"
-                                        data-rep_name ="{{ $assignment->representative?->name }}"
-                                        data-rep_phone ="{{ $assignment->representative?->phone_number }}"
-                                        data-rep_position ="{{ $assignment->representative?->position }}"
+                                     data-id="{{ $question->uuid}}" 
+                                        data-name ="{{ $question->name}}"
                                         title="Edit"> <i class="bx bx-edit"></i> </button>
 
                                         {{-- @if ($college->status == "Inactive")
@@ -81,9 +71,9 @@
                                         <button class="btn btn-warning btn-sm" id="{{ $college->uuid}}" onclick="disable_college(id)"><i class="bx bx-x text-white"></i></button>
                                         @endif --}}
                                         {{-- <button class="btn btn-danger btn-sm" id="{{ $assignment->uuid}}" onclick="delete_college(id)"><i class="bx bx-trash text-white"></i></button> --}}
-                                {{-- </td>
+                                </td>
                             </tr> 
-                        @endforeach --}} 
+                        @endforeach
                        </tbody>
                     </table>
                 </div>

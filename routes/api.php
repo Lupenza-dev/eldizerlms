@@ -27,6 +27,7 @@ use App\Http\Controllers\HomeController as TestController;
 // });
 Route::post('upload-loans',[TestController::class,'uploadLoans']);
 Route::get('verify-vrp',[NmbController::class,'verifyVrp']);
+Route::get('get-assignments',[HomeController::class,'getAssignments']);
 
 Route::post('V1/user-authentication',[AuthController::class,'userLogin']);
 Route::post('V1/recover-password',[AuthController::class,'recoverPassword']);
@@ -59,6 +60,7 @@ Route::group(['prefix'=>'V2'], function(){
     Route::post('subscribe',[NmbController::class,'subscribe']);
     Route::get('get-colleges',[HomeController::class,'getColleges']);
     Route::get('get-regions',[HomeController::class,'getRegions']);
+    Route::get('get-assignments',[HomeController::class,'getAssignments']);
     Route::get('get-districts/{region_id}',[HomeController::class,'getDistricts']);
     Route::get('get-wards/{district_id}',[HomeController::class,'getWards']);
     Route::group(['middleware'=>'auth:api'], function(){

@@ -39,23 +39,23 @@
                 <hr/>
                 <form id="registration_form" class="form-repeater">
                     <div id="alert"></div>
-                    <input type="hidden" value="{{$assignment}}" name="assignment_id">
+                    <input type="hidden" value="{{$assignment->id}}" name="assignment_id">
                     <div data-repeater-list="questions">
                         <div data-repeater-item>
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <label for="name">Question</label>
-                                    <textarea name="name[]" class="form-control" rows="2"></textarea>
+                                    <textarea name="name" class="form-control" rows="2"></textarea>
                                 </div>
 
                                 <div class="col-md-5 mb-2">
                                     <label for="choices">Choices (comma separated)</label>
-                                    <input type="text" name="choices[]" class="form-control" placeholder="e.g. Choice 1, Choice 2" />
+                                    <input type="text" name="choices" class="form-control" placeholder="e.g. Choice 1, Choice 2" />
                                 </div>
 
                                 <div class="col-md-5 mb-2">
                                     <label for="correct_answer">Correct Answer</label>
-                                    <input type="text" name="correct_answer[]" class="form-control" placeholder="e.g. Choice 1" />
+                                    <input type="text" name="correct_answer" class="form-control" placeholder="e.g. Choice 1" />
                                 </div>
                                 
                                 <div class="col-md-2">
@@ -125,7 +125,7 @@
         console.log(response);
         $('#alert').html('<div class="alert alert-success">'+response.message+'</div>');
         setTimeout(function(){
-         location.reload();
+         window.location.href = "{{ route('questions.list', $assignment) }}";
       },500);
       },
       error:function(response){

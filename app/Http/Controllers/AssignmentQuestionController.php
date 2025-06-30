@@ -6,6 +6,10 @@ use App\Http\Requests\StoreAssignmentQuestionRequest;
 use App\Http\Requests\UpdateAssignmentQuestionRequest;
 use App\Models\Management\Assignment;
 use App\Models\Management\AssignmentQuestion;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
 
 class AssignmentQuestionController extends Controller
 {
@@ -18,7 +22,8 @@ class AssignmentQuestionController extends Controller
     }
 
     public function questionList(Assignment $assignment){
-        return view('managements.assignments.question_list',compact('assignment'));
+        $questions =AssignmentQuestion::where('assignment_id',$assignment->id)->get();
+        return view('managements.assignments.question_list',compact('assignment','questions'));
     }
 
     /**
@@ -33,9 +38,23 @@ class AssignmentQuestionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAssignmentQuestionRequest $request)
+    public function store(Request $request)
     {
-        //
+        foreach ($request->questions as $questionData) {
+            AssignmentQuestion::create([
+                'name' => $questionData['name'],
+                'choices' => $questionData['choices'],
+                'correct_answer' => $questionData['correct_answer'],
+                'assignment_id' => $request->assignment_id,
+                'user_id' => Auth::id(),
+                'uuid' => (string) Str::orderedUuid(),
+            ]);
+        }
+
+        return response()->json([
+            'success' =>true,
+            'message' =>"Request Done Successfully"
+        ],200);
     }
 
     /**
