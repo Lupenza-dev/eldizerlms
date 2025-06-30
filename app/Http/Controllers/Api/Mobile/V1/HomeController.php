@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Mobile\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdvertResource;
 use Illuminate\Http\Request;
 use App\Models\Entities\Region;
 use App\Models\Entities\District;
@@ -14,13 +15,16 @@ use App\Http\Resources\AgentResource;
 use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\DeviceCategoryResource;
 use App\Http\Resources\DeviceResource;
+use App\Http\Resources\GroupResource;
 use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\TermResource;
+use App\Models\Management\Advert;
 use App\Models\Management\Assignment;
 use App\Models\Management\Device;
 use App\Models\Management\DeviceCategory;
+use App\Models\Management\Group;
 use App\Models\Management\Term;
 use App\Models\Payment\Payment;
 
@@ -114,6 +118,20 @@ class HomeController extends Controller
         return response()->json([
             'success' =>true,
             'data'    =>AssignmentResource::collection(Assignment::latest()->get()),
+        ]);  
+    }
+
+    public function getGroups(){
+        return response()->json([
+            'success' =>true,
+            'data'    =>GroupResource::collection(Group::latest()->get()),
+        ]);  
+    }
+
+    public function getAdverts(){
+        return response()->json([
+            'success' =>true,
+            'data'    =>AdvertResource::collection(Advert::latest()->get()),
         ]);  
     }
 

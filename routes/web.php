@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AssignmentQuestionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Management\UserController;
 use App\Http\Controllers\Management\UniversityController;
 use App\Http\Controllers\Management\AgentController;
@@ -87,7 +89,9 @@ Route::group(['middleware'=>'auth'],function(){
         'customers'      =>CustomerController::class,
         'devices'        =>DeviceController::class,
         'beneficaries'   =>BenefeciariesController::class,
-        'assignments'   =>AssignmentController::class,
-        'questions'      =>AssignmentQuestionController::class
+        'assignments'    =>AssignmentController::class,
+        'questions'      =>AssignmentQuestionController::class,
+        'groups'         =>GroupController::class,
+        'adverts'        =>AdvertController::class,
     ]);
 });

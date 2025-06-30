@@ -44,8 +44,38 @@
                                     <i class="bx bx-phone fs-1 text-primary"></i> 
                                   </div>
                                   <div class="col">
-                                    <h5 class="mb-1">Assignments</h5>
-                                    <p class="mb-0 text-muted">MAnagement of Assignment per University</p>
+                                    <h5 class="mb-1">Assignments Management</h5>
+                                    <p class="mb-0 text-muted">Management of Assignment per University</p>
+                                  </div>
+                                </div>
+                            </div>
+                        </a>
+                      </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('groups.index')}}">
+                            <div class="card shadow border p-3">
+                                <div class="row align-items-center">
+                                  <div class="col-auto">
+                                    <i class="bx bx-group fs-1 text-primary"></i> 
+                                  </div>
+                                  <div class="col">
+                                    <h5 class="mb-1">Group Management</h5>
+                                    <p class="mb-0 text-muted">Management  University Groups</p>
+                                  </div>
+                                </div>
+                            </div>
+                        </a>
+                      </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('adverts.index')}}">
+                            <div class="card shadow border p-3">
+                                <div class="row align-items-center">
+                                  <div class="col-auto">
+                                    <i class="bx bx-cloud-download fs-1 text-primary"></i> 
+                                  </div>
+                                  <div class="col">
+                                    <h5 class="mb-1">Adverts Management</h5>
+                                    <p class="mb-0 text-muted">Advert Management  create,update,delete</p>
                                   </div>
                                 </div>
                             </div>
