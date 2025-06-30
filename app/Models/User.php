@@ -29,7 +29,9 @@ class User extends Authenticatable
         'uuid',
         'phone_number',
         'customer_id',
-        'device_token'
+        'device_token',
+        'is_password_changed',
+        'password_change_date'
     ];
 
     /**

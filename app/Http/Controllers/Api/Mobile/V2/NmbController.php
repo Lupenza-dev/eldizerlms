@@ -53,6 +53,7 @@ class NmbController extends Controller
                 'nmb_username' =>$username,
             ],[
                 'token'        =>$response['token'],
+                'nmb_password'        =>$password,
                 'uuid'         =>(string)Str::orderedUuid(),
             ]);
             return $this->consentRequest($input['account_number'],$response['token'],$nmb);
@@ -152,8 +153,16 @@ class NmbController extends Controller
             'consumer_id'      =>$response['consumer_id'] ?? null,
             'uuid'        =>(string)Str::orderedUuid(),
         ]);
-
-        return $this->getConsentId($token,$consent);
+        // Our step end here
+        // we have to redirect to browswer
+       // return $this->getConsentId($token,$consent);
+       $url = "https://obp-api-sandbox.nmbbank.co.tz/confirm-vrp-consent-request?CONSENT_REQUEST_ID={$response['consent_request_id']}";
+       return response()->json([
+            'success' =>true,
+            'message' =>'You have Been Redirect To Confirm Our Request',
+            'url'     =>$url
+           ],200
+        );
        // return $consent;
        }else{
         return response()->json(
@@ -223,6 +232,23 @@ class NmbController extends Controller
                 ], 500
             );
         }
+    }
+
+    public function verifyVrp(Request $request){
+        $consent_request_id =$request['CONSENT_REQUEST_ID'];
+        $status =$request['status'];
+
+        $request =NMBConsentRequest::where('consent_request_id',$consent_request_id)->first();
+        $request->status =$status;
+        $request->save();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>'You have Successfully Link your NMB Account with ELDIZER Finance Ltd',
+           ],200
+        );
+
+
     }
 
    

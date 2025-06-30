@@ -96,8 +96,9 @@ class HomeController extends Controller
         ]); 
     }
 
-    public function getDevices(){
-        $devices =Device::with('device_category')->get();
+    public function getDevices(Request $request){
+        $category =$request->category;
+        $devices =Device::with('device_category')->where('device_category_id',$category)->get();
         $categories =DeviceCategory::get();
         return response()->json([
             'success' =>true,

@@ -26,6 +26,7 @@ use App\Http\Controllers\HomeController as TestController;
 //     return $request->user();
 // });
 Route::post('upload-loans',[TestController::class,'uploadLoans']);
+Route::get('verify-vrp',[NmbController::class,'verifyVrp']);
 
 Route::post('V1/user-authentication',[AuthController::class,'userLogin']);
 Route::post('V1/recover-password',[AuthController::class,'recoverPassword']);
@@ -56,6 +57,10 @@ Route::group(['prefix'=>'V2'], function(){
     Route::post('user-registration-college',[RegistrationController::class,'registerUserCollege']);
     Route::post('user-registration-image',[RegistrationController::class,'registerUserImage']);
     Route::post('subscribe',[NmbController::class,'subscribe']);
+    Route::get('get-colleges',[HomeController::class,'getColleges']);
+    Route::get('get-regions',[HomeController::class,'getRegions']);
+    Route::get('get-districts/{region_id}',[HomeController::class,'getDistricts']);
+    Route::get('get-wards/{district_id}',[HomeController::class,'getWards']);
     Route::group(['middleware'=>'auth:api'], function(){
         Route::get('get-devices',[HomeController::class,'getDevices']);
         Route::post('student-registration',[CustomerController::class,'storeStudent']);
@@ -65,6 +70,8 @@ Route::group(['prefix'=>'V2'], function(){
         Route::post('get-payments',[HomeController::class,'getPayments']);
         Route::get('get-agents',[HomeController::class,'getAgents']);
         Route::post('change-password',[AuthController::class,'changePassword']);
+        Route::post('complete-registration',[RegistrationController::class,'completeRegistration']);
+      
     });
   
 });

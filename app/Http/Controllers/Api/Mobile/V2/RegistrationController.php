@@ -14,6 +14,9 @@ use Hash;
 use Str;
 use Log;
 use Auth;
+use Carbon\Carbon;
+use App\Http\Requests\CompleteRegRequest;
+
 
 class RegistrationController extends Controller
 {
@@ -230,4 +233,75 @@ class RegistrationController extends Controller
         );
         
     }
+
+    public function completeRegistration(CompleteRegRequest $request){
+        $valid_data =$request->validated();
+        $other_name =$request->other_name;
+       
+        $customer_obj =null;
+
+        Log::debug($request->all());
+
+       try {
+           DB::transaction(function() use ($valid_data,$other_name,&$customer_obj,$request){
+           $expo_push_token =$request->expo_push_token;
+          // $customer_obj =Customer::StoreCustomer($valid_data,$other_name);
+
+           $customer_obj =Customer::where('id',Auth::user()->customer_id)->first();
+               Log::debug('step 1');
+           if ($request->hasfile('image')) {
+               Log::debug('step 2');
+               $file = $request->file('image');
+               $filename =time().$file->getClientOriginalName();
+               $path     =Storage::disk('local')->putFileAs('',$file,$filename);
+
+               $imageName = $request->file('image')->store('images', 'public');
+           }
+        //    Log::debug($imageName);
+            $id_number =$valid_data['id_number'];
+            $year = substr($id_number, 0, 4);
+            $month = substr($id_number, 4, 2);
+            $day = substr($id_number, 6, 2);
+            $code =255;
+            $formattedDate = "$year-$month-$day";
+
+           $customer_obj->image =$imageName ?? null;
+           $customer_obj->id_number =$valid_data['id_number'];
+           $customer_obj->region_id =$valid_data['region_id'];
+           $customer_obj->district_id =$valid_data['district_id'];
+           $customer_obj->ward_id  =$valid_data['ward_id'];
+           $customer_obj->street   =$valid_data['street'];
+           $customer_obj->gender_id   =substr($valid_data['id_number'], -2, 1);
+           $customer_obj->dob   =date('Y-m-d',strtotime($formattedDate));
+           $customer_obj->registration_stage   =4;
+           $customer_obj->save();
+
+           $student =Student::create([
+               'customer_id'  =>$customer_obj->id,
+               'college_id'   =>$valid_data['college_id'],
+              'form_four_index_no' =>$valid_data['index_no'],
+               'study_year'      =>$valid_data['study_year'],
+               'student_reg_id'  =>$valid_data['student_reg_id'],
+               'heslb_status'    =>$valid_data['heslb_status'],
+               'course'          =>$valid_data['course'],
+               'uuid'            =>(string)Str::orderedUuid(),
+           ]);
+          
+           });
+       } catch (\Exception $e) {
+           Log::debug($e->getMessage());
+           return $e->getMessage();
+       }
+
+
+       return response()->json([
+           'success' =>true,
+           'message' =>'Registration Done Success Fully',
+           'data'    =>new CustomerResource($customer_obj),
+          ],200
+       );
+      
+     
+
+   }
 }

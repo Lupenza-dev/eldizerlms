@@ -1,0 +1,17 @@
+[0;1;32m●[0m supervisor.service - Supervisor process control system for UNIX
+     Loaded: loaded (/lib/systemd/system/supervisor.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Sun 2025-01-26 22:33:24 CET; 1h 7min ago
+       Docs: http://supervisord.org
+   Main PID: 71256 (supervisord)
+      Tasks: 1 (limit: 7036)
+     Memory: 16.8M
+        CPU: 1.245s
+     CGroup: /system.slice/supervisor.service
+             └─71256 /usr/bin/python3 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+
+Jan 26 22:33:24 vmi2417137.contaboserver.net systemd[1]: Started Supervisor process control system for UNIX.
+Jan 26 22:33:24 vmi2417137.contaboserver.net supervisord[71256]: 2025-01-26 22:33:24,561 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+Jan 26 22:33:24 vmi2417137.contaboserver.net supervisord[71256]: 2025-01-26 22:33:24,561 WARN No file matches via include "/etc/supervisor/conf.d/*.conf"
+Jan 26 22:33:24 vmi2417137.contaboserver.net supervisord[71256]: 2025-01-26 22:33:24,565 INFO RPC interface 'supervisor' initialized
+Jan 26 22:33:24 vmi2417137.contaboserver.net supervisord[71256]: 2025-01-26 22:33:24,565 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+Jan 26 22:33:24 vmi2417137.contaboserver.net supervisord[71256]: 2025-01-26 22:33:24,566 INFO supervisord started with pid 71256
