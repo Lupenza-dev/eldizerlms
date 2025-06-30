@@ -87,6 +87,13 @@
         </li>
         <li class="menu-label">Managements</li>
         <li>
+            <a class="{{ Route::is('app.management') ? "li-active": ""}}" href="{{ route('app.management')}}">
+                <div class="parent-icon"> <i class="bx bx-phone"></i>
+                </div>
+                <div class="menu-title">App</div>
+            </a>
+        </li>
+        <li>
             <a class="{{ Route::is('devices.index') ? "li-active": ""}}" href="{{ route('devices.index')}}">
                 <div class="parent-icon"> <i class="bx bx-phone"></i>
                 </div>

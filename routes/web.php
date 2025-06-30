@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignmentQuestionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanContractController;
+use App\Http\Controllers\Management\AppController;
+use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
 use App\Http\Controllers\Payment\PaymentController;
@@ -72,6 +75,11 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
     Route::get('generate/loan/application/report',[LoanApplicationController::class,'generateExcelReport'])->name('genderate.loan.application.report');
 
+    #### App Management
+    Route::get('app/management',[AppController::class,'index'])->name('app.management');
+    Route::get('questions/list/{assignment}',[AssignmentQuestionController::class,'questionList'])->name('questions.list');
+    Route::get('questions/create/{assignment}',[AssignmentQuestionController::class,'create'])->name('question.create');
+
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,
@@ -79,5 +87,7 @@ Route::group(['middleware'=>'auth'],function(){
         'customers'      =>CustomerController::class,
         'devices'        =>DeviceController::class,
         'beneficaries'   =>BenefeciariesController::class,
+        'assignments'   =>AssignmentController::class,
+        'questions'      =>AssignmentQuestionController::class
     ]);
 });
