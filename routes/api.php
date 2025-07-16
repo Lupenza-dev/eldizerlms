@@ -61,7 +61,7 @@ Route::group(['prefix'=>'V2'], function(){
     Route::get('get-colleges',[HomeController::class,'getColleges']);
     Route::get('get-regions',[HomeController::class,'getRegions']);
     Route::get('get-assignments',[HomeController::class,'getAssignments']);
-    Route::get('get-groups',[HomeController::class,'getGroups']);
+    Route::get('get-groups-ads',[HomeController::class,'getGroups']);
     Route::get('get-adverts',[HomeController::class,'getAdverts']);
     Route::get('get-districts/{region_id}',[HomeController::class,'getDistricts']);
     Route::get('get-wards/{district_id}',[HomeController::class,'getWards']);
