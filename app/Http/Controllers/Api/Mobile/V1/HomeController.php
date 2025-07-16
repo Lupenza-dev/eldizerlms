@@ -124,7 +124,8 @@ class HomeController extends Controller
     public function getGroups(){
         return response()->json([
             'success' =>true,
-            'data'    =>GroupResource::collection(Group::latest()->get()),
+            'groups'    =>GroupResource::collection(Group::latest()->get()),
+            'ads'       =>AdvertResource::collection(Advert::latest()->get()),
         ]);  
     }
 
