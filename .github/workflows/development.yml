@@ -1,0 +1,27 @@
+name: Eldizer Portal  Development Workflow
+
+on:
+  push:
+    branches: [ development ]
+#  pull_request:
+#    branches: [ staging ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploying to test server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MAIN_SERVER_SSH_HOST }}
+          username: ${{ secrets.MAIN_SERVER_SSH_USERNAME }}
+          password: ${{ secrets.MAIN_SERVER_SSH_PASSPHRASE }}
+          port: 22
+          script: |
+            cd /var/www/development/
+            git checkout -f
+            git pull
+            php artisan migrate --path=database/migrations/version1
+            php artisan db:seed
+            php artisan o:c
