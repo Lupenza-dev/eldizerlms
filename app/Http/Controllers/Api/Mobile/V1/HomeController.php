@@ -136,5 +136,12 @@ class HomeController extends Controller
         ]);  
     }
 
+    public function submitAssignment(Request $request){
+        return response()->json([
+            'success' =>true,
+            'message' =>'submitted succesfuly'
+        ],200);
+    }
+
 
 }

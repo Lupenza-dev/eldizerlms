@@ -75,6 +75,8 @@ Route::group(['prefix'=>'V2'], function(){
         Route::get('get-agents',[HomeController::class,'getAgents']);
         Route::post('change-password',[AuthController::class,'changePassword']);
         Route::post('complete-registration',[RegistrationController::class,'completeRegistration']);
+        Route::post('submit-assignment',[HomeController::class,'submitAssignment']);
+
       
     });
   
