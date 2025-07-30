@@ -26,7 +26,7 @@ class LoanApplicationController extends Controller
         $device_id =$request->device_id;
         $data =[
             'amount' =>$amount,
-            'plan'   =>$plan,
+            'plan'   =>3,
             'loan_type' =>$loan_type,
             'device_name' =>$device_name,
             'device_id' =>$device_id
