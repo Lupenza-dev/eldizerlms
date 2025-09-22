@@ -140,6 +140,7 @@ class HomeController extends Controller
     }
 
     public function submitAssignment(Request $request){
+        Log::debug($request->all());
         $requests =$request->answers;
         $collected_answers =[];
         foreach ($requests as $answer) {
