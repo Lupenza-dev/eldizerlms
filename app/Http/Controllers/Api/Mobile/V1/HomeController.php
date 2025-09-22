@@ -27,6 +27,7 @@ use App\Models\Management\DeviceCategory;
 use App\Models\Management\Group;
 use App\Models\Management\Term;
 use App\Models\Payment\Payment;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -137,6 +138,7 @@ class HomeController extends Controller
     }
 
     public function submitAssignment(Request $request){
+        Log::debug($request->all());
         return response()->json([
             'success' =>true,
             'message' =>'submitted succesfuly'
