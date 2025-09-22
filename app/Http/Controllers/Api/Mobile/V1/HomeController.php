@@ -22,6 +22,8 @@ use App\Http\Resources\PaymentResource;
 use App\Http\Resources\TermResource;
 use App\Models\Management\Advert;
 use App\Models\Management\Assignment;
+use App\Models\Management\AssignmentParticipant;
+use App\Models\Management\AssignmentQuestion;
 use App\Models\Management\Device;
 use App\Models\Management\DeviceCategory;
 use App\Models\Management\Group;
@@ -138,7 +140,26 @@ class HomeController extends Controller
     }
 
     public function submitAssignment(Request $request){
-        Log::debug($request->all());
+        $requests =$request->answers;
+        $collected_answers =[];
+        foreach ($requests as $answer) {
+            $true_answer =AssignmentQuestion::where(['id'=>$answer->question_id,'answer'=>$answer->answer])->count();
+            if ($true_answer) {
+                $collected_answers[] =$true_answer;
+            }
+        }
+
+        //count question
+        $total_question =AssignmentQuestion::where('assignment_id',$request->assignment_id)->count();
+
+        // save result 
+        $assignment =AssignmentParticipant::create([
+            'assignment_id' =>$request->assignment_id,
+            'user_id'       =>Auth::user()->id,
+            'score_gained'  =>count($collected_answers),
+            'total_questions' =>$total_question,
+            'answers'         =>json_encode($requests),
+        ]);
         return response()->json([
             'success' =>true,
             'message' =>'submitted succesfuly'
