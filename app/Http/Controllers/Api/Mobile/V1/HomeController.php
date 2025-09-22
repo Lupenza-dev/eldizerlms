@@ -144,7 +144,7 @@ class HomeController extends Controller
         $requests =$request->answers;
         $collected_answers =[];
         foreach ($requests as $answer) {
-            $true_answer =AssignmentQuestion::where(['id'=>$answer['question_id'],'answer'=>$answer['answer']])->count();
+            $true_answer =AssignmentQuestion::where(['id'=>$answer['question_id'],'correct_answer'=>$answer['answer']])->count();
             if ($true_answer) {
                 $collected_answers[] =$true_answer;
             }
