@@ -118,6 +118,7 @@ class HomeController extends Controller
     }
 
     public function getAssignments(){
+        Log::debug(Auth::user());
         return response()->json([
             'success' =>true,
             'data'    =>AssignmentResource::collection(Assignment::latest()->get()),
