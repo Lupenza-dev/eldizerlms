@@ -24,7 +24,7 @@ class AssignmentResource extends JsonResource
             'progress' =>$this->progress_format,
             'image' => $this->getFirstMediaUrl('images'),
             'questions' => AssignmentQuestionResource::collection($this->questions),
-            'participants' =>$this->participants
+            'participant' =>$this->user_participation
         ];
     }
 }
