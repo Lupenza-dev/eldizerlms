@@ -2,6 +2,7 @@
 
 namespace App\Models\Management;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,5 +44,10 @@ class Assignment extends Model implements HasMedia
       } else {
           return 'Completed';
       }
+    }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'assignment_participants', 'assignment_id', 'user_id');
     }
 }
