@@ -60,7 +60,7 @@ Route::group(['prefix'=>'V2'], function(){
     Route::post('subscribe',[NmbController::class,'subscribe']);
     Route::get('get-colleges',[HomeController::class,'getColleges']);
     Route::get('get-regions',[HomeController::class,'getRegions']);
-    Route::get('get-assignments',[HomeController::class,'getAssignments']);
+  
     Route::get('get-groups-ads',[HomeController::class,'getGroups']);
     Route::get('get-adverts',[HomeController::class,'getAdverts']);
     Route::get('get-districts/{region_id}',[HomeController::class,'getDistricts']);
@@ -76,6 +76,7 @@ Route::group(['prefix'=>'V2'], function(){
         Route::post('change-password',[AuthController::class,'changePassword']);
         Route::post('complete-registration',[RegistrationController::class,'completeRegistration']);
         Route::post('submit-assignment',[HomeController::class,'submitAssignment']);
+        Route::get('get-assignments',[HomeController::class,'getAssignments']);
 
       
     });
