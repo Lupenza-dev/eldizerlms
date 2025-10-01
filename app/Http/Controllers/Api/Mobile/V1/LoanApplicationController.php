@@ -89,7 +89,7 @@ class LoanApplicationController extends Controller
             'plan'        =>3,
             // 'plan'        =>$calculator['plan'],
             'installment_amount'  =>$calculator['installment_amount'],
-            'interest_rate'       =>0.20,
+            'interest_rate'       =>0.035,
             'interest_amount'     =>$calculator['interest_amount'],
             'loan_code'           =>$code_generator->loanCode(),
             'uuid'                =>(string)Str::orderedUuid(),
@@ -98,8 +98,9 @@ class LoanApplicationController extends Controller
             'loan_type'           =>$valid_data['loan_type'],
             'device_id'           =>$request->device_id ?? null,
             'initial_deposit'     =>$request->initial_deposit ?? 0,
-            
+            'other_fees'          =>json_encode(['fees_and_charges' => 0.065,'late_payment'=>0.05])
         ]);
+      
 
         $approval =LoanApproval::create([
             'loan_application_id' =>$loan_application->id,

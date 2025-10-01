@@ -14,7 +14,7 @@ class LoanContract extends Model
     use HasFactory;
 
     protected $fillable=['loan_application_id','college_id','customer_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'status','current_balance','contract_code','created_by','uuid','outstanding_amount','start_date','expected_end_date'];
+    'status','current_balance','contract_code','created_by','uuid','outstanding_amount','start_date','expected_end_date','other_fees'];
 
   public function customer(){
     return $this->belongsTo(Customer::class);
