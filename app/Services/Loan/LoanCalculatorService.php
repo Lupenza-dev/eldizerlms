@@ -11,7 +11,7 @@ class LoanCalculatorService
     // }
 
     public static function calculator($data){
-        $rate =($data['loan_type'] == 2)? 1.15 : 1.15;
+        $rate =($data['loan_type'] == 2)? 1.15 : 1.20;
         $amount =$data['amount'];
         $plan   =$data['plan'];
 
