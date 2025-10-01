@@ -21,7 +21,7 @@ class LoanApplicationResource extends JsonResource
             'plan'           =>3,
             // 'plan'           =>$this->plan,
             'installment_amount'   =>number_format($this->installment_amount),
-            'interest_rate'        =>0.20,
+            'interest_rate'        =>($this->interest_rate * 100).'%',
             'interest_amount'      =>number_format($this->interest_amount),
             'fees_amount'          =>number_format($this->fees_amount),
             'level'                =>$this->level,
@@ -38,6 +38,8 @@ class LoanApplicationResource extends JsonResource
             'remark'               =>$this->remark,
             'agent_attended_date'  =>$this->loan_approval?->attended_date ? date('d,M-Y',strtotime($this->loan_approval?->attended_date)) : "Not Attendeded",
             'device_name'         =>$this->get_device?->name,
+            'fee_charges' =>$this->fee_charges,
+            'late_charges' =>$this->late_charges
 
 
         ];

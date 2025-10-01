@@ -105,4 +105,14 @@ class LoanApplication extends Model
       public function get_device(){
         return $this->hasOne(Device::class,'id','device_id');
       }
+
+      public function getFeeChargesAttribute(){
+        $fees =json_decode($this->other_fees,true);
+        return ($fees['fees_and_charges'] * 100).'%';
+      }
+
+      public function getLateChargesAttribute(){
+        $fees =json_decode($this->other_fees,true);
+        return ($fees['late_payment'] * 100).'%';
+      }
 }
