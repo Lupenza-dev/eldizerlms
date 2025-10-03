@@ -18,7 +18,7 @@ class LoanApplicationResource extends JsonResource
             'customer'       =>new CustomerResource($this->customer),
             'amount'         =>number_format($this->amount),
             'loan_amount'    =>number_format($this->loan_amount),
-            'plan'           =>3,
+            'plan'           =>"3 Months",
             // 'plan'           =>$this->plan,
             'installment_amount'   =>number_format($this->installment_amount),
             'interest_rate'        =>($this->interest_rate * 100).'%',

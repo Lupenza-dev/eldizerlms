@@ -18,7 +18,7 @@ class LoanContractResource extends JsonResource
             'request_amount'       =>number_format($this->amount),
             'loan_amount'          =>number_format($this->loan_amount),
             'contract_code'        =>$this->contract_code,
-            'plan'                 =>$this->plan,
+            'plan'                  =>"3 Months",
             'installment_amount'   =>number_format($this->installment_amount),
             'interest_rate'        =>$this->interest_rate,
             'interest_amount'      =>number_format($this->interest_amount),
