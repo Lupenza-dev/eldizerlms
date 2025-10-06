@@ -26,7 +26,7 @@ class LoanCalculatorService
         $details['device_id']          =$data['device_id'] ?? null;
         $details['initial_deposit']    =($data['loan_type'] == 2)? $details['total_amount'] * 0.40 : 0;
         $details['interest_charge']    ="3.5%";
-        $details['fees_and_charges']   ="6.5%";
+        $details['fees_and_charges']   ="9.5%";
         $details['late_payment']       ="5%";
 
         return $details;
