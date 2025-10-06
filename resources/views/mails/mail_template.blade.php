@@ -4,6 +4,6 @@ Dear <strong>{{ $data['name'] }}</strong>,
 </p>
 <p>
     Sincerely,<br />
-    El-Dizer Finance Ltd Team<br />
+    Eldizer Financial Service<br />
     <a href="https://eldizerfinance.co.tz/" target="_blank">https://eldizerfinance.co.tz/</a>
 </p>
