@@ -23,7 +23,7 @@ class LoanContractObserver
         $email_subject ="Loan Contract With Eldizer Financial Services";
         $receiver_name =$receiver_name;
         // $receiver_email =$loanContract->customer?->email;
-        $receiver_email ='lupenza10@gmail.com';
+        $receiver_email ='elibarikidavid23@gmail.com';
 
         Mail::send('mails.mail_template',['data'=>$data],function($message) use ($email_subject,$receiver_name,$receiver_email,$pdf) {
            $message->to($receiver_email, $receiver_name)->subject

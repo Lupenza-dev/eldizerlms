@@ -459,9 +459,9 @@
       success:function(response){
         console.log(response);
         $('#approve_alert').html('<div class="alert alert-success">'+response.message+'</div>');
-    //     setTimeout(function(){
-    //      location.reload();
-    //   },500);
+        setTimeout(function(){
+         location.reload();
+      },500);
       },
       error:function(response){
           console.log(response.responseText);
@@ -507,7 +507,7 @@
         console.log(response);
         $('#agent_approve_alert').html('<div class="alert alert-success">'+response.message+'</div>');
         setTimeout(function(){
-         //location.reload();
+         location.reload();
       },500);
       },
       error:function(response){
