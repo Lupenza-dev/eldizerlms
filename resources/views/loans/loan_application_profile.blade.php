@@ -155,7 +155,7 @@
                         <tr>
                             <th>Installment Amount</th>
                             <td>{{ number_format($loan->installment_amount) }}</td>
-                            <th>Interes rate</th>
+                            <th>Interest rate</th>
                             <td>{{ $loan->interest_rate}}</td>
                             <th>Interest Amount</th>
                             <td>{{ number_format($loan->interest_amount) }}</td>

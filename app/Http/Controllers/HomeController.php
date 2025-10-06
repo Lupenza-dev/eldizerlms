@@ -17,6 +17,7 @@ use App\Models\Loan\LoanContract;
 use App\Models\Loan\Installment;
 use App\Models\Payment\DisbursmentPayment;
 use App\Models\Payment\Payment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Str;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -253,6 +254,12 @@ class HomeController extends Controller
          $details['message'] ='Action done successfuly';
          
          return $details;
+    }
+
+    public function testPdf(){
+        $loan = LoanContract::with('customer','college','student','guarantors','loan_approval')->latest()->first();
+        $pdf = Pdf::loadView('pdf.loan_contract', ['loan' => $loan])->setPaper('a4', 'portrait');
+        return $pdf->stream('loan_contract.pdf');
     }
 
 }

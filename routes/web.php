@@ -38,6 +38,7 @@ use App\Http\Controllers\Payment\PaymentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('due-days', [HomeController::class, 'dueDays'])->name('due.days');
+Route::get('test-pdf', [HomeController::class, 'testPdf'])->name('test.pdf');
 Route::post('user/authentication',[LoginController::class,'authentication'])->name('authentication');
 
 Route::group(['middleware'=>'auth'],function(){

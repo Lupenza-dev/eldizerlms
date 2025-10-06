@@ -16,4 +16,8 @@ class LoanApproval extends Model
     public function agent(){
         return $this->hasOne(User::class,'id','agent_id');
     }
+
+    public function agentUser(){
+        return $this->hasOne(User::class,'id','agent_id');
+    }
 }
