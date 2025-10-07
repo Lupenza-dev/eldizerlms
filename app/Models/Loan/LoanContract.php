@@ -110,4 +110,14 @@ class LoanContract extends Model
     return $label;
   }
 
+  public function getFeeChargesAttribute(){
+    $fees =json_decode($this->other_fees,true);
+    return ($fees['fees_and_charges'] * 100).'%';
+  }
+
+  public function getLateChargesAttribute(){
+    $fees =json_decode($this->other_fees,true);
+    return ($fees['late_payment'] * 100).'%';
+  }
+
 }

@@ -189,6 +189,7 @@ class LoanApplicationController extends Controller
                 'expected_end_date'         =>date('Y-m-d', strtotime("+".$loan->plan." months", strtotime($valid['payment_date']))),
                 'created_by'                =>Auth::user()->id,
                 'uuid'                      =>(string)Str::orderedUuid(),
+                'other_fees'                 =>$loan->other_fees
                ]);
 
               // for ($i=1; $i < $loan->plan; $i++) {
