@@ -98,7 +98,7 @@ class LoanApplicationController extends Controller
             'loan_type'           =>$valid_data['loan_type'],
             'device_id'           =>$request->device_id ?? null,
             'initial_deposit'     =>$request->initial_deposit ?? 0,
-            'other_fees'          =>json_encode(['fees_and_charges' => 0.065,'late_payment'=>0.05])
+            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05])
         ]);
       
 
