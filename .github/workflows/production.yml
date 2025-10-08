@@ -21,7 +21,7 @@ jobs:
           script: |
             cd /var/www/elidizerportal/
             git checkout -f
-            git pull
+            git pull origin main
             php artisan migrate --path=database/migrations/version1
             php artisan db:seed
             php artisan o:c
