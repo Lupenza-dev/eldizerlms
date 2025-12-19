@@ -3,6 +3,7 @@
 
 //check_time
 
+use App\Models\Management\AssignmentParticipant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -50,6 +51,16 @@ if (!function_exists('mobileNotification')) {
 
         return $response;
     }
+}
+
+if (!function_exists('participationStatus')) {
+    function participationStatus($assignmentId){
+        $return =AssignmentParticipant::where('user_id',Auth::user()->id)
+        ->where('assignment_id',$assignmentId)
+        ->count();
+        return $return ? true : false;
+    }
+    # code...
 }
 
 
