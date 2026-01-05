@@ -13,7 +13,7 @@
     <div class="page-content">
         <!--breadcrumb-->
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Assigments Participant</div>
+            <div class="breadcrumb-title pe-3">Assigments Participants ({{$assignment->name}})</div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
@@ -42,7 +42,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Reg Date</th>
+                                <th>Date</th>
                                 <th>Name</th>
                                 <th>Score</th>
                                 <th>Total Question</th>
@@ -52,7 +52,7 @@
                         @foreach ($participants as $participant)
                             <tr>
                                 <td>{{  $loop->iteration }}</td>
-                                <td>{{  date('d,M-Y',strtotime($participant->created_at))}}</td>
+                                <td>{{  date('d,M-Y H:i:s',strtotime($participant->created_at))}}</td>
                                 <td>{{  $participant->user?->customer?->customer_name }}</td>
                                 <td>{!! $participant->score_gained !!}</td>
                                 <td>{!! $participant->total_questions !!}</td>
