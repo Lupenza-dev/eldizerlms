@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAssignmentQuestionRequest;
 use App\Http\Requests\UpdateAssignmentQuestionRequest;
 use App\Models\Management\Assignment;
+use App\Models\Management\AssignmentParticipant;
 use App\Models\Management\AssignmentQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,11 @@ class AssignmentQuestionController extends Controller
     public function questionList(Assignment $assignment){
         $questions =AssignmentQuestion::where('assignment_id',$assignment->id)->get();
         return view('managements.assignments.question_list',compact('assignment','questions'));
+    }
+
+    public function participantList(Assignment $assignment){
+        $participants =AssignmentParticipant::with('user')->where('assignment_id',$assignment->id)->get();
+        return view('managements.assignments.partipant_list',compact('assignment','participants'));
     }
 
     /**

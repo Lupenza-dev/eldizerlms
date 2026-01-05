@@ -81,6 +81,7 @@ Route::group(['middleware'=>'auth'],function(){
     #### App Management
     Route::get('app/management',[AppController::class,'index'])->name('app.management');
     Route::get('questions/list/{assignment}',[AssignmentQuestionController::class,'questionList'])->name('questions.list');
+    Route::get('participant/list/{assignment}',[AssignmentQuestionController::class,'participantList'])->name('participant.list');
     Route::get('questions/create/{assignment}',[AssignmentQuestionController::class,'create'])->name('question.create');
 
     Route::resources([

@@ -45,6 +45,7 @@
                                 <th>Start Time</th>
                                 <th>End Time</th>
                                 <th>Questions</th>
+                                <th>Participant</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -60,6 +61,11 @@
                                 <td>
                                     <a href="{{ route('questions.list',$assignment)}}">
                                         <button class="btn btn-primary">Questions</button>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('participant.list',$assignment)}}">
+                                        <button class="btn btn-secondary">Participant</button>
                                     </a>
                                 </td>
                                 <td>{!! $assignment->status_formatted !!}</td>
