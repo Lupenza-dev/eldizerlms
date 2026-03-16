@@ -108,23 +108,23 @@ class LoanApplicationController extends Controller
             'uuid'                =>(string)Str::orderedUuid(),
         ]);
 
-        $guarantor1 =Guarantor::create([
-            'customer_id' =>Auth::user()->customer_id ?? 3,
-            'loan_application_id' =>$loan_application->id,
-            'full_name'           =>$request->guarantor1fs,
-            'relationship'        =>$request->guarantor1rs,
-            'phone_number'        =>$request->guarantor1pn,
-            'uuid'                =>(string)Str::orderedUuid(),
-        ]);
+        // $guarantor1 =Guarantor::create([
+        //     'customer_id' =>Auth::user()->customer_id ?? 3,
+        //     'loan_application_id' =>$loan_application->id,
+        //     'full_name'           =>$request->guarantor1fs,
+        //     'relationship'        =>$request->guarantor1rs,
+        //     'phone_number'        =>$request->guarantor1pn,
+        //     'uuid'                =>(string)Str::orderedUuid(),
+        // ]);
 
-        $guarantor2 =Guarantor::create([
-            'customer_id' =>Auth::user()->customer_id ?? 3,
-            'loan_application_id' =>$loan_application->id,
-            'full_name'           =>$request->guarantor2fs,
-            'relationship'        =>$request->guarantor2rs,
-            'phone_number'        =>$request->guarantor2pn,
-            'uuid'                =>(string)Str::orderedUuid(),
-        ]);
+        // $guarantor2 =Guarantor::create([
+        //     'customer_id' =>Auth::user()->customer_id ?? 3,
+        //     'loan_application_id' =>$loan_application->id,
+        //     'full_name'           =>$request->guarantor2fs,
+        //     'relationship'        =>$request->guarantor2rs,
+        //     'phone_number'        =>$request->guarantor2pn,
+        //     'uuid'                =>(string)Str::orderedUuid(),
+        // ]);
 
         event (new LoanApplied($loan_application,1));
 
