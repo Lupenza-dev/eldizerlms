@@ -14,6 +14,7 @@ use Auth;
 use Str;
 use App\Http\Resources\LoanApplicationResource;
 use App\Models\Management\Customer;
+use App\Models\Management\CustomerBankDetail;
 
 class LoanApplicationController extends Controller
 {
@@ -81,6 +82,14 @@ class LoanApplicationController extends Controller
         $calculator =LoanCalculatorService::calculator($valid_data);
 
         $code_generator =new LoanCalculatorService;
+
+        // save bank details
+        CustomerBankDetail::create([
+            'customer_id' =>Auth::user()->customer_id,
+            'bank_name'   =>$request->bank_name,
+            'account_number' =>$request->account_number,
+            'uuid'        =>(string)Str::orderedUuid(),
+        ]);
         
         $loan_application =LoanApplication::create([
             'customer_id' =>Auth::user()->customer_id ?? 3,
