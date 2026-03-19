@@ -36,7 +36,7 @@ class LoanApplicationObserver
             $payload=[
                 'corporate_reference' =>$token_request['corporate_reference'],
                 'channel'             =>'BANK',
-                'payment_channel'      =>'CRDB',
+                'payment_channel'      =>'NMB',
                 'account_name'        =>'Renfrid William Ngolongolo',
                 // 'account_name'        =>$loanApplication->customer?->customer_name,
                 // 'account_number'    =>$customer_bank->account_number,
@@ -63,13 +63,14 @@ class LoanApplicationObserver
                 $response =Http::withToken($token_request['token'])
                 ->post(env('SOLOCODE_BASE_URL').''.'mandate/create',$payload);
                 $result =json_decode($response,true);
+                Log::info('result',$result);
                 if ($result['success']) {
                     $customer_mandate->update([
                         'mandate_reference' => $result['data']['mandateReference'],
                         'status'     => $result['data']['status'],
                     ]);
                 } else {
-                    Log::error('Error Mandate creation Error: '.$result['message']);
+                    Log::error('Error Mandate creation Error: '.$result);
                 }
                 
 

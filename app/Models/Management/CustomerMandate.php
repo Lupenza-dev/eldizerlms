@@ -17,4 +17,14 @@ class CustomerMandate extends Model
         'status',
         'uuid'
     ];
+
+    public function getCustomerBankNameAttribute(){
+        $response =json_decode($this->payload,true);
+        return $response['payment_channel'];
+    }
+
+    public function getCustomerAccountNumberAttribute(){
+        $response =json_decode($this->payload,true);
+        return $response['account_number'];
+    }
 }
