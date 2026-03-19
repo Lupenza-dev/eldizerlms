@@ -6,6 +6,7 @@ use App\Models\Management\College;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Management\Customer;
+use App\Models\Management\CustomerMandate;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use  App\Models\Management\Device;
 
@@ -26,6 +27,10 @@ class LoanApplication extends Model
 
     public function loan_approval(){
         return $this->hasOne(LoanApproval::class);
+    }
+
+    public function customer_mandate(){
+      return $this->hasOne(CustomerMandate::class,'loan_application_id','loan_application_id');
     }
 
     public function college(){

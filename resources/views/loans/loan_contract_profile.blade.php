@@ -339,6 +339,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                     <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-user"></i>
+                        Customer Bank and Mandate Status
+                    </h6>
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>Bank Name</th>
+                                <td>{{ $contract->customer_mandate?->bank_name }}</td>
+                                <th>Bank Account Number</th>
+                                <td>{{ $contract->customer_mandate?->account_number }}</td>
+                            </tr>
+                            <tr>
+                                <th>Mandate Status</th>
+                                    <td>{{ $contract->customer_mandat?->status }}</td>
+                                <th>Mandate Reference</th>
+                                <td>{{ $contract->customer_mandate?->mandate_reference }}</td>
+                            </tr>
+                          
+                        </tbody>
+                    </table>
+                </div>
                 
                 <!-- Student Details Section -->
                 <div class="info-card">
