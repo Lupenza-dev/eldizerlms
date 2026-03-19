@@ -63,6 +63,21 @@ if (!function_exists('participationStatus')) {
     # code...
 }
 
+if (!function_exists('getApiToken')) {
+    function getApiToken(){
+        try {
+            $response =Http::post(env('SOLOCODE_BASE_URL').''.'token',[
+                'partnerId'=>env('PARTNER_ID'),
+                'password'=>env('PARTNER_PASSWORD'),
+            ]);
+            return json_decode($response,true);
+        } catch (\Throwable $th) {
+            return ['success'=>false,'message'=>$th->getMessage()];
+        }
+      
+    }
+}
+
 
 
 

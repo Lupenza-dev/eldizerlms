@@ -84,12 +84,15 @@ class LoanApplicationController extends Controller
         $code_generator =new LoanCalculatorService;
 
         // save bank details
-        CustomerBankDetail::create([
-            'customer_id' =>Auth::user()->customer_id,
-            'bank_name'   =>$request->bank_name,
-            'account_number' =>$request->account_number,
-            'uuid'        =>(string)Str::orderedUuid(),
-        ]);
+        if($request->bank_name && $request->account_number){
+            CustomerBankDetail::create([
+                'customer_id' =>Auth::user()->customer_id,
+                'bank_name'   =>$request->bank_name,
+                'account_number' =>$request->account_number,
+                'uuid'        =>(string)Str::orderedUuid(),
+            ]);
+        }
+        
         
         $loan_application =LoanApplication::create([
             'customer_id' =>Auth::user()->customer_id ?? 3,
