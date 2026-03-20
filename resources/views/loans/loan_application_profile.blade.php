@@ -326,9 +326,9 @@
                         <tbody>
                             <tr>
                                 <th>Bank Name</th>
-                                <td>{{ $loan->customer_mandate?->bank_name }}</td>
+                                <td>{{ $loan->customer_mandate?->customer_bank_name }}</td>
                                 <th>Bank Account Number</th>
-                                <td>{{ $loan->customer_mandate?->account_number }}</td>
+                                <td>{{ $loan->customer_mandate?->customer_account_number }}</td>
                             </tr>
                             <tr>
                                 <th>Mandate Status</th>

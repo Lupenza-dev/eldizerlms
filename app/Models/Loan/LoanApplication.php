@@ -30,7 +30,7 @@ class LoanApplication extends Model
     }
 
     public function customer_mandate(){
-      return $this->hasOne(CustomerMandate::class,'loan_application_id','loan_application_id');
+      return $this->hasOne(CustomerMandate::class,'loan_application_id','id');
     }
 
     public function college(){

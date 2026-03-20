@@ -349,9 +349,9 @@
                         <tbody>
                             <tr>
                                 <th>Bank Name</th>
-                                <td>{{ $contract->customer_mandate?->bank_name }}</td>
+                                <td>{{ $contract->customer_mandate?->customer_bank_name }}</td>
                                 <th>Bank Account Number</th>
-                                <td>{{ $contract->customer_mandate?->account_number }}</td>
+                                <td>{{ $contract->customer_mandate?->customer_account_number }}</td>
                             </tr>
                             <tr>
                                 <th>Mandate Status</th>
