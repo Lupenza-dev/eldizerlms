@@ -4,65 +4,60 @@
     td{
         align-content: center;
     }
-    .custom-header{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-content: center
-    }
 </style>
-<div class="page-wrapper">
+<div class="page-wrapper bg-light">
     <div class="page-content">
         <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Loan Applications</div>
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4">
+            <div class="breadcrumb-title pe-3">
+                <h5 class="mb-0 fw-bold text-primary">Loan Applications</h5>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+                        <li class="breadcrumb-item">
+                            <a href="javascript:;" class="text-muted text-decoration-none">
+                                <i class="bx bx-home-alt text-primary"></i>
+                            </a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group">
+                <div class="btn-group shadow-sm">
                     {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-user-plus"></span> Add Agent</button> --}}
-                    {{-- <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
-                        <a class="dropdown-item" href="javascript:;">Another action</a>
-                        <a class="dropdown-item" href="javascript:;">Something else here</a>
-                        <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
-                    </div> --}}
                 </div>
             </div>
         </div>
         <!--end breadcrumb-->
       
-        <div class="card">
-            <div class="card-body">
-                <div class="custom-header">
-                    <div></div>
-                    <h6 class="mb-0 text-uppercase">Loan Application</h6>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0 text-uppercase fw-bold text-dark">Loan Applications</h6>
                     <div>
-                        <button class="btn btn-info" id="filter-btn"><span style="color: #fff" class="bx bx-filter"></span> <span style="color: #fff">Custom Filter</span></button>
+                        <button class="btn btn-info px-3 py-2 shadow-sm" id="filter-btn">
+                            <i class="bx bx-filter text-white me-2"></i>
+                            <span class="text-white">Custom Filter</span>
+                        </button>
                     </div>
                 </div>
-                <form action="" id="submit-form" style="display: none">
-                    <div class="form-group row">
+                
+                <form action="" id="submit-form" class="bg-light p-4 rounded-3 mb-4" style="display: none">
+                    <div class="row g-3">
                         <div class="col-md-3">
-                            <label for="">Start Date</label>
+                            <label for="" class="form-label fw-semibold">Start Date</label>
                             <input type="date" name="application_start_date" class="form-control" value="{{ $requests['application_start_date'] ?? null}}">
                         </div>
                         <div class="col-md-3">
-                            <label for="">End Date</label>
+                            <label for="" class="form-label fw-semibold">End Date</label>
                             <input type="date" name="application_end_date" class="form-control" value="{{ $requests['application_end_date'] ?? null}}">
                         </div>
                         <div class="col-md-3">
-                            <label for="">Gender</label>
+                            <label for="" class="form-label fw-semibold">Gender</label>
                             <select name="gender_id" class="form-control">
-                                <option value="">please choose Gender</option>
+                                <option value="">Please choose Gender</option>
                                 @if ($requests['gender_id'] ?? null)
                                 <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
                                 <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
@@ -70,14 +65,13 @@
                                 <option value="1">Male</option>
                                 <option value="2">Female</option>  
                                 @endif
-                               
                             </select>
                         </div>
                         @if (Auth::user()->hasRole(['Admin','Super Admin']))
                         <div class="col-md-3">
-                            <label for="">College</label>
+                            <label for="" class="form-label fw-semibold">College</label>
                             <select name="college_id" class="form-control">
-                                <option value="">please choose College</option>
+                                <option value="">Please choose College</option>
                                 @foreach ($colleges as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
@@ -85,66 +79,80 @@
                         </div>  
                         @endif
                     </div>
-                    <div class="form-group row" style="margin-top: 10px">
+                    <div class="row g-3 mt-2">
                         <div class="col-md-3">
-                            <label for="">Phone Number</label>
+                            <label for="" class="form-label fw-semibold">Phone Number</label>
                             <input type="number" name="phone_number" class="form-control" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
                         </div>
                         <div class="col-md-3">
-                            <label for="">ID Number</label>
+                            <label for="" class="form-label fw-semibold">ID Number</label>
                             <input type="number" name="id_number" class="form-control" value="{{ $requests['id_number'] ?? null}}">
                         </div>
                         <div class="col-md-3">
-                            <label for="">Student Reg ID</label>
+                            <label for="" class="form-label fw-semibold">Student Reg ID</label>
                             <input type="text" name="student_reg_id" class="form-control" value="{{ $requests['student_reg_id'] ?? null}}">
                         </div>
-                        <div class="col-md-3" style="text-align: right; padding-top: 20px;">
-                            <button class="btn btn-primary btn-sm" formaction="{{ route('loan.applications')}}" type="submit"><span class="bx bx-search"></span> Search</button>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end gap-2">
+                            <button class="btn btn-primary px-3 py-2" formaction="{{ route('loan.applications')}}" type="submit">
+                                <i class="bx bx-search me-1"></i> Search
+                            </button>
                             @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                            <button class="btn btn-success btn-sm" formaction="{{ route('genderate.loan.application.report')}}"><span class="bx bx-file"></span> Generate </button>
+                            <button class="btn btn-success px-3 py-2" formaction="{{ route('genderate.loan.application.report')}}">
+                                <i class="bx bx-file me-1"></i> Generate
+                            </button>
                             @endif
                         </div>
                     </div>
                 </form>
-                <hr>
+                
+                <hr class="my-4"/>
+                
                 <div class="table-responsive">
                     <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th>#</th>
-                                <th>Application Date</th>
-                                <th>Customer</th>
-                                <th>Address</th>
-                                <th>Amount</th>
-                                <th>Total Loan</th>
-                                <th>Installment</th>
-                                <th>Plan</th>
-                                <th>Loan Type</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Loan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loan Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             </tr>
                         </thead>
                        <tbody>
                         @foreach ($loans as $loan)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ date('d,M-Y',strtotime($loan->created_at))}}</td>
-                                <td>{{ $loan->customer->first_name.' '.$loan->customer->last_name }}</td>
-                                <td>{{ $loan->customer->email }} <br> {{ $loan->customer->phone_number }} </td>
-                                <td>{{ number_format($loan->amount) }}</td>
-                                <td>{{ number_format($loan->loan_amount) }}</td>
-                                <td>{{ number_format($loan->installment_amount) }}</td>
-                                <td>{{ $loan->plan }}</td>
-                                <td>{!! $loan->loan_type_format  !!}
-                                    <br>
-                                    {{ $loan->get_device?->name }}
-                                    <br>
-                                    <b>ID</b>: {{ number_format($loan->initial_deposit) }}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($loan->created_at)) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $loan->customer->first_name.' '.$loan->customer->last_name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <div class="flex flex-col">
+                                        <span>{{ $loan->customer->email }}</span>
+                                        <span class="text-gray-500">{{ $loan->customer->phone_number }}</span>
+                                    </div>
                                 </td>
-                                <td>{!! $loan->level_formatted !!}</td>
-                                <td>
-                                    <a href="{{ route('loan.profile',$loan->uuid)}}">
-                                    <button class="btn btn-primary btn-sm" title="User"> <i class="bx bx-user"></i> </button>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($loan->amount) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($loan->loan_amount) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ number_format($loan->installment_amount) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $loan->plan }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <div class="flex flex-col">
+                                        <span>{!! $loan->loan_type_format !!}</span>
+                                        <span class="text-gray-500">{{ $loan->get_device?->name }}</span>
+                                        <span class="text-xs font-semibold">ID: {{ number_format($loan->initial_deposit) }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{!! $loan->level_formatted !!}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="{{ route('loan.profile',$loan->uuid)}}" class="text-decoration-none">
+                                        <button class="btn btn-primary btn-sm shadow-sm" title="View Profile">
+                                            <i class="bx bx-user"></i>
+                                        </button>
                                     </a>
                                 </td>
                             </tr> 
@@ -156,68 +164,23 @@
         </div>
     </div>
 </div>
-{{-- <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agent Registration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="" id="registration_form">
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Write fullname ......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Write Email......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Phone Number</label>
-                            <input type="number" name="phone_number" class="form-control" placeholder="Write phone number......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Student Reg</label>
-                            <input type="text" name="student_reg_id" class="form-control" placeholder="Write Student Reg Id......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">College</label>
-                            <select name="college_id" class="form-control" required>
-                                <option value="">Please Choose College</option>
-                                @foreach ($colleges as $college)
-                                    <option value="{{ $college->id}}">{{ $college->name }}</option>    
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Agent Profile Image</label>
-                            <input type="file" name="image" class="form-control" required>
-                        </div>
-                        <div class="col-md-12" id="alert" style="margin-top: 10px">
 
-                        </div>
-                        <div class="col-md-12" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn"> <span class="bx bx-save"></span> Submit</button>
-                        </div>
-                    </div>
-                </form>
-                
-            </div>
-            
-        </div>
-    </div>
-</div> --}}
-    
-@endsection
-@push('scripts')
 <script>
-    $('#filter-btn').on('click',function(){
-        $('#submit-form').toggle();
-    })
-</script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtn = document.getElementById('filter-btn');
+    const submitForm = document.getElementById('submit-form');
     
-@endpush
+    if (filterBtn && submitForm) {
+        filterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (submitForm.style.display === 'none') {
+                submitForm.style.display = 'block';
+            } else {
+                submitForm.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+@endsection
 

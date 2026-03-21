@@ -84,6 +84,13 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('participant/list/{assignment}',[AssignmentQuestionController::class,'participantList'])->name('participant.list');
     Route::get('questions/create/{assignment}',[AssignmentQuestionController::class,'create'])->name('question.create');
 
+    #### payment management
+    Route::get('payment/management',[PaymentController::class,'paymentManagement'])->name('payment.management');
+    Route::get('payment/mandates',[PaymentController::class,'paymentMandates'])->name('payment.mandates');
+    Route::get('sync/mandates',[PaymentController::class,'syncMandates'])->name('sync.mandate');
+    Route::get('view/payment/mandate/{reference}',[PaymentController::class,'viewPaymentMandate'])->name('view.payment.mandate');
+    Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
+
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,

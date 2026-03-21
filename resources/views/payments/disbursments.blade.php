@@ -5,66 +5,168 @@
         align-content: center;
     }
 </style>
-<div class="page-wrapper">
+<div class="page-wrapper bg-light">
     <div class="page-content">
         <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Payment Disbursed</div>
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4">
+            <div class="breadcrumb-title pe-3">
+                <h5 class="mb-0 fw-bold text-primary">Payment Disbursements</h5>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+                        <li class="breadcrumb-item">
+                            <a href="javascript:;" class="text-muted text-decoration-none">
+                                <i class="bx bx-home-alt text-primary"></i>
+                            </a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group">
-                    {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-user-plus"></span> Add Agent</button> --}}
-                    {{-- <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
-                        <a class="dropdown-item" href="javascript:;">Another action</a>
-                        <a class="dropdown-item" href="javascript:;">Something else here</a>
-                        <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
-                    </div> --}}
+                <div class="btn-group shadow-sm">
+                    <div class="badge bg-success" id="record-count">
+                        {{ $payments->count() }} Records
+                    </div>
                 </div>
             </div>
         </div>
         <!--end breadcrumb-->
        
-        <div class="card">
-            <div class="card-body">
-                <h6 class="mb-0 text-uppercase text-center">Payment Disbursed</h6>
-                <hr/>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0 text-uppercase fw-bold text-dark">Payment Disbursements</h6>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-info px-3 py-2 shadow-sm" id="filter-btn">
+                            <i class="bx bx-filter text-white me-2"></i>
+                            <span class="text-white">Filter</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <form action="" id="filter-form" class="bg-light p-4 rounded-3 mb-4" style="display: none">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" value="{{ $requests['start_date'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">End Date</label>
+                            <input type="date" class="form-control" name="end_date" value="{{ $requests['end_date'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Payment Method</label>
+                            <select name="payment_method" class="form-control">
+                                <option value="">Choose Method</option>
+                                <option value="BANK">Bank Transfer</option>
+                                <option value="MOBILE">Mobile Money</option>
+                                <option value="CASH">Cash</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Payment Channel</label>
+                            <select name="payment_channel" class="form-control">
+                                <option value="">Choose Channel</option>
+                                <option value="NMB">NMB Bank</option>
+                                <option value="TIGO">Tigo Pesa</option>
+                                <option value="M-PESA">M-Pesa</option>
+                                <option value="AIRTEL">Airtel Money</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Payment Reference</label>
+                            <input type="text" class="form-control" name="payment_reference" placeholder="Payment Reference" value="{{ $requests['payment_reference'] ?? null}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="number" class="form-control" name="phone_number" value="{{ $requests['phone_number'] ?? null}}" placeholder="2557*****">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Customer Name</label>
+                            <input type="text" class="form-control" name="customer_name" value="{{ $requests['customer_name'] ?? null}}" placeholder="Customer Name">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end gap-2">
+                            <button class="btn btn-primary px-3 py-2" type="submit">
+                                <i class="bx bx-search me-1"></i> Search
+                            </button>
+                            <button class="btn btn-secondary px-3 py-2" type="reset">
+                                <i class="bx bx-x me-1"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <hr class="my-4"/>
+                
                 <div class="table-responsive">
                     <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th>#</th>
-                                <th>Payment Date</th>
-                                <th>Customer</th>
-                                <th>Address</th>
-                                <th>Amount</th>
-                                <th>Payment Reference</th>
-                                <th>Payment Method</th>
-                                <th>Payment Channel</th>
-                                
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Reference</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Channel</th>
                             </tr>
                         </thead>
                        <tbody>
                         @foreach ($payments as $payment)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ date('d,M-Y',strtotime($payment->payment_date))}}</td>
-                                <td>{{ $payment->loan_contract->customer->first_name.' '.$payment->loan_contract->customer->last_name }}</td>
-                                <td>{{ $payment->loan_contract->customer->email }} <br> {{ $payment->loan_contract->customer->phone_number }} </td>
-                                <td>{{ number_format($payment->paid_amount) }}</td>
-                                <td>{{ $payment->payment_reference }}</td>
-                                <td>{{ $payment->payment_method }}</td>
-                                <td>{{ $payment->payment_channel }}</td>
-                               
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($payment->payment_date)) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $payment->loan_contract->customer->first_name.' '.$payment->loan_contract->customer->last_name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <div class="flex flex-col">
+                                        <span>{{ $payment->loan_contract->customer->email }}</span>
+                                        <span class="text-gray-500">{{ $payment->loan_contract->customer->phone_number }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($payment->paid_amount, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ $payment->payment_reference }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @switch($payment->payment_method)
+                                        @case('BANK')
+                                            <span class="badge bg-primary">Bank Transfer</span>
+                                            @break
+                                        @case('MOBILE')
+                                            <span class="badge bg-success">Mobile Money</span>
+                                            @break
+                                        @case('CASH')
+                                            <span class="badge bg-warning text-dark">Cash</span>
+                                            @break
+                                        @default
+                                            <span class="badge bg-secondary">{{ $payment->payment_method }}</span>
+                                    @endswitch
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @switch($payment->payment_channel)
+                                        @case('NMB')
+                                            <span class="badge bg-info">NMB Bank</span>
+                                            @break
+                                        @case('TIGO')
+                                            <span class="badge bg-success">Tigo Pesa</span>
+                                            @break
+                                        @case('M-PESA')
+                                            <span class="badge bg-primary">M-Pesa</span>
+                                            @break
+                                        @case('AIRTEL')
+                                            <span class="badge bg-danger">Airtel Money</span>
+                                            @break
+                                        @default
+                                            <span class="badge bg-secondary">{{ $payment->payment_channel }}</span>
+                                    @endswitch
+                                </td>
                             </tr> 
                         @endforeach
                        </tbody>
@@ -74,60 +176,29 @@
         </div>
     </div>
 </div>
-{{-- <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agent Registration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="" id="registration_form">
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Write fullname ......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Write Email......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Phone Number</label>
-                            <input type="number" name="phone_number" class="form-control" placeholder="Write phone number......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Student Reg</label>
-                            <input type="text" name="student_reg_id" class="form-control" placeholder="Write Student Reg Id......." required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">College</label>
-                            <select name="college_id" class="form-control" required>
-                                <option value="">Please Choose College</option>
-                                @foreach ($colleges as $college)
-                                    <option value="{{ $college->id}}">{{ $college->name }}</option>    
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="">Agent Profile Image</label>
-                            <input type="file" name="image" class="form-control" required>
-                        </div>
-                        <div class="col-md-12" id="alert" style="margin-top: 10px">
 
-                        </div>
-                        <div class="col-md-12" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn"> <span class="bx bx-save"></span> Submit</button>
-                        </div>
-                    </div>
-                </form>
-                
-            </div>
-            
-        </div>
-    </div>
-</div> --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtn = document.getElementById('filter-btn');
+    const filterForm = document.getElementById('filter-form');
     
+    if (filterBtn && filterForm) {
+        filterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (filterForm.style.display === 'none') {
+                filterForm.style.display = 'block';
+            } else {
+                filterForm.style.display = 'none';
+            }
+        });
+    }
+    
+    const recordCount = document.getElementById('record-count');
+    if(recordCount) {
+        const count = {{ $payments->count() }};
+        recordCount.textContent = count + ' Record' + (count !== 1 ? 's' : '');
+    }
+});
+</script>
 @endsection
 

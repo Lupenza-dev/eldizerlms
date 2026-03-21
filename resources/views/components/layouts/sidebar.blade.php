@@ -237,7 +237,7 @@
         </li>
         <li>
             <a class="{{ (Route::is('loan.contracts') or Route::is('loan.contract.profile')) ? "li-active": ""}}" href="{{ route('loan.contracts')}}" title="Loan Contracts">
-                <div class="parent-icon"><i class='bx bx-contract'></i></div>
+                <div class="parent-icon"><i class='bx bx-file'></i></div>
                 <div class="menu-title">Loan Contracts</div>
             </a>
         </li>
@@ -251,14 +251,14 @@
             </a>
         </li>
         <li>
-            <a class="{{ Route::is('payments') ? "li-active": ""}}" href="{{ route('payments')}}" title="Repayment Management">
+            <a class="{{ Route::is('payment.management') ? "li-active": ""}}" href="{{ route('payment.management')}}" title="Repayment Management">
                 <div class="parent-icon"><i class='bx bx-receipt'></i></div>
-                <div class="menu-title">Repayments</div>
+                <div class="menu-title">Payments</div>
             </a>
         </li>
         <li>
             <a class="{{ Route::is('nmb.subscribers') ? "li-active": ""}}" href="{{ route('nmb.subscribers')}}" title="NMB Subscribers">
-                <div class="parent-icon"><i class='bx bx-bank'></i></div>
+                <div class="parent-icon"><i class='bx bx-user'></i></div>
                 <div class="menu-title">NMB Subscribers</div>
             </a>
         </li>

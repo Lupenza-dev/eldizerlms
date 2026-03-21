@@ -32,6 +32,7 @@
 	<link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css')}}"/>
 	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css')}}"/>
 	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css')}}"/>
+	<script src="https://cdn.tailwindcss.com"></script>
 	<title>ELDIZER FINANCE</title>
 </head>
 

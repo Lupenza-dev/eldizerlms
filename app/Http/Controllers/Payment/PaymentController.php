@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\LoadMandatePaymentCollection;
+use App\Jobs\LoadPaymentMandates;
 use Illuminate\Http\Request;
 use App\Models\Payment\DisbursmentPayment;
 use App\Models\Payment\Payment;
 use App\Models\Loan\LoanContract;
 use App\Models\Management\NMBConsentRequest;
 use App\Models\Management\NMBSubscription;
+use App\Models\Payment\MandatePaymentCollection;
+use App\Models\Payment\PaymentMandate;
 use App\Services\Loan\InstallmentService;
 use Auth;
 use Illuminate\Support\Facades\Http;
@@ -145,4 +149,31 @@ class PaymentController extends Controller
         }
 
     }
+
+    public function paymentManagement(){
+        return view('payments.payment_management');
+    }
+
+    public function paymentMandates(){
+        $payments =PaymentMandate::get();
+        return view('payments.payment_mandates',compact('payments'));
+    }
+
+    public function syncMandates(){
+         LoadPaymentMandates::dispatch();
+        return back()->with('success', 'Payment mandates sync job dispatched successfully');
+    }
+
+    public function syncMandatePaymentCollection($reference){
+         LoadMandatePaymentCollection::dispatch($reference);
+        return back()->with('success', 'Mandate payment collection sync job dispatched successfully');
+    }
+
+    public function viewPaymentMandate($reference){
+        $payment = PaymentMandate::where('reference',$reference)->first();
+        $collections =MandatePaymentCollection::where('mandate_reference',$reference)->get();
+        return view('payments.mandate_profile',compact('payment','collections'));
+    }
+
+
 }
