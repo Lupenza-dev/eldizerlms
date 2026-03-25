@@ -61,7 +61,7 @@
                         @foreach ($payments as $payment)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($payment->loanApplication->created_date)) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($payment->loanApplication->created_at)) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $payment->customer?->customer_name ?? "Name" }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($payment->loanApplication?->loan_amount ?? 0, 2) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $payment->mandate_reference }}</td>
