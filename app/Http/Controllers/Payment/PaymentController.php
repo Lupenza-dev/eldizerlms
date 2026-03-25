@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment\DisbursmentPayment;
 use App\Models\Payment\Payment;
 use App\Models\Loan\LoanContract;
+use App\Models\Management\CustomerMandate;
 use App\Models\Management\NMBConsentRequest;
 use App\Models\Management\NMBSubscription;
 use App\Models\Payment\MandatePaymentCollection;
@@ -173,6 +174,11 @@ class PaymentController extends Controller
         $payment = PaymentMandate::where('reference',$reference)->first();
         $collections =MandatePaymentCollection::where('mandate_reference',$reference)->get();
         return view('payments.mandate_profile',compact('payment','collections'));
+    }
+
+    public function customerLoansMandates(){
+        $payments =CustomerMandate::with('customer','loanApplication')->get();
+        return view('payments.customer_loans_mandates',compact('payments'));
     }
 
 

@@ -90,7 +90,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('sync/mandates',[PaymentController::class,'syncMandates'])->name('sync.mandate');
     Route::get('view/payment/mandate/{reference}',[PaymentController::class,'viewPaymentMandate'])->name('view.payment.mandate');
     Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
-
+    Route::get('customer/loans/mandates',[PaymentController::class,'customerLoansMandates'])->name('customer.loans.mandates');
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,

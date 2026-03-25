@@ -67,15 +67,15 @@
                         </a>
                       </div>
                     <div class="col-md-6">
-                        <a href="{{ route('adverts.index')}}">
+                        <a href="{{ route('customer.loans.mandates')}}">
                             <div class="card shadow border p-3">
                                 <div class="row align-items-center">
                                   <div class="col-auto">
                                     <i class="bx bx-cloud-download fs-1 text-primary"></i> 
                                   </div>
                                   <div class="col">
-                                    <h5 class="mb-1">Adverts Management</h5>
-                                    <p class="mb-0 text-muted">Advert Management  create,update,delete</p>
+                                    <h5 class="mb-1">Customer Loan Mandates</h5>
+                                    <p class="mb-0 text-muted">Customer Applied Loans Mandates</p>
                                   </div>
                                 </div>
                             </div>
