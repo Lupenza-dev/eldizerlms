@@ -244,24 +244,24 @@
         @if (Auth::user()->hasRole(['Admin','Super Admin']))
             
         <li class="menu-label">Payment Management</li>
-        <li>
+        {{-- <li>
             <a class="{{ Route::is('payment.disbursed') ? "li-active": ""}}" href="{{ route('payment.disbursed')}}" title="Disbursement Management">
                 <div class="parent-icon"><i class='bx bx-send'></i></div>
                 <div class="menu-title">Disbursements</div>
             </a>
-        </li>
+        </li> --}}
         <li>
             <a class="{{ Route::is('payment.management') ? "li-active": ""}}" href="{{ route('payment.management')}}" title="Repayment Management">
                 <div class="parent-icon"><i class='bx bx-receipt'></i></div>
                 <div class="menu-title">Payments</div>
             </a>
         </li>
-        <li>
+        {{-- <li>
             <a class="{{ Route::is('nmb.subscribers') ? "li-active": ""}}" href="{{ route('nmb.subscribers')}}" title="NMB Subscribers">
                 <div class="parent-icon"><i class='bx bx-user'></i></div>
                 <div class="menu-title">NMB Subscribers</div>
             </a>
-        </li>
+        </li> --}}
         <li class="menu-label">System Management</li>
         <li>
             <a class="{{ Route::is('app.management') ? "li-active": ""}}" href="{{ route('app.management')}}" title="App Management">

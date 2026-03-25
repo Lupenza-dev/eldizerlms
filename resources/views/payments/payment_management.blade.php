@@ -41,7 +41,7 @@
                             <div class="card shadow border p-3">
                                 <div class="row align-items-center">
                                   <div class="col-auto">
-                                    <i class="bx bx-phone fs-1 text-primary"></i> 
+                                    <i class="bx bx-money fs-1 text-primary"></i> 
                                   </div>
                                   <div class="col">
                                     <h5 class="mb-1">All Payments</h5>
@@ -56,7 +56,7 @@
                             <div class="card shadow border p-3">
                                 <div class="row align-items-center">
                                   <div class="col-auto">
-                                    <i class="bx bx-group fs-1 text-primary"></i> 
+                                    <i class="bx bx-file fs-1 text-primary"></i> 
                                   </div>
                                   <div class="col">
                                     <h5 class="mb-1">All Payment Mandates</h5>
@@ -71,11 +71,41 @@
                             <div class="card shadow border p-3">
                                 <div class="row align-items-center">
                                   <div class="col-auto">
-                                    <i class="bx bx-cloud-download fs-1 text-primary"></i> 
+                                    <i class="bx bx-user-check fs-1 text-primary"></i> 
                                   </div>
                                   <div class="col">
                                     <h5 class="mb-1">Customer Loan Mandates</h5>
                                     <p class="mb-0 text-muted">Customer Applied Loans Mandates</p>
+                                  </div>
+                                </div>
+                            </div>
+                        </a>
+                      </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('payment.disbursed')}}">
+                            <div class="card shadow border p-3">
+                                <div class="row align-items-center">
+                                  <div class="col-auto">
+                                    <i class="bx bx-send fs-1 text-primary"></i> 
+                                  </div>
+                                  <div class="col">
+                                    <h5 class="mb-1">Disbursment</h5>
+                                    <p class="mb-0 text-muted">All Payment Disbursed</p>
+                                  </div>
+                                </div>
+                            </div>
+                        </a>
+                      </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('nmb.subscribers')}}">
+                            <div class="card shadow border p-3">
+                                <div class="row align-items-center">
+                                  <div class="col-auto">
+                                    <i class="bx bx-user fs-1 text-primary"></i> 
+                                  </div>
+                                  <div class="col">
+                                    <h5 class="mb-1">NMB Subscribers</h5>
+                                    <p class="mb-0 text-muted">All NMB Subscribers</p>
                                   </div>
                                 </div>
                             </div>
