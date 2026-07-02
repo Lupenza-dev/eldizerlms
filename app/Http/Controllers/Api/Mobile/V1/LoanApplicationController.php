@@ -138,7 +138,7 @@ class LoanApplicationController extends Controller
         //     'uuid'                =>(string)Str::orderedUuid(),
         // ]);
 
-        event (new LoanApplied($loan_application,1));
+       // event (new LoanApplied($loan_application,1));
 
         return response()->json([
             'success' =>true,
