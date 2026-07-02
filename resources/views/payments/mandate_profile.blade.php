@@ -173,7 +173,6 @@
                                                     @else
                                                         N/A
                                                     @endif
-                                                    @endif
                                                 </p>
                                             </div>
                                         </div>
