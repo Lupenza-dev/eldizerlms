@@ -156,22 +156,23 @@
                                                 <p class="form-control-plaintext">{{ $payment->number_of_installment ?? 'N/A' }}</p>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label fw-semibold text-muted">Contract Status</label>
+                                                <label class="form-label fw-semibold text-muted">LifeCycle Status</label>
                                                 <p class="form-control-plaintext">
-                                                    @if($payment->contract_status)
-                                                        <span class="badge bg-success">{{ $payment->contract_status }}</span>
+                                                    @if($payment->lifecycle_status)
+                                                        <span class="badge bg-success">{{ $payment->lifecycle_status }}</span>
                                                     @else
                                                         N/A
                                                     @endif
                                                 </p>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label fw-semibold text-muted">Approved</label>
+                                            <div class="col-md-12">
+                                                <label class="form-label fw-semibold text-muted">Remarks</label>
                                                 <p class="form-control-plaintext">
-                                                    @if($payment->approved)
-                                                        <span class="badge bg-success">Approved</span>
+                                                    @if($payment->remarks)
+                                                        <span class="badge bg-success">{{ $payment->remarks }}</span>
                                                     @else
-                                                        <span class="badge bg-warning">Pending</span>
+                                                        N/A
+                                                    @endif
                                                     @endif
                                                 </p>
                                             </div>
