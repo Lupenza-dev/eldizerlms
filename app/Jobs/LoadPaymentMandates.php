@@ -31,17 +31,18 @@ class LoadPaymentMandates implements ShouldQueue
        try {
         Log::info('job dispatched');
           $token_request =getApiToken();
-        $response =Http::withToken($token_request['token'])
+        $response =Http::withToken($token_request['data']['token'])
                     ->get(env('SOLOCODE_BASE_URL').''.'mandate/all');
         $result =json_decode($response,true);
+        Log::info('response: '.json_encode($result));
 
         if ( $result['success']) {
 
-            foreach ($result['mandates'] as $mandate) {
+            foreach ($result['data']['mandates'] as $mandate) {
                  PaymentMandate::updateOrCreate([
                 'reference' =>$mandate['reference']
             ],[
-                'channel' =>$mandate['channel'],
+                'channel' =>$mandate['payment_channel'],
                 'periodicity' =>$mandate['periodicity'],
                 'debit_type' =>$mandate['debit_type'],
                 'installment_amount' =>$mandate['installment_amount'],
@@ -53,8 +54,10 @@ class LoadPaymentMandates implements ShouldQueue
                 'number_of_installment' =>$mandate['number_of_installment'],
                 'start_date' =>$mandate['start_date'],
                 'end_date' =>$mandate['end_date'],
-                'contract_status' =>$mandate['contract_status'],
-                'approved' =>$mandate['approved'],
+                'contract_status' =>$mandate['contract_status'] ?? "Status",
+                'lifecycle_status' =>$mandate['lifecycle_status'] ?? null,
+                'remarks' =>$mandate['remarks'] ?? null,
+                'approved' =>$mandate['approved'] ?? "Approved",
             ]);
             }
            

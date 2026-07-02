@@ -67,7 +67,7 @@
                                         {{ $payment->reference }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $payment->customer_name ?? "N/A" }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $payment->customer_mandate?->customer?->customer_name ?? "N/A" }}</td>
                                 <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ number_format($payment->total_amount, 2) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-emerald-600 whitespace-nowrap">{{ number_format($payment->paid_amount, 2) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-orange-500 whitespace-nowrap">{{ number_format($payment->outstanding_amount, 2) }}</td>

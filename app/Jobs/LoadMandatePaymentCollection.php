@@ -33,7 +33,7 @@ class LoadMandatePaymentCollection implements ShouldQueue
        try {
         Log::info('job dispatched');
           $token_request =getApiToken();
-        $response =Http::withToken($token_request['token'])
+        $response =Http::withToken($token_request['data']['token'])
                     ->post(env('SOLOCODE_BASE_URL').''.'collections/filtering',
                     [
                         'reference' => $this->reference
@@ -42,7 +42,7 @@ class LoadMandatePaymentCollection implements ShouldQueue
         Log::info($response);
         if ( $result['success']) {
 
-            foreach ($result['collections'] as $collection) {
+            foreach ($result['data']['collections'] as $collection) {
                  MandatePaymentCollection::updateOrCreate([
                 'reference' =>$collection['reference'],
                 'mandate_reference' =>$collection['mandate']['reference'],

@@ -131,6 +131,10 @@
                                             <i class="bx bx-file me-2"></i>Basic Information
                                         </h6>
                                         <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label class="form-label fw-semibold text-muted">Customer</label>
+                                                <p class="form-control-plaintext">{{ $payment->customer_mandate?->customer?->customer_name ?? 'N/A' }}</p>
+                                            </div>
                                             <div class="col-md-6">
                                                 <label class="form-label fw-semibold text-muted">Reference</label>
                                                 <p class="form-control-plaintext">{{ $payment->reference ?? 'N/A' }}</p>

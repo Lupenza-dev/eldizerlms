@@ -6,7 +6,7 @@
 use App\Models\Management\AssignmentParticipant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 if (!function_exists('greeting')) {
     function greeting()

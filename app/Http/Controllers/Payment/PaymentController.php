@@ -156,7 +156,7 @@ class PaymentController extends Controller
     }
 
     public function paymentMandates(){
-        $payments =PaymentMandate::get();
+        $payments =PaymentMandate::with('customer_mandate','customer_mandate.customer')->orderBy('start_date','desc')->get();
         return view('payments.payment_mandates',compact('payments'));
     }
 
@@ -171,13 +171,13 @@ class PaymentController extends Controller
     }
 
     public function viewPaymentMandate($reference){
-        $payment = PaymentMandate::where('reference',$reference)->first();
+        $payment = PaymentMandate::with('customer_mandate','customer_mandate.customer')->where('reference',$reference)->first();
         $collections =MandatePaymentCollection::where('mandate_reference',$reference)->get();
         return view('payments.mandate_profile',compact('payment','collections'));
     }
 
     public function customerLoansMandates(){
-        $payments =CustomerMandate::with('customer','loanApplication')->get();
+        $payments =CustomerMandate::with('customer','loanApplication')->orderBy('created_at','desc')->get();
         return view('payments.customer_loans_mandates',compact('payments'));
     }
 

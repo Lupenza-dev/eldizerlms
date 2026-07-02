@@ -2,6 +2,7 @@
 
 namespace App\Models\Payment;
 
+use App\Models\Management\CustomerMandate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,5 +26,11 @@ class PaymentMandate extends Model
         'end_date',
         'contract_status',
         'approved',
+        'lifecycle_status',
+        'remarks',
     ];
+
+    public function customer_mandate(){
+        return $this->hasOne(CustomerMandate::class,'mandate_reference','reference');
+    }
 }
