@@ -53,6 +53,8 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Total Amount</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Paid</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Outstanding</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Channel</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
@@ -71,6 +73,12 @@
                                 <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ number_format($payment->total_amount, 2) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-emerald-600 whitespace-nowrap">{{ number_format($payment->paid_amount, 2) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-orange-500 whitespace-nowrap">{{ number_format($payment->outstanding_amount, 2) }}</td>
+                                <td class="px-4 py-3 text-sm font-medium text-slate-800 whitespace-nowrap">{{ $payment->channel ?? "N/A" }}</td>
+                                <td class="px-4 py-3 text-sm font-medium text-slate-800 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                            {{ $payment->lifecycle_status ?? "N/A" }}
+                                        </span>
+                                </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <a href="{{ route('view.payment.mandate',$payment->reference)}}" class="text-decoration-none">
                                         <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">

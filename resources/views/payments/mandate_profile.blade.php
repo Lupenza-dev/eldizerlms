@@ -274,10 +274,10 @@
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment Order</th>
+                                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment Order</th> --}}
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment Amount</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Installment</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Installment</th>
+                                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Installment</th> --}}
+                                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Installment</th> --}}
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Balance</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outstanding</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
@@ -295,10 +295,10 @@
                                                     {{ $collection->reference }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $collection->installment_order ?? 'N/A' }}</td>
+                                            {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $collection->installment_order ?? 'N/A' }}</td> --}}
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($collection->installment_amount, 2) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($collection->min_installment_amount, 2) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($collection->max_installment_amount, 2) }}</td>
+                                            {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($collection->min_installment_amount, 2) }}</td> --}}
+                                            {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($collection->max_installment_amount, 2) }}</td> --}}
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">{{ number_format($collection->current_balance, 2) }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">{{ number_format($collection->outstanding_amount, 2) }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">

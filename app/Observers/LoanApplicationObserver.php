@@ -29,7 +29,7 @@ class LoanApplicationObserver
 
     // send CRDB Mandate
     $customer_bank  =CustomerBankDetail::where('customer_id',$loanApplication->customer_id)
-    ->where('bank_name','CRDB')
+   // ->where('bank_name','CRDB')
     ->first();
 
     if ($customer_bank) {
@@ -39,11 +39,11 @@ class LoanApplicationObserver
             $payload=[
                 // 'corporate_reference' =>$token_request['data']['corporate_reference'],
                 'channel'             =>'BANK',
-                'payment_channel'      =>'CRDB',
-                'account_name'        =>'Luhangano Lupenza',
-                // 'account_name'        =>$loanApplication->customer?->customer_name,
-                // 'account_number'    =>$customer_bank->account_number,
-                'account_number'    =>'0152784219300',
+                'payment_channel'      =>$customer_bank->bank_name,
+                // 'account_name'        =>'Luhangano Lupenza',
+                'account_name'        =>$loanApplication->customer?->customer_name,
+                'account_number'    =>$customer_bank->account_number,
+                // 'account_number'    =>'0152784219300',
                 'phone'             =>$loanApplication->customer?->phone_number,
                 'NIN'               =>$loanApplication->customer?->id_number,
                 'address'           =>$loanApplication->customer?->region?->name,
