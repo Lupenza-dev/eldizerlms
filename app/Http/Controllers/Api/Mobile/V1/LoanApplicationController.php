@@ -84,13 +84,17 @@ class LoanApplicationController extends Controller
         $code_generator =new LoanCalculatorService;
 
         // save bank details
+        $customerBankDetail = null;
         if($request->bank_name && $request->account_number){
-            CustomerBankDetail::create([
-                'customer_id' =>Auth::user()->customer_id,
-                'bank_name'   =>$request->bank_name,
-                'account_number' =>$request->account_number,
-                'uuid'        =>(string)Str::orderedUuid(),
-            ]);
+           $customerBankDetail = CustomerBankDetail::updateOrCreate(
+                [
+                    'customer_id' =>Auth::user()->customer_id,
+                    'account_number' =>$request->account_number,
+                ],
+                [
+                    'bank_name'   =>$request->bank_name,
+                    'uuid'        =>(string)Str::orderedUuid(),
+                ]);
         }
         
         
@@ -110,7 +114,8 @@ class LoanApplicationController extends Controller
             'loan_type'           =>$valid_data['loan_type'],
             'device_id'           =>$request->device_id ?? null,
             'initial_deposit'     =>$request->initial_deposit ?? 0,
-            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05])
+            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05]),
+            'customer_bank_detail_id' => $customerBankDetail?->id,
         ]);
       
 

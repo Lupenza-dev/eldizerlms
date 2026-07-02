@@ -28,7 +28,7 @@ class LoanApplicationObserver
     //     SendEmailJob::dispatch($message,$receiver_email,$receiver_name,$subject)->onQueue('emails');
 
     // send CRDB Mandate
-    $customer_bank  =CustomerBankDetail::where('customer_id',$loanApplication->customer_id)
+    $customer_bank  =CustomerBankDetail::where('id',$loanApplication->customer_bank_detail_id)
    // ->where('bank_name','CRDB')
     ->first();
 
