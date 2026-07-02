@@ -6,6 +6,7 @@
 use App\Models\Management\AssignmentParticipant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Log;
 
 if (!function_exists('greeting')) {
     function greeting()
@@ -70,8 +71,11 @@ if (!function_exists('getApiToken')) {
                 'partnerId'=>env('PARTNER_ID'),
                 'password'=>env('PARTNER_PASSWORD'),
             ]);
+            Log::info('----api----result');
+            Log::info($response);
             return json_decode($response,true);
         } catch (\Throwable $th) {
+            Log::info($th->getMessage());
             return ['success'=>false,'message'=>$th->getMessage()];
         }
       
