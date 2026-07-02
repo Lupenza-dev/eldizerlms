@@ -1,192 +1,190 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-    .divider{
-        margin-top: 10px !important;
-    }
-    label{
-        margin-bottom: 5px !important;
-    }
-</style>
-<div class="page-wrapper">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">University Adverts</div>
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
+            <div class="breadcrumb-title pe-3">
+                <span class="text-lg font-bold text-slate-700">University Adverts</span>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-plus"></span> Add</button>
-                </div>
+                <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
+                    <i class="bx bx-plus"></i> Add Advert
+                </button>
             </div>
         </div>
-        <!--end breadcrumb-->
-      
-        <div class="card">
-            <div class="card-body">
-                <h6 class="mb-0 text-uppercase text-center">University Adverts</h6>
-                <hr/>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-image text-white text-xl"></i>
+                </div>
+                <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">University Adverts</h6>
+            </div>
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                    <table id="example" class="table w-full" style="width:100%">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Image</th>
-                                <th>Reg Date</th>
-                                <th>Name</th>
-                                <th>University</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Reg Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">University</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                       <tbody>
+                        <tbody>
                         @foreach ($adverts as $advert)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     @if($advert->getFirstMediaUrl('images'))
-                                        <img src="{{ $advert->getFirstMediaUrl('images') }}" alt="Group Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                        <img src="{{ $advert->getFirstMediaUrl('images') }}" alt="Advert Image" class="h-12 w-16 rounded-lg object-cover border-2 border-slate-200 shadow-sm">
                                     @else
-                                        <span class="text-muted">No Image</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-400 text-xs">No Image</span>
                                     @endif
                                 </td>
-                                <td>{{ date('d,M-Y',strtotime($advert->created_at))}}</td>
-                                <td>{{ $advert->name }}</td>
-                                <td>{{ $advert->college?->name }}</td>
-                                <td>{!! $advert->status_formatted !!}</td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm edit-btn"  data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
-                                        data-id="{{ $advert->uuid}}" 
-                                        data-name ="{{ $advert->user?->name }}"
-                                     
-                                        title="Edit"> <i class="bx bx-edit"></i> </button>
-{{-- 
-                                        @if ($agent->user?->active == 2)
-                                        <button class="btn btn-success btn-sm" id="{{ $agent->user?->uuid}}" onclick="enable_user(id)"><i class="bx bx-check text-white"></i></button>
-                                        @else
-                                        <button class="btn btn-warning btn-sm" id="{{ $agent->user?->uuid}}" onclick="deactivate_user(id)"><i class="bx bx-x text-white"></i></button>
-                                        @endif
-                                        <button class="btn btn-danger btn-sm" id="{{ $agent->user?->uuid}}" onclick="delete_user(id)"><i class="bx bx-trash text-white"></i></button> --}}
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($advert->created_at)) }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $advert->name }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $advert->college?->name }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{!! $advert->status_formatted !!}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
+                                            data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
+                                            data-id="{{ $advert->uuid }}"
+                                            data-name="{{ $advert->user?->name }}"
+                                            title="Edit">
+                                        <i class="bx bx-edit text-sm"></i>
+                                    </button>
                                 </td>
-                            </tr> 
+                            </tr>
                         @endforeach
-                       </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Advert Registration Modal -->
 <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Advert Registration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-image text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Advert Registration</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-6">
                 <form action="" id="registration_form">
-                    <div class="form-group row">
-                        <div class="col-md-12 divider">
-                            <label for="">Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Write fullname ......." required>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</label>
+                            <input type="text" name="name" class="form-control rounded-lg text-sm" placeholder="Enter advert name..." required>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">File</label>
-                            <input type="file" name="image" class="form-control" required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">File / Image</label>
+                            <input type="file" name="image" class="form-control rounded-lg text-sm" required>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">College</label>
-                            <select name="college_id" class="form-control" required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+                            <select name="college_id" class="form-control rounded-lg text-sm" required>
                                 <option value="">Please Choose College</option>
                                 @foreach ($colleges as $college)
-                                    <option value="{{ $college->id}}">{{ $college->name }}</option>    
+                                    <option value="{{ $college->id }}">{{ $college->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-12 divider" id="alert" style="margin-top: 10px">
-
-                        </div>
-                        <div class="col-md-12 divider" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn"> <span class="bx bx-save"></span> Submit</button>
-                        </div>
+                        <div id="alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="reg_btn">
+                            <i class="bx bx-save"></i> Submit
+                        </button>
                     </div>
                 </form>
-                
             </div>
-            
         </div>
     </div>
 </div>
 
+<!-- Edit Advert Modal -->
 <div class="modal fade" id="exampleLargeModalEdit" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agent Registration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-cyan-800 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-edit text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Edit Advert</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-6">
                 <form action="" id="update_form">
                     <input type="hidden" name="id" id="id">
-                    <div class="form-group row">
-                        <div class="col-md-12 divider">
-                            <label for="">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Write fullname ......." required>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</label>
+                            <input type="text" id="name" name="name" class="form-control rounded-lg text-sm" placeholder="Enter name..." required>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Write Email......." readonly>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                            <input type="email" id="email" name="email" class="form-control rounded-lg text-sm bg-slate-50" placeholder="Email..." readonly>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Phone Number</label>
-                            <input type="number" id="phone_number" name="phone_number" class="form-control" placeholder="Write phone number......." required>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
+                                <input type="number" id="phone_number" name="phone_number" class="form-control rounded-lg text-sm" placeholder="Phone..." required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg</label>
+                                <input type="text" id="student_reg" name="student_reg_id" class="form-control rounded-lg text-sm" placeholder="Student Reg ID..." required>
+                            </div>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Student Reg</label>
-                            <input type="text" id="student_reg" name="student_reg_id" class="form-control" placeholder="Write Student Reg Id......." required>
-                        </div>
-                        <div class="col-md-12 divider">
-                            <label for="">College</label>
-                            <select name="college_id" id="college_id" class="form-control" required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+                            <select name="college_id" id="college_id" class="form-control rounded-lg text-sm" required>
                                 <option value="">Please Choose College</option>
                                 @foreach ($colleges as $college)
-                                    <option value="{{ $college->id}}">{{ $college->name }}</option>    
+                                    <option value="{{ $college->id }}">{{ $college->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        {{-- <div class="col-md-12 divider">
-                            <label for="">Agent Profile Image</label>
-                            <input type="file" name="image" class="form-control" required>
-                        </div> --}}
-                        <div class="col-md-12 divider" id="update_alert">
-
-                        </div>
-                        <div class="col-md-12 divider" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="update_btn"> <span class="bx bx-save"></span> Submit</button>
-                        </div>
+                        <div id="update_alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="update_btn">
+                            <i class="bx bx-save"></i> Submit
+                        </button>
                     </div>
                 </form>
-                
             </div>
-            
         </div>
     </div>
 </div>
-    
+
 @endsection
 
 @push('scripts')

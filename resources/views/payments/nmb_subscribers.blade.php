@@ -1,101 +1,81 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-</style>
-<div class="page-wrapper bg-light">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4">
+        {{-- Breadcrumb --}}
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
             <div class="breadcrumb-title pe-3">
-                <h5 class="mb-0 fw-bold text-primary">NMB Subscribers</h5>
+                <span class="text-lg font-bold text-slate-700">NMB Subscribers</span>
             </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted text-decoration-none">
-                                <i class="bx bx-home-alt text-primary"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active text-muted" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group shadow-sm">
-                    <div class="badge bg-success" id="record-count">
-                        {{ $subscribers->count() }} Subscribers
-                    </div>
-                </div>
+                <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
+                    {{ $subscribers->count() }} Subscribers
+                </span>
             </div>
         </div>
-        <!--end breadcrumb-->
-       
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0 text-uppercase fw-bold text-dark">NMB Bank Subscribers</h6>
-                    {{-- <div class="d-flex gap-2">
-                        <button class="btn btn-success px-3 py-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit">
-                            <i class="bx bx-plus-circle text-white me-2"></i>
-                            <span class="text-white">Create Transaction</span>
-                        </button>
-                    </div> --}}
+
+        {{-- Main Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            {{-- Card Header --}}
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-user text-white text-xl"></i>
                 </div>
-                
-                <hr class="my-4"/>
-                
+                <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">NMB Bank Subscribers</h6>
+            </div>
+
+            {{-- Table --}}
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <table id="example" class="table w-full" style="width:100%">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Account</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                       <tbody>
+                        <tbody>
                         @foreach ($subscribers as $subcriber)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($subcriber->consent_request?->created_at)) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $subcriber->nmb_username }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($subcriber->consent_request?->created_at)) }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $subcriber->nmb_username }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                                         {{ $subcriber->consent_request?->from_account_number }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     @switch($subcriber->consent_request?->status)
-                                        @case('APPROVED')
-                                            <span class="badge bg-success">Approved</span>
-                                            @break
-                                        @case('PENDING')
-                                            <span class="badge bg-warning">Pending</span>
-                                            @break
-                                        @case('REJECTED')
-                                            <span class="badge bg-danger">Rejected</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-secondary">{{ $subcriber->consent_request?->status }}</span>
+                                        @case('APPROVED') <span class="badge bg-success">Approved</span> @break
+                                        @case('PENDING') <span class="badge bg-warning">Pending</span> @break
+                                        @case('REJECTED') <span class="badge bg-danger">Rejected</span> @break
+                                        @default <span class="badge bg-secondary">{{ $subcriber->consent_request?->status }}</span>
                                     @endswitch
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <button class="btn btn-primary btn-sm edit-btn shadow-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
-                                            data-id="{{ $subcriber->consent_request?->uuid }}" 
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors edit-btn"
+                                            data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
+                                            data-id="{{ $subcriber->consent_request?->uuid }}"
                                             title="Create Transaction">
-                                        <i class="bx bx-edit"></i>
+                                        <i class="bx bx-edit text-sm"></i> Transact
                                     </button>
                                 </td>
-                            </tr> 
+                            </tr>
                         @endforeach
-                       </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -106,34 +86,37 @@
 <!-- Transaction Modal -->
 <div class="modal fade" id="exampleLargeModalEdit" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white border-0">
-                <h5 class="modal-title fw-bold">
-                    <i class="bx bx-dollar-circle me-2"></i>Create Transaction
-                </h5>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-dollar-circle text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Create Transaction</h5>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-6">
                 <form action="" id="update_form">
                     <input type="hidden" name="uuid" id="id">
-                    <div class="mb-4">
-                        <label for="amount" class="form-label fw-semibold">
-                            <i class="bx bx-money me-2"></i>Transaction Amount
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Transaction Amount
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">TZS</span>
-                            <input type="number" name="amount" class="form-control" placeholder="Enter amount..." required>
+                            <span class="input-group-text bg-slate-100 text-slate-600 font-semibold border-slate-200">TZS</span>
+                            <input type="number" name="amount" class="form-control rounded-r-lg border-slate-200" placeholder="Enter amount..." required>
                         </div>
                     </div>
-                    
+
                     <div class="alert-container" id="update_alert"></div>
-                    
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bx bx-x me-1"></i> Close
+
+                    <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
                         </button>
-                        <button type="submit" class="btn btn-primary" id="update_btn">
-                            <i class="bx bx-save me-1"></i> Submit Transaction
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="update_btn">
+                            <i class="bx bx-save"></i> Submit Transaction
                         </button>
                     </div>
                 </form>

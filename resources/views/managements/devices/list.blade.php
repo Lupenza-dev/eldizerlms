@@ -1,102 +1,80 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-    .divider{
-        margin-top: 10px !important;
-    }
-    label{
-        margin-bottom: 5px !important;
-    }
-</style>
-<div class="page-wrapper bg-light">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4">
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
             <div class="breadcrumb-title pe-3">
-                <h5 class="mb-0 fw-bold text-primary">Device Management</h5>
+                <span class="text-lg font-bold text-slate-700">Device Management</span>
             </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted text-decoration-none">
-                                <i class="bx bx-home-alt text-primary"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active text-muted" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
-            <div class="ms-auto">
-                <div class="btn-group shadow-sm">
-                    <div class="badge bg-success" id="record-count">
-                        {{ $devices->count() }} Devices
-                    </div>
-                    <button type="button" class="btn btn-primary px-3 py-2" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
-                        <i class="bx bx-plus text-white me-2"></i>
-                        <span class="text-white">Add Device</span>
-                    </button>
-                </div>
+            <div class="ms-auto flex items-center gap-3">
+                <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
+                    {{ $devices->count() }} Devices
+                </span>
+                <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
+                    <i class="bx bx-plus"></i> Add Device
+                </button>
             </div>
         </div>
-        <!--end breadcrumb-->
-      
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0 text-uppercase fw-bold text-dark">Device Inventory</h6>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-devices text-white text-xl"></i>
                 </div>
-                
-                <hr class="my-4"/>
-                
+                <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Device Inventory</h6>
+            </div>
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initial Deposit</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <table id="example" class="table w-full" style="width:100%">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Reg Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Price</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Plan</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Initial Deposit</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                       <tbody>
+                        <tbody>
                         @foreach ($devices as $device)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-16 w-16 rounded-full object-cover border-2 border-gray-200 shadow-sm" 
-                                             src="{{ asset('storage/attachments').'/'.$device->image}}" 
-                                             alt="{{ $device->name }}"
-                                             onerror="this.src='https://picsum.photos/seed/device{{$device->id}}/64/64.jpg'">
-                                    </div>
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <img class="h-12 w-12 rounded-xl object-cover border-2 border-slate-200 shadow-sm"
+                                         src="{{ asset('storage/attachments').'/'.$device->image}}"
+                                         alt="{{ $device->name }}"
+                                         onerror="this.src='https://picsum.photos/seed/device{{$device->id}}/64/64.jpg'">
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ date('d M Y', strtotime($device->created_at)) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $device->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ number_format($device->price, 2) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $device->plan }} months</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">{{ number_format($device->initial_deposit, 2) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($device->created_at)) }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $device->name }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-slate-700 whitespace-nowrap">{{ number_format($device->price, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ $device->plan }} months</td>
+                                <td class="px-4 py-3 text-sm font-medium text-blue-600 whitespace-nowrap">{{ number_format($device->initial_deposit, 2) }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
                                         {{ $device->device_category?->name ?? 'Uncategorized' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <button class="btn btn-danger btn-sm shadow-sm" id="{{ $device->uuid }}" onclick="delete_device(id)" title="Delete Device">
-                                        <i class="bx bx-trash text-white"></i>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors" id="{{ $device->uuid }}" onclick="delete_device(id)" title="Delete Device">
+                                        <i class="bx bx-trash text-sm"></i>
                                     </button>
                                 </td>
-                            </tr> 
+                            </tr>
                         @endforeach
-                       </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -107,73 +85,64 @@
 <!-- Device Registration Modal -->
 <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white border-0">
-                <h5 class="modal-title fw-bold">
-                    <i class="bx bx-mobile-alt me-2"></i>Device Registration
-                </h5>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-mobile-alt text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Device Registration</h5>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-6">
                 <form action="" id="registration_form">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label fw-semibold">
-                                <i class="bx bx-tag me-2"></i>Device Name
-                            </label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter device name..." required>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Name</label>
+                            <input type="text" name="name" class="form-control rounded-lg text-sm" placeholder="Enter device name..." required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="price" class="form-label fw-semibold">
-                                <i class="bx bx-dollar me-2"></i>Device Price
-                            </label>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Price</label>
                             <div class="input-group">
-                                <span class="input-group-text">TZS</span>
-                                <input type="number" name="price" class="form-control" placeholder="0.00" required>
+                                <span class="input-group-text text-sm">TZS</span>
+                                <input type="number" name="price" class="form-control rounded-r-lg text-sm" placeholder="0.00" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="initial_deposit" class="form-label fw-semibold">
-                                <i class="bx bx-wallet me-2"></i>Initial Deposit
-                            </label>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Initial Deposit</label>
                             <div class="input-group">
-                                <span class="input-group-text">TZS</span>
-                                <input type="number" name="initial_deposit" class="form-control" placeholder="0.00" required>
+                                <span class="input-group-text text-sm">TZS</span>
+                                <input type="number" name="initial_deposit" class="form-control rounded-r-lg text-sm" placeholder="0.00" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="plan" class="form-label fw-semibold">
-                                <i class="bx bx-calendar me-2"></i>Payment Plan (months)
-                            </label>
-                            <input type="number" name="plan" class="form-control" placeholder="Enter payment plan..." required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Payment Plan (months)</label>
+                            <input type="number" name="plan" class="form-control rounded-lg text-sm" placeholder="Enter payment plan..." required>
                         </div>
-                        <div class="col-12">
-                            <label for="device_category" class="form-label fw-semibold">
-                                <i class="bx bx-category me-2"></i>Device Category
-                            </label>
-                            <select name="device_category" class="form-control" required>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Category</label>
+                            <select name="device_category" class="form-control rounded-lg text-sm" required>
                                 <option value="">Select a category</option>
                                 @foreach ($categories as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>    
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12">
-                            <label for="image" class="form-label fw-semibold">
-                                <i class="bx bx-image me-2"></i>Device Image
-                            </label>
-                            <input type="file" name="image" class="form-control" accept="image/*" required>
-                            <small class="text-muted">Supported formats: JPG, PNG, GIF. Max size: 2MB</small>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Image</label>
+                            <input type="file" name="image" class="form-control rounded-lg text-sm" accept="image/*" required>
+                            <p class="text-xs text-slate-400 mt-1">Supported formats: JPG, PNG, GIF. Max size: 2MB</p>
                         </div>
-                        <div class="col-12" id="alert"></div>
-                        <div class="col-12 d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="bx bx-x me-1"></i> Cancel
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn">
-                                <i class="bx bx-save me-1"></i> Register Device
-                            </button>
-                        </div>
+                        <div class="sm:col-span-2" id="alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Cancel
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="reg_btn">
+                            <i class="bx bx-save"></i> Register Device
+                        </button>
                     </div>
                 </form>
             </div>

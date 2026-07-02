@@ -1,68 +1,50 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-    .divider{
-        margin-top: 10px !important;
-    }
-    label{
-        margin-bottom: 5px !important;
-    }
-</style>
-<div class="page-wrapper bg-light">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-4">
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
             <div class="breadcrumb-title pe-3">
-                <h5 class="mb-0 fw-bold text-primary">Loan Beneficiaries</h5>
+                <span class="text-lg font-bold text-slate-700">Loan Beneficiaries</span>
             </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted text-decoration-none">
-                                <i class="bx bx-home-alt text-primary"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active text-muted" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group shadow-sm">
-                    <button type="button" class="btn btn-primary px-3 py-2" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
-                        <i class="bx bx-upload text-white me-2"></i>
-                        <span class="text-white">Bulk Upload</span>
-                    </button>
-                </div>
+                <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
+                    <i class="bx bx-upload"></i> Bulk Upload
+                </button>
             </div>
         </div>
-        <!--end breadcrumb-->
-      
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0 text-uppercase fw-bold text-dark">Beneficiaries Directory</h6>
-                    <div class="badge bg-info">
-                        <i class="bx bx-data me-1"></i>Server-Side Processing
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-group text-white text-xl"></i>
                     </div>
+                    <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Beneficiaries Directory</h6>
                 </div>
-                
-                <hr class="my-4"/>
-                
+                <span class="inline-flex items-center bg-cyan-500/20 text-cyan-200 text-xs font-medium px-3 py-1 rounded-full">
+                    <i class="bx bx-data me-1"></i> Server-Side Processing
+                </span>
+            </div>
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="student_table" class="table table-striped table-bordered" style="width:100%">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fullname</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index Number</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Code</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg No</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year of Study</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Academic Year</th>
+                    <table id="student_table" class="table w-full" style="width:100%">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Fullname</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Index Number</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Code</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Course Code</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Reg No</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Year of Study</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Academic Year</th>
                             </tr>
                         </thead>
                     </table>
@@ -75,66 +57,52 @@
 <!-- Bulk Upload Modal -->
 <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white border-0">
-                <h5 class="modal-title fw-bold">
-                    <i class="bx bx-upload me-2"></i>Bulk Upload Beneficiaries
-                </h5>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-upload text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Bulk Upload Beneficiaries</h5>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-6">
                 <form action="" id="registration_form">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label for="college_id" class="form-label fw-semibold">
-                                <i class="bx bx-building me-2"></i>College Name
-                            </label>
-                            <select name="college_id" class="form-control" required>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College Name</label>
+                            <select name="college_id" class="form-control rounded-lg text-sm" required>
                                 <option value="">Select a college</option>
                                 @foreach ($colleges as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>    
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12">
-                            <label for="file" class="form-label fw-semibold">
-                                <i class="bx bx-file me-2"></i>Excel File
-                            </label>
-                            <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
-                            <small class="text-muted">Supported formats: Excel (.xlsx, .xls)</small>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Excel File</label>
+                            <input type="file" name="file" class="form-control rounded-lg text-sm" accept=".xlsx,.xls" required>
+                            <p class="text-xs text-slate-400 mt-1">Supported formats: Excel (.xlsx, .xls)</p>
                         </div>
-                        
-                        <div class="col-12">
-                            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                <i class="bx bx-info-circle me-2"></i>
-                                <strong>Instructions:</strong> Download the sample format below to prepare your data correctly.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <i class="bx bx-download text-blue-600 text-2xl shrink-0"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-slate-700 mb-0.5">Sample Format</p>
+                                <p class="text-xs text-slate-400 mb-0">Download the Excel template to see the required format.</p>
                             </div>
+                            <a href="{{ asset('assets/sample.xlsx') }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shrink-0">
+                                <i class="bx bx-download"></i> Download
+                            </a>
                         </div>
-                        
-                        <div class="col-12">
-                            <div class="d-flex align-items-center p-3 bg-light rounded-3">
-                                <i class="bx bx-download text-primary fs-4 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1 fw-semibold">Sample Format</h6>
-                                    <p class="mb-0 text-muted small">Download the Excel template to see the required format for uploading beneficiaries.</p>
-                                </div>
-                                <a href="{{ asset('assets/sample.xlsx') }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="bx bx-download me-1"></i>Download
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="col-12" id="alert"></div>
-                        
-                        <div class="col-12 d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="bx bx-x me-1"></i> Close
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn">
-                                <i class="bx bx-upload me-1"></i> Upload File
-                            </button>
-                        </div>
+                        <div id="alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="reg_btn">
+                            <i class="bx bx-upload"></i> Upload File
+                        </button>
                     </div>
                 </form>
             </div>
