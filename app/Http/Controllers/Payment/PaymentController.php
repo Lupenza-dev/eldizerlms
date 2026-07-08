@@ -17,6 +17,7 @@ use App\Models\Payment\PaymentMandate;
 use App\Services\Loan\InstallmentService;
 use Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Str;
 
 
@@ -174,6 +175,44 @@ class PaymentController extends Controller
         $payment = PaymentMandate::with('customer_mandate','customer_mandate.customer')->where('reference',$reference)->first();
         $collections =MandatePaymentCollection::where('mandate_reference',$reference)->get();
         return view('payments.mandate_profile',compact('payment','collections'));
+    }
+
+    public function cancelMandate(Request $request){
+        $valid_data = $this->validate($request,[
+            'reference'   => 'required',
+            'description' => 'required|string',
+        ]);
+
+          $token_request =getApiToken();
+          Log::info("++++++send++++");
+          Log::info($valid_data['reference']);
+          Log::info($valid_data['description']);
+          Log::info($token_request['data']['token']);
+          Log::info(env('SOLOCODE_BASE_URL').''.'mandate/cancellation');
+         $response =Http::withToken($token_request['data']['token'])
+                    ->post(env('SOLOCODE_BASE_URL').''.'mandate/cancellation',
+                    [
+                        'reference' => $valid_data['reference'],
+                        'reasons' => $valid_data['description'],
+                    ]);
+       // $result =json_decode($response,true);
+
+      Log::info($response);
+
+
+        // if ($result['success']) {
+        //     return response()->json([
+        //     'success' => true,
+        //     'message' => 'Action completed successfully',
+        // ],200);
+        // }else{
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Failed to cancel mandate',
+        //     ],500);
+        // }
+
+       
     }
 
     public function customerLoansMandates(){

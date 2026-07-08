@@ -123,6 +123,11 @@
                 <div class="tab-content" id="mandateTabsContent">
                     <!-- Mandate Details Tab -->
                     <div class="tab-pane fade show active" id="details" role="tabpanel">
+                        <div class="d-flex justify-content-start mb-4">
+                            <button type="button" class="inline-flex items-center gap-2 bg-red-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#updateMandateDescriptionModal">
+                                <i class="bx bx-edit"></i> Cancel Mndate
+                            </button>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card border-0 bg-light">
@@ -351,4 +356,97 @@
         </div>
     </div>
 </div>
+
+<!-- Update Mandate Description Modal -->
+<div class="modal fade" id="updateMandateDescriptionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-edit text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Cancel Mandate</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-6">
+                <form action="" id="update_mandate_description_form">
+                    <input type="hidden" name="reference" value="{{ $payment->reference }}">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Description / Remarks</label>
+                            <textarea name="description" id="mandate_description" rows="5" class="form-control rounded-lg text-sm" placeholder="Enter description here..." required></textarea>
+                        </div>
+                        <div id="mandate_description_alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Cancel
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="update_mandate_description_btn">
+                            <i class="bx bx-save"></i> Cancel Mandate
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const descriptionForm = document.getElementById('update_mandate_description_form');
+    if (!descriptionForm) return;
+
+    descriptionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('update_mandate_description_btn');
+        const alertDiv = document.getElementById('mandate_description_alert');
+
+        // Loading state
+        submitBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Saving...';
+        submitBtn.disabled = true;
+        alertDiv.innerHTML = '';
+
+        const formData = new FormData(this);
+
+        fetch("{{ route('cancel.mandate') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alertDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bx bx-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bx bx-error-circle me-2"></i>${data.message || 'An error occurred'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bx bx-error-circle me-2"></i>An error occurred. Please try again.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+        })
+        .finally(() => {
+            submitBtn.innerHTML = '<i class="bx bx-save me-1"></i> Cancel Mandate';
+            submitBtn.disabled = false;
+        });
+    });
+});
+</script>
+
 @endsection

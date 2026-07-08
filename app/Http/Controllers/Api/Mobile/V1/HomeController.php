@@ -16,6 +16,7 @@ use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\DeviceCategoryResource;
 use App\Http\Resources\DeviceResource;
 use App\Http\Resources\GroupResource;
+use App\Http\Resources\HospitalResource;
 use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
@@ -27,6 +28,7 @@ use App\Models\Management\AssignmentQuestion;
 use App\Models\Management\Device;
 use App\Models\Management\DeviceCategory;
 use App\Models\Management\Group;
+use App\Models\Management\Hospital;
 use App\Models\Management\Term;
 use App\Models\Payment\Payment;
 use Illuminate\Support\Facades\Log;
@@ -166,6 +168,13 @@ class HomeController extends Controller
             'success' =>true,
             'message' =>'submitted succesfuly'
         ],200);
+    }
+
+    public function getHospitals(){
+         return response()->json([
+            'success' =>true,
+            'data'    =>HospitalResource::collection(Hospital::latest()->get()),
+        ]);   
     }
 
 

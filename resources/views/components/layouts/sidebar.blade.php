@@ -282,6 +282,12 @@
             </a>
         </li>
         <li>
+            <a class="{{ Route::is('hospitals.index') ? "li-active": ""}}" href="{{ route('hospitals.index')}}" title="Hospital Management">
+                <div class="parent-icon"><i class='bx bx-buildings'></i></div>
+                <div class="menu-title">Hospitals</div>
+            </a>
+        </li>
+        <li>
             <a class="{{ Route::is('beneficaries.index') ? "li-active": ""}}" href="{{ route('beneficaries.index')}}" title="HESLB Beneficiaries">
                 <div class="parent-icon"><i class='bx bx-award'></i></div>
                 <div class="menu-title">HESLB Beneficiaries</div>
