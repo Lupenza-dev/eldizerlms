@@ -17,6 +17,7 @@ use App\Http\Controllers\Management\AppController;
 use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
+use App\Http\Controllers\Management\HospitalController;
 use App\Http\Controllers\Payment\PaymentController;
 
 /*
@@ -63,13 +64,17 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('nmb/subscribers',[PaymentController::class,'nmbSubscribers'])->name('nmb.subscribers');
     Route::post('nmb/create/transaction',[PaymentController::class,'nmbCreateTransaction'])->name('create.transaction');
     Route::post('college/update',[UniversityController::class,'collegeUpdate'])->name('update.college');
+    Route::post('hospital/update',[HospitalController::class,'hospitalUpdate'])->name('update.hospital');
+    Route::get('hospital/districts/{region_id}',[HospitalController::class,'getDistrictsByRegion'])->name('hospital.districts');
     Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
     Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');
     Route::post('user/update/roles',[UserController::class,'userUpdateRoles'])->name('update.user.roles');
     Route::post('college/status',[UniversityController::class,'collegeStatus'])->name('college.status');
+    Route::post('hospital/status',[HospitalController::class,'hospitalStatus'])->name('hospital.status');
     Route::post('user/status',[UserController::class,'userStatus'])->name('user.status');
     Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');
     Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
+    Route::post('hospital/delete',[HospitalController::class,'destroy'])->name('hospital.delete');
     Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
     Route::post('delete/device',[DeviceController::class,'destroyDevice'])->name('device.delete');
     Route::get('beneficaries/data',[BenefeciariesController::class,'getBeneficariesData'])->name('beneficaries.data');
@@ -89,11 +94,13 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('payment/mandates',[PaymentController::class,'paymentMandates'])->name('payment.mandates');
     Route::get('sync/mandates',[PaymentController::class,'syncMandates'])->name('sync.mandate');
     Route::get('view/payment/mandate/{reference}',[PaymentController::class,'viewPaymentMandate'])->name('view.payment.mandate');
+    Route::post('cancel/mandate',[PaymentController::class,'cancelMandate'])->name('cancel.mandate');
     Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
     Route::get('customer/loans/mandates',[PaymentController::class,'customerLoansMandates'])->name('customer.loans.mandates');
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,
+        'hospitals'      =>HospitalController::class,
         'agents'         =>AgentController::class,
         'customers'      =>CustomerController::class,
         'devices'        =>DeviceController::class,
