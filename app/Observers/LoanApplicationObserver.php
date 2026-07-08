@@ -67,7 +67,7 @@ class LoanApplicationObserver
                 ->post(env('SOLOCODE_BASE_URL').''.'mandate/create',$payload);
                 $result =json_decode($response,true);
                 Log::info("++++++++++Result of mandate++++++++++++");
-                Log::info('result',$result);
+                Log::info($result);
                 if ($result['success']) {
                     $customer_mandate->update([
                         'mandate_reference' => $result['data']['mandate_reference'],
