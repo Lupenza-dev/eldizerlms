@@ -16,7 +16,8 @@ use Log;
 use Auth;
 use Carbon\Carbon;
 use App\Http\Requests\CompleteRegRequest;
-
+use App\Models\Management\Intern;
+use Illuminate\Support\Facades\Storage;
 
 class RegistrationController extends Controller
 {
@@ -302,6 +303,62 @@ class RegistrationController extends Controller
        );
       
      
+
+   }
+
+   public function completeInternRegistration(Request $request){
+    $validator = Validator::make(
+        $request->all(), [
+            'hospital_id'      =>'required',
+            'start_date'      =>'required',
+            'end_date'      =>'required',
+            'professional'      =>'required',
+            'nida_number'         =>'required',
+            'letter'      =>'required',
+        ]
+    );
+
+    if ($validator->fails() ) {
+        return response()->json(
+            [
+                'success' => false,
+                'error_message' => $validator->errors(),
+            ], 500
+        );
+    }
+
+    $valid_data = $validator->valid();
+    Log::info(json_encode($valid_data));
+    if ($request->hasfile('letter')) {
+        Log::debug('step 2');
+        $file = $request->file('letter');
+        $filename =time().$file->getClientOriginalName();
+        $path     =Storage::disk('local')->putFileAs('',$file,$filename);
+
+        $letterName = $request->file('letter')->store('letters', 'public');
+    }
+
+    Intern::create([
+        'hospital_id' =>$valid_data['hospital_id'],
+        'start_date' =>$valid_data['start_date'],
+        'end_date' =>$valid_data['end_date'],
+        'professional' =>$valid_data['professional'],
+        'customer_id'  =>Auth::user()->customer_id,
+        'letter'       =>$letterName,
+        'uuid'            =>(string)Str::orderedUuid(),
+    ]);
+
+    $customer_obj =Customer::where('id',Auth::user()->customer_id)->first();
+    $customer_obj->registration_stage =4;
+    $customer_obj->id_number =$valid_data['nida_number'];
+    $customer_obj->save();
+
+    return response()->json([
+        'success' =>true,
+        'message' =>'Registration Done Success Fully',
+        'data'    =>new CustomerResource($customer_obj),
+       ],200
+    );
 
    }
 }

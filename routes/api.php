@@ -78,6 +78,7 @@ Route::group(['prefix'=>'V2'], function(){
         Route::post('complete-registration',[RegistrationController::class,'completeRegistration']);
         Route::post('submit-assignment',[HomeController::class,'submitAssignment']);
         Route::get('get-assignments',[HomeController::class,'getAssignments']);
+        Route::post('complete-intern-registration',[RegistrationController::class,'completeInternRegistration']);
 
       
     });

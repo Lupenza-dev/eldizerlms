@@ -26,18 +26,21 @@ class CustomerController extends Controller
         $requests =$request->all();
         //$filter   =Auth::user()->hasRole('Agent') ? true : false;
        // return getCollegeId();
-        $customers =Customer::with('region','district','ward','student','student.college','gender','user')
-                    ->whereHas('student',function($query) use ($requests){
-                        $query->withfilters($requests);
-                        // if ($filter) {
-                        //     $query->where('college_id',getCollegeId());
-                        // }
-                    })
-                    ->when($requests,function ($query) use ($requests){
-                        $query->withfilters($requests);
-                    })
-                    ->latest()
-                    ->get();
+       $customers = Customer::with('region', 'district', 'ward', 'student', 'student.college', 'gender', 'user')
+    ->where(function ($query) use ($requests) {
+        $query->whereDoesntHave('student')
+              ->orWhereHas('student', function ($subQuery) use ($requests) {
+                  $subQuery->withfilters($requests);
+                  // if ($filter) {
+                  //     $subQuery->where('college_id', getCollegeId());
+                  // }
+              });
+    })
+    ->when($requests, function ($query) use ($requests) {
+        $query->withfilters($requests);
+    })
+    ->latest()
+    ->get();
         $regions   =Region::get();
         $colleges  =College::get();
         $roles     =Role::whereNotIn('id',[1,2])->get(['name','id']);

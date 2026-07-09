@@ -21,7 +21,7 @@ class Customer extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable=['first_name','middle_name','last_name','phone_number','email','dob','gender_id','marital_status_id','region_id','district_id',
-    'ward_id','street','resident_since','image','uuid','other_name','id_number','registration_stage'];
+    'ward_id','street','resident_since','image','uuid','other_name','id_number','registration_stage','customer_type'];
 
 
     public static function StoreCustomer($valid_data,$other_name){
@@ -47,8 +47,8 @@ class Customer extends Model
             'ward_id'                  =>$valid_data['ward_id'],
             'street'                   =>$valid_data['street'],
             'resident_since'           =>$valid_data['resident_since'] ?? null,
-            'other_name'               =>$other_name ?? null,
-            'uuid'                     =>(string)Str::orderedUuid()
+            'uuid'                     =>(string)Str::orderedUuid(),
+            'customer_type'            =>$valid_data['reg_type']
         ]);
 
         return $customer;

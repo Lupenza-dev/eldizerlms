@@ -27,24 +27,27 @@ class LoanApplicationController extends Controller
         $colleges  =College::get();
         $requests  =$request->all();
         $filter   =Auth::user()->hasRole('Agent') ? true : false;
-        $loans =LoanApplication::with('customer','customer.student')
-                ->where('level','!=','Canceled')
-                ->where('level','!=','GRANTED')
-                ->where('level','!=','CLOSED')
-                ->whereHas('customer',function($query) use ($requests){
-                     $query->withfilters($requests);
-                })
-                ->whereHas('customer.student',function($query) use ($requests , $filter){
-                     $query->withfilters($requests); 
-                     if ($filter) {
-                        $query->where('college_id',getCollegeId());
-                    }
-                })
-                ->when($requests, function($query) use ($requests){
-                    $query->withfilters($requests);
-                })
-                ->latest()
-                ->get();
+        $loans = LoanApplication::with('customer', 'customer.student')
+        ->where('level', '!=', 'Canceled')
+        ->where('level', '!=', 'GRANTED')
+        ->where('level', '!=', 'CLOSED')
+        ->whereHas('customer', function ($query) use ($requests) {
+            $query->withfilters($requests);
+        })
+        ->where(function ($query) use ($requests, $filter) {
+            $query->whereDoesntHave('customer.student')
+                  ->orWhereHas('customer.student', function ($subQuery) use ($requests, $filter) {
+                      $subQuery->withfilters($requests);
+                      if ($filter) {
+                          $subQuery->where('college_id', getCollegeId());
+                      }
+                  });
+        })
+        ->when($requests, function ($query) use ($requests) {
+            $query->withfilters($requests);
+        })
+        ->latest()
+        ->get();
         return view('loans.loan_applications',compact('loans','requests','regions','colleges'));
     }
 
