@@ -11,4 +11,8 @@ class Intern extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable =['hospital_id','customer_id','start_date','end_date','letter','professional','uuid'];
+
+    public function hospital(){
+        return $this->hasOne(Hospital::class,'id','hospital_id');
+    }
 }
