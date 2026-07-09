@@ -264,11 +264,11 @@
                             <div class="d-flex align-items-center gap-3">
                                
                                     <div class="customer-avatar d-flex align-items-center justify-content-center" style="background: white; color: #28a745; font-size: 2rem; font-weight: bold;">
-                                        {{ substr($contract->customer->first_name, 0, 1) }}{{ substr($contract->customer->last_name, 0, 1) }}
+                                        {{ substr($contract->customer?->first_name ?? '', 0, 1) }}{{ substr($contract->customer?->last_name ?? '', 0, 1) }}
                                     </div>
                                 <div>
-                                    <h4 class="mb-1">{{ $contract->customer->first_name.' '.$contract->customer->last_name }}</h4>
-                                    <p class="mb-0 opacity-75">{{ $contract->customer->phone_number }}</p>
+                                    <h4 class="mb-1">{{ ($contract->customer?->first_name ?? '').' '.($contract->customer?->last_name ?? '') }}</h4>
+                                    <p class="mb-0 opacity-75">{{ $contract->customer?->phone_number ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -308,33 +308,33 @@
                         <tbody>
                             <tr>
                                 <th>Full Name</th>
-                                <td>{{ $contract->customer->first_name.' '.$contract->customer->last_name }}</td>
+                                <td>{{ ($contract->customer?->first_name ?? '').' '.($contract->customer?->last_name ?? '') }}</td>
                                 <th>Gender</th>
                                 <td>{{ $contract->customer?->gender?->name }}</td>
                             </tr>
                             <tr>
                                 <th>ID Number</th>
-                                <td>{{ $contract->customer->id_number}}</td>
+                                <td>{{ $contract->customer?->id_number ?? 'N/A'}}</td>
                                 <th>Date of Birth</th>
-                                <td>{{ date('d M Y',strtotime($contract->customer->dob))}}</td>
+                                <td>{{ $contract->customer?->dob ? date('d M Y',strtotime($contract->customer?->dob)) : 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Phone Number</th>
-                                <td>{{ $contract->customer->phone_number}}</td>
+                                <td>{{ $contract->customer?->phone_number ?? 'N/A'}}</td>
                                 <th>Email Address</th>
-                                <td>{{ $contract->customer->email}}</td>
+                                <td>{{ $contract->customer?->email ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Region</th>
-                                <td>{{ $contract->customer->region?->name }}</td>
+                                <td>{{ $contract->customer?->region?->name ?? 'N/A' }}</td>
                                 <th>District</th>
-                                <td>{{ $contract->customer->district?->name }}</td>
+                                <td>{{ $contract->customer?->district?->name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>Ward</th>
-                                <td>{{ $contract->customer->ward?->name }}</td>
+                                <td>{{ $contract->customer?->ward?->name ?? 'N/A' }}</td>
                                 <th>Resident Since</th>
-                                <td>{{ $contract->customer->resident_since }}</td>
+                                <td>{{ $contract->customer?->resident_since ?? 'N/A' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -355,7 +355,7 @@
                             </tr>
                             <tr>
                                 <th>Mandate Status</th>
-                                    <td>{{ $contract->customer_mandat?->status }}</td>
+                                    <td>{{ $contract->customer_mandate?->status ?? 'N/A' }}</td>
                                 <th>Mandate Reference</th>
                                 <td>{{ $contract->customer_mandate?->mandate_reference }}</td>
                             </tr>
@@ -374,21 +374,21 @@
                         <tbody>
                             <tr>
                                 <th>College Name</th>
-                                <td>{{ $contract->customer?->student->college?->name }}</td>
+                                <td>{{ $contract->customer?->student?->college?->name ?? 'N/A' }}</td>
                                 <th>Study Year</th>
-                                <td>{{ $contract->customer?->student?->study_year}}</td>
+                                <td>{{ $contract->customer?->student?->study_year ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Student Reg ID</th>
-                                <td>{{ $contract->customer?->student?->student_reg_id}}</td>
+                                <td>{{ $contract->customer?->student?->student_reg_id ?? 'N/A'}}</td>
                                 <th>Course</th>
-                                <td>{{ $contract->customer?->student?->course}}</td>
+                                <td>{{ $contract->customer?->student?->course ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Position</th>
                                 <td><span class="status-badge status-active">Student</span></td>
                                 <th>HESLB Beneficiary</th>
-                                <td>{{ $contract->customer?->student?->heslb_status}}</td>
+                                <td>{{ $contract->customer?->student?->heslb_status ?? 'N/A'}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -493,9 +493,9 @@
                                         </tr>
                                         <tr>
                                             <th>Start Date</th>
-                                            <td>{{ date('d M Y',strtotime($contract->start_date))}}</td>
+                                            <td>{{ $contract->start_date ? date('d M Y',strtotime($contract->start_date)) : 'N/A'}}</td>
                                             <th>Expected End Date</th>
-                                            <td>{{ date('d M Y',strtotime($contract->expected_end_date))}}</td>
+                                            <td>{{ $contract->expected_end_date ? date('d M Y',strtotime($contract->expected_end_date)) : 'N/A'}}</td>
                                         </tr>
                                         <tr>
                                             <th>Original Amount</th>

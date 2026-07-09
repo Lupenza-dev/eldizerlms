@@ -223,16 +223,16 @@
                     <div class="row align-items-center">
                         <div class="col-md-4">
                             <div class="d-flex align-items-center gap-3">
-                                {{-- @if($loan->customer->image)
-                                    <img src="{{ asset('storage').'/'.$loan->customer->image}}" alt="Customer" class="customer-avatar">
+                                {{-- @if($loan->customer?->image)
+                                    <img src="{{ asset('storage').'/'.$loan->customer?->image}}" alt="Customer" class="customer-avatar">
                                 @else --}}
                                     <div class="customer-avatar d-flex align-items-center justify-content-center" style="background: white; color: #667eea; font-size: 2rem; font-weight: bold;">
-                                        {{ substr($loan->customer->first_name, 0, 1) }}{{ substr($loan->customer->last_name, 0, 1) }}
+                                        {{ substr($loan->customer?->first_name ?? '', 0, 1) }}{{ substr($loan->customer?->last_name ?? '', 0, 1) }}
                                     </div>
                                 {{-- @endif --}}
                                 <div>
-                                    <h4 class="mb-1">{{ $loan->customer->first_name.' '.$loan->customer->last_name }}</h4>
-                                    <p class="mb-0 opacity-75">{{ $loan->customer->phone_number }}</p>
+                                    <h4 class="mb-1">{{ ($loan->customer?->first_name ?? '').' '.($loan->customer?->last_name ?? '') }}</h4>
+                                    <p class="mb-0 opacity-75">{{ $loan->customer?->phone_number ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -240,7 +240,7 @@
                             <h5 class="mb-2">Loan Application</h5>
                             <span class="loan-code">{{ $loan->loan_code }}</span>
                             <div class="mt-2">
-                                <small class="opacity-75">{{ date('d M Y', strtotime($loan->created_at)) }}</small>
+                                <small class="opacity-75">{{ $loan->created_at ? date('d M Y', strtotime($loan->created_at)) : 'N/A' }}</small>
                             </div>
                         </div>
                         <div class="col-md-4 text-end">
@@ -285,33 +285,33 @@
                         <tbody>
                             <tr>
                                 <th>Full Name</th>
-                                <td>{{ $loan->customer->first_name.' '.$loan->customer->last_name }}</td>
+                                <td>{{ ($loan->customer?->first_name ?? '').' '.($loan->customer?->last_name ?? '') }}</td>
                                 <th>Gender</th>
-                                <td>{{ $loan->customer->gender_id}}</td>
+                                <td>{{ $loan->customer?->gender_id ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>ID Number</th>
-                                <td>{{ $loan->customer->id_number}}</td>
+                                <td>{{ $loan->customer?->id_number ?? 'N/A'}}</td>
                                 <th>Date of Birth</th>
-                                <td>{{ date('d M Y',strtotime($loan->customer->dob))}}</td>
+                                <td>{{ $loan->customer?->dob ? date('d M Y',strtotime($loan->customer?->dob)) : 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Phone Number</th>
-                                <td>{{ $loan->customer->phone_number}}</td>
+                                <td>{{ $loan->customer?->phone_number ?? 'N/A'}}</td>
                                 <th>Email Address</th>
-                                <td>{{ $loan->customer->email}}</td>
+                                <td>{{ $loan->customer?->email ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Region</th>
-                                <td>{{ $loan->customer->region->name }}</td>
+                                <td>{{ $loan->customer?->region?->name ?? 'N/A' }}</td>
                                 <th>District</th>
-                                <td>{{ $loan->customer->district->name }}</td>
+                                <td>{{ $loan->customer?->district?->name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>Ward</th>
-                                <td>{{ $loan->customer->ward->name }}</td>
+                                <td>{{ $loan->customer?->ward?->name ?? 'N/A' }}</td>
                                 <th>Resident Since</th>
-                                <td>{{ $loan->customer->resident_since }}</td>
+                                <td>{{ $loan->customer?->resident_since ?? 'N/A' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -351,21 +351,21 @@
                         <tbody>
                             <tr>
                                 <th>College Name</th>
-                                <td>{{ $loan->customer?->student->college?->name }}</td>
+                                <td>{{ $loan->customer?->student?->college?->name ?? 'N/A' }}</td>
                                 <th>Study Year</th>
-                                <td>{{ $loan->customer?->student?->study_year}}</td>
+                                <td>{{ $loan->customer?->student?->study_year ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Student Reg ID</th>
-                                <td>{{ $loan->customer?->student?->student_reg_id}}</td>
+                                <td>{{ $loan->customer?->student?->student_reg_id ?? 'N/A'}}</td>
                                 <th>Course</th>
-                                <td>{{ $loan->customer?->student?->course}}</td>
+                                <td>{{ $loan->customer?->student?->course ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>Position</th>
                                 <td><span class="status-badge status-approved">Student</span></td>
                                 <th>HESLB Beneficiary</th>
-                                <td>{{ $loan->customer?->student?->heslb_status}}</td>
+                                <td>{{ $loan->customer?->student?->heslb_status ?? 'N/A'}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -425,7 +425,7 @@
                         <tbody>
                             <tr>
                                 <th>Application Date</th>
-                                <td>{{ date('d M Y',strtotime($loan->created_at))}}</td>
+                                <td>{{ $loan->created_at ? date('d M Y',strtotime($loan->created_at)) : 'N/A'}}</td>
                                 <th>Loan Level</th>
                                 <td>{!! $loan->level_formatted !!}</td>
                             </tr>
@@ -468,7 +468,7 @@
                                 <th>Agent Name</th>
                                 <td>{{ $loan->loan_approval?->agent?->name ?: 'Not Assigned' }}</td>
                                 <th>Agent College</th>
-                                <td>{{ $loan->customer?->student->college?->name  ?: 'N/A' }}</td>
+                                <td>{{ $loan->customer?->student?->college?->name  ?: 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>Phone Number</th>
@@ -490,7 +490,7 @@
                                 <th>Remark</th>
                                 <td>{{ $loan->loan_approval?->remark ?: 'No remarks' }}</td>
                                 <th>Attended Date</th>
-                                <td>{{ $loan->loan_approval?->attended_date ? date('d M Y',strtotime($loan->loan_approval->attended_date)) : 'Not attended' }}</td>
+                                <td>{{ $loan->loan_approval?->attended_date ? date('d M Y',strtotime($loan->loan_approval?->attended_date)) : 'Not attended' }}</td>
                             </tr>
                         </tbody>
                     </table>

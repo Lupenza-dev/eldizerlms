@@ -127,13 +127,13 @@
                         @foreach ($contracts as $contract)
                             <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
                                 <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($contract->start_date)) }}</td>
-                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($contract->expected_end_date)) }}</td>
-                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $contract->customer->first_name.' '.$contract->customer->middle_name.' '.$contract->customer->last_name }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ $contract->start_date ? date('d M Y', strtotime($contract->start_date)) : 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ $contract->expected_end_date ? date('d M Y', strtotime($contract->expected_end_date)) : 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ ($contract->customer?->first_name ?? '').' '.($contract->customer?->middle_name ?? '').' '.($contract->customer?->last_name ?? '') }}</td>
                                 <td class="px-4 py-3 text-sm text-slate-500">
                                     <div class="flex flex-col gap-0.5">
-                                        <span>{{ $contract->customer->email }}</span>
-                                        <span class="text-slate-400 text-xs">{{ $contract->customer->phone_number }}</span>
+                                        <span>{{ $contract->customer?->email ?? 'N/A' }}</span>
+                                        <span class="text-slate-400 text-xs">{{ $contract->customer?->phone_number ?? 'N/A' }}</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ number_format($contract->amount) }}</td>
