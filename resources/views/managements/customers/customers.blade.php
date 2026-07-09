@@ -115,7 +115,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Gender</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">ID Number</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Address</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">College</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Customer Type</th>
                                 @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Roles</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Actions</th>
@@ -154,13 +154,7 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm text-slate-500">{!! $customer->address !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
-                                    @if($customer->student?->college?->name)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-700">
-                                            {{ $customer->student->college->name }}
-                                        </span>
-                                    @else
-                                        <span class="text-xs text-slate-400">N/A</span>
-                                    @endif
+                                   {{ $customer->customer_reg_type}}
                                 </td>
                                 @if (Auth::user()->hasRole(['Admin','Super Admin']))
                                 <td class="px-4 py-3 whitespace-nowrap">

@@ -152,5 +152,20 @@ class Customer extends Model
         return $this->hasOne(User::class,'customer_id','id');
     }
 
+    public function getCustomerRegTypeAttribute(){
+        switch($this->customer_type){
+            case 1:
+                return 'Student';
+            case 2:
+                return 'Intern';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    public function intern(){
+        return $this->hasOne(Intern::class,'customer_id','id');
+    }
+
 
 }

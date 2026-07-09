@@ -370,6 +370,51 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- hos detail --}}
+                <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-plus-medical"></i>
+                        Hospital Information
+                    </h6>
+                    @if($loan->customer?->intern)
+                        <table class="info-table">
+                            <tbody>
+                                <tr>
+                                    <th>Hospital Name</th>
+                                    <td>{{ $loan->customer?->intern?->hospital?->name }}</td>
+                                    <th>Professional Title</th>
+                                    <td>{{ $loan->customer?->intern?->professional }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <td>{{ $loan->customer?->intern?->start_date }}</td>
+                                    <th>End Date</th>
+                                    <td>{{ $loan->customer?->intern?->end_date }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Letter</th>
+                                    <td colspan="3">
+                                        @if($loan->customer?->intern?->letter)
+                                            <a href="{{ asset('storage/' . $loan->customer?->intern?->letter) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                                                <i class='bx bx-file'></i>
+                                                View Letter
+                                            </a>
+                                        @else
+                                            <span class="text-sm text-slate-400">No letter uploaded</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="empty-state">
+                            <i class="bx bx-plus-medical" style="font-size: 2rem; color: #dee2e6;"></i>
+                            <p class="mt-2">No Hospital information available</p>
+                            <small class="text-muted">Hospital details will be displayed here once added</small>
+                        </div>
+                    @endif
+                </div>
                 <!-- Loan Application Details Section -->
                 <div class="info-card">
                     <h6 class="section-title">

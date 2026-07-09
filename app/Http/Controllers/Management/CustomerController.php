@@ -84,7 +84,7 @@ class CustomerController extends Controller
      */
     public function show(string $uuid)
     {
-        $customer =Customer::with('region','district','ward','marital_status','student','student.college')
+        $customer =Customer::with('region','district','ward','marital_status','student','student.college','intern')
         ->where('uuid',$uuid)
         ->first();
        

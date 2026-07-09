@@ -25,9 +25,9 @@ class LoanContractController extends Controller
                     ->whereHas('customer',function ($query) use ($requests){
                         $query->withfilters($requests);
                     })
-                    ->whereHas('student',function ($query) use ($requests ){
-                        $query->withfilters($requests);
-                    })
+                    // ->whereHas('student',function ($query) use ($requests ){
+                    //     $query->withfilters($requests);
+                    // })
                     ->when($filter,function ($query){
                         $query->where('college_id',getCollegeId());
                     })
