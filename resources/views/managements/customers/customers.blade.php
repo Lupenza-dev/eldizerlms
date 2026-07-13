@@ -92,7 +92,7 @@
                     @endif
                 </div>
                 <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
-                    <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" formaction="{{ route('customers.index')}}" type="submit">
+                    <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="search-btn" type="submit">
                         <i class="bx bx-search"></i> Search
                     </button>
                     @if (Auth::user()->hasRole(['Admin','Super Admin']))
@@ -106,7 +106,7 @@
             {{-- Table --}}
             <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table w-full" style="width:100%">
+                    <table id="customers_table" class="table w-full" style="width:100%">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600">
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
@@ -122,80 +122,6 @@
                                 @endif
                             </tr>
                         </thead>
-                        <tbody>
-                        @foreach ($customers as $customer)
-                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
-                                <td class="px-4 py-3 text-sm font-semibold text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($customer->created_at)) }}</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex flex-col gap-0.5">
-                                        <span class="text-sm font-semibold text-slate-800">{{ $customer->customer_name }}</span>
-                                        <span class="text-xs text-slate-500 flex items-center gap-1">
-                                            <i class="bx bx-phone text-cyan-500"></i>{{ $customer->phone_number }}
-                                        </span>
-                                        <span class="text-xs text-slate-500 flex items-center gap-1">
-                                            <i class="bx bx-envelope text-cyan-500"></i>{{ $customer->email }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    @if($customer->gender?->name == 'Male')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
-                                            <i class="bx bx-male mr-1"></i> Male
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-200">
-                                            <i class="bx bx-female mr-1"></i> {{ $customer->gender?->name ?? 'N/A' }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <span class="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">{{ $customer->id_number }}</span>
-                                </td>
-                                <td class="px-4 py-3 text-sm text-slate-500">{!! $customer->address !!}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                   {{ $customer->customer_reg_type}}
-                                </td>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    @foreach ($customer->user?->roles ?? [] as $role)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mr-1
-                                            {{ strtolower($role->name) == 'admin' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-cyan-100 text-cyan-700 border border-cyan-200' }}">
-                                            {{ $role->name }}
-                                        </span>
-                                    @endforeach
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div class="btn-group">
-                                        <button type="button" class="inline-flex items-center gap-1 bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-l-lg transition-colors">Actions</button>
-                                        <button type="button" class="bg-slate-700 hover:bg-slate-800 text-white px-2 py-1.5 rounded-r-lg border-l border-slate-600 dropdown-toggle dropdown-toggle-split transition-colors" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="visually-hidden">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
-                                            <li>
-                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="{{ $customer->id }}" data-name="{{ $customer->customer_name }}" data-email="{{ $customer->email }}">
-                                                    <i class="bx bx-user-voice text-cyan-500"></i> Manage Roles
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="{{ route('customers.show',$customer->uuid) }}">
-                                                    <i class="bx bx-user text-blue-500"></i> View Profile
-                                                </a>
-                                            </li>
-                                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                                            <li>
-                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="{{ route('customers.edit',$customer->uuid) }}">
-                                                    <i class="bx bx-edit text-emerald-500"></i> Edit Customer
-                                                </a>
-                                            </li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </td>
-                                @endif
-                            </tr>
-                        @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -271,11 +197,69 @@
         $('#submit-form').toggle();
     })
 
-    $('.role-btn').on('click',function(){
+    $(document).on('click','.role-btn',function(){
         $('#id').val($(this).data('id'));
         $('#name').val($(this).data('name'));
         $('#email').val($(this).data('email'));
     })
+</script>
+<script>
+    $(document).ready(function(){
+        var customersTable = $('#customers_table').DataTable({
+            processing: true,
+            serverSide: true,
+            searchDelay: 500,
+            ajax: {
+                url: "{{ route('customers.data') }}",
+                data: function (d) {
+                    d.start_date     = $('#submit-form [name=start_date]').val();
+                    d.end_date       = $('#submit-form [name=end_date]').val();
+                    d.phone_number   = $('#submit-form [name=phone_number]').val();
+                    d.id_number      = $('#submit-form [name=id_number]').val();
+                    d.student_reg_id = $('#submit-form [name=student_reg_id]').val();
+                    d.gender_id      = $('#submit-form [name=gender_id]').val();
+                    d.college_id     = $('#submit-form [name=college_id]').val();
+                    d.region_id      = $('#submit-form [name=region_id]').val();
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false, orderable: false},
+                {data: 'reg_date', name: 'created_at', searchable: false},
+                {data: 'customer_info', name: 'customer_info', searchable: true, orderable: false},
+                {data: 'gender', name: 'gender', searchable: false, orderable: false},
+                {data: 'id_number', name: 'id_number', searchable: true, orderable: false},
+                {data: 'address', name: 'address', searchable: false, orderable: false},
+                {data: 'customer_type', name: 'customer_type', searchable: false, orderable: false},
+                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                {data: 'roles', name: 'roles', searchable: false, orderable: false},
+                {data: 'actions', name: 'actions', searchable: false, orderable: false},
+                @endif
+            ],
+            order: [[1, 'desc']],
+            language: {
+                processing: '<i class="bx bx-loader bx-spin me-2"></i>Processing...',
+                search: '<i class="bx bx-search me-2"></i>Search:',
+                lengthMenu: 'Show _MENU_ entries',
+                info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+                paginate: {
+                    first: '<i class="bx bx-chevrons-left"></i>',
+                    last: '<i class="bx bx-chevrons-right"></i>',
+                    next: '<i class="bx bx-chevron-right"></i>',
+                    previous: '<i class="bx bx-chevron-left"></i>'
+                }
+            },
+            pageLength: 25,
+            responsive: true,
+            dom: '<"row mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                 '<"row"<"col-sm-12"tr>>' +
+                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+        });
+
+        $('#search-btn').on('click',function(e){
+            e.preventDefault();
+            customersTable.ajax.reload();
+        });
+    });
 </script>
 <script>
     $(document).ready(function(){

@@ -78,6 +78,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
     Route::post('delete/device',[DeviceController::class,'destroyDevice'])->name('device.delete');
     Route::get('beneficaries/data',[BenefeciariesController::class,'getBeneficariesData'])->name('beneficaries.data');
+    Route::get('customers/data',[CustomerController::class,'getCustomersData'])->name('customers.data');
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
@@ -97,6 +98,8 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('cancel/mandate',[PaymentController::class,'cancelMandate'])->name('cancel.mandate');
     Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
     Route::get('customer/loans/mandates',[PaymentController::class,'customerLoansMandates'])->name('customer.loans.mandates');
+    Route::post('mandate/resend/otp',[PaymentController::class,'resendMandateOtp'])->name('mandate.resend.otp');
+    Route::post('mandate/verify/otp',[PaymentController::class,'verifyMandateOtp'])->name('mandate.verify.otp');
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,

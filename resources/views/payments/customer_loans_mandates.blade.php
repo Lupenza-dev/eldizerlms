@@ -70,22 +70,76 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
-                                    {{-- <a href="" class="text-decoration-none">
-                                        <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
-                                            <i class="bx bx-show text-sm"></i> View
+                                    <div class="btn-group">
+                                        <button type="button" class="inline-flex items-center gap-1 bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-l-lg transition-colors">Actions</button>
+                                        <button type="button" class="bg-slate-700 hover:bg-slate-800 text-white px-2 py-1.5 rounded-r-lg border-l border-slate-600 dropdown-toggle dropdown-toggle-split transition-colors" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
                                         </button>
-                                    </a> --}}
-                                    <a href="{{ route('view.payment.mandate',$payment->mandate_reference)}}" class="text-decoration-none">
-                                        <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
-                                            <i class="bx bx-show text-sm"></i> View
-                                        </button>
-                                    </a>
+                                        <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
+                                            <li>
+                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="{{ route('view.payment.mandate',$payment->mandate_reference)}}">
+                                                    <i class="bx bx-show text-blue-500"></i> View
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm resend-otp-btn" href="javascript:;" data-reference="{{ $payment->mandate_reference }}">
+                                                    <i class="bx bx-refresh text-emerald-500"></i> Resend OTP
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item flex items-center gap-2 py-2 text-sm verify-otp-btn" href="javascript:;" data-bs-toggle="modal" data-bs-target="#verifyOtpModal" data-reference="{{ $payment->mandate_reference }}">
+                                                    <i class="bx bx-check-shield text-cyan-500"></i> Verify OTP
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Verify OTP Modal --}}
+<div class="modal fade" id="verifyOtpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-check-shield text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Verify OTP</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-6">
+                <form action="" id="verify_otp_form">
+                    <input type="hidden" name="mandate_reference" id="otp_mandate_reference">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mandate Reference</label>
+                            <input type="text" id="otp_mandate_reference_display" class="form-control rounded-lg text-sm bg-slate-50" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">OTP</label>
+                            <input type="text" name="otp" class="form-control rounded-lg text-sm" placeholder="Enter OTP" required>
+                        </div>
+                        <div id="verify_otp_alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="verify_otp_btn">
+                            <i class="bx bx-check-shield"></i> Verify
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -101,3 +155,76 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+@push('scripts')
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $(document).on('click','.resend-otp-btn',function(){
+        var btn = $(this);
+        $.ajax({
+            type:'POST',
+            url:"{{ route('mandate.resend.otp') }}",
+            data:{ mandate_reference: btn.data('reference') },
+            success:function(response){
+                alert(response.message);
+            },
+            error:function(response){
+                alert(response.responseJSON?.message ?? 'Failed to resend OTP');
+            },
+            beforeSend:function(){
+                btn.addClass('disabled').html('<i class="bx bx-loader bx-spin text-emerald-500"></i> Sending...');
+            },
+            complete:function(){
+                btn.removeClass('disabled').html('<i class="bx bx-refresh text-emerald-500"></i> Resend OTP');
+            }
+        });
+    });
+
+    $(document).on('click','.verify-otp-btn',function(){
+        $('#otp_mandate_reference').val($(this).data('reference'));
+        $('#otp_mandate_reference_display').val($(this).data('reference'));
+        $('#verify_otp_alert').html('');
+        $('#verify_otp_form input[name=otp]').val('');
+    });
+
+    $('#verify_otp_form').on('submit',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url:"{{ route('mandate.verify.otp') }}",
+            data : new FormData(this),
+            contentType: false,
+            cache: false,
+            processData : false,
+            success:function(response){
+                $('#verify_otp_alert').html('<div class="alert alert-success">'+response.message+'</div>');
+                setTimeout(function(){
+                    location.reload();
+                },1000);
+            },
+            error:function(response){
+                if (jQuery.type(response.responseJSON?.errors) == "object") {
+                    $('#verify_otp_alert').html('');
+                    $.each(response.responseJSON.errors,function(key,value){
+                        $('#verify_otp_alert').append('<div class="alert alert-danger">'+value+'</div>');
+                    });
+                } else {
+                    $('#verify_otp_alert').html('<div class="alert alert-danger">'+(response.responseJSON?.message ?? 'Failed to verify OTP')+'</div>');
+                }
+            },
+            beforeSend : function(){
+                $('#verify_otp_btn').html('<i class="bx bx-loader bx-spin"></i> Verifying...');
+                $('#verify_otp_btn').attr('disabled', true);
+            },
+            complete : function(){
+                $('#verify_otp_btn').html('<i class="bx bx-check-shield"></i> Verify');
+                $('#verify_otp_btn').attr('disabled', false);
+            }
+        });
+    });
+</script>
+@endpush
