@@ -180,6 +180,10 @@ class PaymentController extends Controller
     {
         $payment = PaymentMandate::with('customer_mandate', 'customer_mandate.customer')->where('reference', $reference)->first();
         $collections = MandatePaymentCollection::where('mandate_reference', $reference)->get();
+
+        if (!$payment) {
+            return redirect()->back()->with('error', 'Payment mandate not found');
+        }
         return view('payments.mandate_profile', compact('payment', 'collections'));
     }
 
@@ -233,28 +237,32 @@ class PaymentController extends Controller
     public function resendMandateOtp(Request $request)
     {
         $valid_data = $this->validate($request, [
-            'mandate_reference' => 'required',
+            'reference' => 'required',
         ]);
 
         $token_request = getApiToken();
         $response = Http::withToken($token_request['data']['token'])
             ->post(
-                env('SOLOCODE_BASE_URL') . '' . 'collections/filtering',
+                env('SOLOCODE_BASE_URL') . '' . 'mandate/otp/create',
                 [
-                    'reference' => $this->reference
+                    'reference' => $valid_data['reference']
                 ]
             );
         $result = json_decode($response, true);
         Log::info($response);
         if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP Resent Successfully',
+            ], 200);
         } else {
-            Log::error("load all payment collection failed,$response");
-        }
+            Log::error("resend mandate otp failed,$response");
 
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP Resent Successfully',
-        ], 200);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resend OTP',
+            ], 500);
+        }
     }
 
     public function verifyMandateOtp(Request $request)
@@ -276,11 +284,10 @@ class PaymentController extends Controller
         $result = json_decode($response, true);
         Log::info($response);
         if ($result['success']) {
-         return response()->json([
-            'success' => true,
-            'message' => 'OTP Verified Successfully',
-        ], 200);
-            
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP Verified Successfully',
+            ], 200);
         } else {
             Log::error("OTP verification failed,$response");
             return response()->json([
@@ -288,7 +295,5 @@ class PaymentController extends Controller
                 'error' => $result['message'] ?? 'OTP verification failed',
             ], 500);
         }
-
-       
     }
 }
