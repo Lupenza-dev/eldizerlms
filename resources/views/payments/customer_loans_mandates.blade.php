@@ -81,6 +81,7 @@
                                                     <i class="bx bx-show text-blue-500"></i> View
                                                 </a>
                                             </li>
+                                            @if ($payment->customer_bank_name == "NMB")
                                             <li>
                                                 <a class="dropdown-item flex items-center gap-2 py-2 text-sm resend-otp-btn" href="javascript:;" data-reference="{{ $payment->mandate_reference }}">
                                                     <i class="bx bx-refresh text-emerald-500"></i> Resend OTP
@@ -90,7 +91,9 @@
                                                 <a class="dropdown-item flex items-center gap-2 py-2 text-sm verify-otp-btn" href="javascript:;" data-bs-toggle="modal" data-bs-target="#verifyOtpModal" data-reference="{{ $payment->mandate_reference }}">
                                                     <i class="bx bx-check-shield text-cyan-500"></i> Verify OTP
                                                 </a>
-                                            </li>
+                                            </li>  
+                                            @endif
+                                           
                                         </ul>
                                     </div>
                                 </td>
