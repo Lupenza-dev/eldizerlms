@@ -10,7 +10,6 @@ use App\Models\Entities\District;
 use App\Models\Entities\Ward;
 use App\Models\Management\College;
 use App\Models\Management\Student;
-use Auth;
 use App\Http\Resources\AgentResource;
 use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\DeviceCategoryResource;
@@ -21,6 +20,7 @@ use App\Models\Loan\LoanApplication;
 use App\Http\Resources\LoanApplicationResource;
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\TermResource;
+use App\Models\Loan\LoanContract;
 use App\Models\Management\Advert;
 use App\Models\Management\Assignment;
 use App\Models\Management\AssignmentParticipant;
@@ -31,6 +31,7 @@ use App\Models\Management\Group;
 use App\Models\Management\Hospital;
 use App\Models\Management\Term;
 use App\Models\Payment\Payment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
@@ -174,6 +175,18 @@ class HomeController extends Controller
          return response()->json([
             'success' =>true,
             'data'    =>HospitalResource::collection(Hospital::latest()->get()),
+        ]);   
+    }
+
+    public function dashboard(){
+        return response()->json([
+            'success' =>true,
+            'data'    =>[
+                'pending_applications' =>LoanApplication::where('customer_id',Auth::user()->customer_id)->where('level','Application')->count(),
+                'approved_applications' =>LoanContract::where('customer_id',Auth::user()->customer_id)->count(),
+                'outstanding_loans' =>LoanContract::where('customer_id',Auth::user()->customer_id)->sum('outstanding_amount'),
+                'total_paid_amount' =>LoanContract::where('customer_id',Auth::user()->customer_id)->sum('current_balance'),
+            ],
         ]);   
     }
 

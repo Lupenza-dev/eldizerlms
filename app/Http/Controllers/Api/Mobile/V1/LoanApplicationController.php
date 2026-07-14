@@ -15,6 +15,7 @@ use Str;
 use App\Http\Resources\LoanApplicationResource;
 use App\Models\Management\Customer;
 use App\Models\Management\CustomerBankDetail;
+use App\Models\Payment\PaymentMandate;
 
 class LoanApplicationController extends Controller
 {
@@ -153,5 +154,43 @@ class LoanApplicationController extends Controller
         );
 
 
+    }
+
+    public function eMakatocallBack(Request $request)
+    {
+        if ($request['callback_type'] == 'MANDATE_STATUS') {
+              PaymentMandate::updateOrCreate([
+                'reference' =>$request['reference']
+            ],[
+                'channel' =>$request['channel'],
+                'periodicity' =>$request['mandate']['periodicity'],
+                'debit_type' =>$request['mandate']['debit_type'],
+                'installment_amount' =>$request['mandate']['installment_amount'],
+                'min_installment_amount' =>$request['mandate']['min_installment_amount'],
+                'max_installment_amount' =>$request['mandate']['max_installment_amount'],
+                'total_amount' =>$request['mandate']['total_amount'],
+                'paid_amount' =>$request['mandate']['paid_amount'],
+                'outstanding_amount' =>$request['mandate']['outstanding_amount'],
+                'number_of_installment' =>$request['mandate']['number_of_installment'],
+                'start_date' =>$request['mandate']['start_date'],
+                'end_date' =>$request['mandate']['end_date'],
+                'contract_status' =>$request['mandate']['contract_status'] ?? "Status",
+                'lifecycle_status' =>$request['mandate']['lifecycle_status'] ?? null,
+                'remarks' =>$request['mandate']['remarks'] ?? null,
+                'approved' =>$request['mandate']['approved'] ?? "Approved",
+            ]);
+        } else if ($request['callback_type'] == 'MANDATE_STATUS'){
+
+        }
+        else {
+            # code...
+        }
+        
+        // Handle eMakato callback here
+        return response()->json([
+            'success' => true,
+            'message' => 'Callback received successfully',
+            'data' => $request->all()
+        ]);
     }
 }

@@ -25,6 +25,7 @@ use App\Http\Controllers\HomeController as TestController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::get('call-back',[LoanApplicationController::class,'eMakatocallBack']);
 Route::post('upload-loans',[TestController::class,'uploadLoans']);
 Route::get('verify-vrp',[NmbController::class,'verifyVrp']);
 Route::get('get-assignments',[HomeController::class,'getAssignments']);
@@ -67,6 +68,7 @@ Route::group(['prefix'=>'V2'], function(){
     Route::get('get-districts/{region_id}',[HomeController::class,'getDistricts']);
     Route::get('get-wards/{district_id}',[HomeController::class,'getWards']);
     Route::group(['middleware'=>'auth:api'], function(){
+        Route::get('dashboard',[HomeController::class,'dashboard']);
         Route::get('get-devices',[HomeController::class,'getDevices']);
         Route::post('student-registration',[CustomerController::class,'storeStudent']);
         Route::post('loan-application',[LoanApplicationController::class,'loanApplication']);
