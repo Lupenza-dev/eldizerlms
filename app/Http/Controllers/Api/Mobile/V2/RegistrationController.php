@@ -51,7 +51,7 @@ class RegistrationController extends Controller
                 'first_name'   =>$valid['first_name'],
                 'middle_name'  =>$valid['middle_name'],
                 'last_name'    =>$valid['last_name'],
-                'phone_number' =>'255'.''.$valid['phone_number'],
+                'phone_number' =>'255'.''.substr($valid['phone_number'], -9),
                 'email'        =>$valid['email'],
                 'customer_type'   =>$valid['reg_type'],
                 'registration_stage' =>1,
@@ -61,7 +61,7 @@ class RegistrationController extends Controller
             $user =User::create([
                 'name'  =>ucwords($valid['first_name'].' '.$valid['middle_name'].' '.$valid['last_name']),
                 'email' =>$valid['email'],
-                'phone_number' =>'255'.''.$valid['phone_number'],
+                'phone_number' =>'255'.''.substr($valid['phone_number'], -9),
                 'password'     =>Hash::make($valid['password']),
                 'uuid'         =>(string)Str::orderedUuid(),
                 'device_token' =>$expo_push_token,

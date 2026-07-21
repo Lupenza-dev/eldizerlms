@@ -77,9 +77,15 @@
                                         </button>
                                         <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
                                             <li>
+                                                @if($payment->mandate_reference)
                                                 <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="{{ route('view.payment.mandate',$payment->mandate_reference)}}">
                                                     <i class="bx bx-show text-blue-500"></i> View
                                                 </a>
+                                                @else
+                                                <span class="dropdown-item flex items-center gap-2 py-2 text-sm text-slate-400">
+                                                    <i class="bx bx-show text-slate-400"></i> View
+                                                </span>
+                                                @endif
                                             </li>
                                             @if ($payment->customer_bank_name == "NMB")
                                             <li>

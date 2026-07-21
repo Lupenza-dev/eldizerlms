@@ -80,11 +80,17 @@
                                         </span>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
+                                    @if($payment->reference)
                                     <a href="{{ route('view.payment.mandate',$payment->reference)}}" class="text-decoration-none">
                                         <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                                             <i class="bx bx-show text-sm"></i> View
                                         </button>
                                     </a>
+                                    @else
+                                    <button class="inline-flex items-center gap-1 bg-slate-300 text-white text-xs font-medium px-3 py-1.5 rounded-lg" disabled>
+                                        <i class="bx bx-show text-sm"></i> View
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
