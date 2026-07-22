@@ -32,6 +32,19 @@
             <div class="p-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 
+                      <a href="{{ route('loan.applications.waiting.mandate')}}" class="group block">
+                        <div class="flex items-center gap-4 p-5 rounded-xl border border-slate-200 hover:border-violet-300 hover:shadow-md hover:bg-violet-50/40 transition-all duration-200">
+                            <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors shrink-0">
+                                <i class="bx bx-time text-violet-600 text-2xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h5 class="font-semibold text-slate-800 mb-0.5 text-base leading-tight">Waiting Mandate Confirmation</h5>
+                                <p class="text-xs text-slate-500 mb-0">Loan Applications Pending Mandate</p>
+                            </div>
+                            <i class="bx bx-chevron-right text-slate-300 text-2xl group-hover:text-violet-500 group-hover:translate-x-1 transition-all shrink-0"></i>
+                        </div>
+                    </a>
+
                     <a href="{{ route('loan.applications')}}" class="group block">
                         <div class="flex items-center gap-4 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md hover:bg-blue-50/40 transition-all duration-200">
                             <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors shrink-0">
@@ -58,18 +71,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('loan.applications.waiting.mandate')}}" class="group block">
-                        <div class="flex items-center gap-4 p-5 rounded-xl border border-slate-200 hover:border-violet-300 hover:shadow-md hover:bg-violet-50/40 transition-all duration-200">
-                            <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors shrink-0">
-                                <i class="bx bx-time text-violet-600 text-2xl"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h5 class="font-semibold text-slate-800 mb-0.5 text-base leading-tight">Waiting Mandate Confirmation</h5>
-                                <p class="text-xs text-slate-500 mb-0">Loan Applications Pending Mandate</p>
-                            </div>
-                            <i class="bx bx-chevron-right text-slate-300 text-2xl group-hover:text-violet-500 group-hover:translate-x-1 transition-all shrink-0"></i>
-                        </div>
-                    </a>
+                  
 
                 </div>
             </div>
