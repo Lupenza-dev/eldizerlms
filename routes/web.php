@@ -51,7 +51,10 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('password/change',[LoginController::class,'passwordChange'])->name('password.change');
     Route::get('bar/chart',[DashboardController::class,'barChart'])->name('admin.bar.chart');
     Route::post('bar/charts',[DashboardController::class,'barCharts'])->name('admin.bar.charts');
+    Route::get('loan/management',[LoanApplicationController::class,'loanManagement'])->name('loan.management');
     Route::get('loan/applications',[LoanApplicationController::class,'index'])->name('loan.applications');
+    Route::get('loan/applications/waiting/mandate',[LoanApplicationController::class,'waitingMandateConfirmation'])->name('loan.applications.waiting.mandate');
+    Route::post('loan/application/confirm/mandate',[LoanApplicationController::class,'confirmMandate'])->name('confirm.mandate.loan.application');
     Route::get('loan/application/profile/{uuid}',[LoanApplicationController::class,'profile'])->name('loan.profile');
     Route::post('reject/loan/application',[LoanApplicationController::class,'rejectApplication'])->name('reject.loan.application');
     Route::post('approve/loan/application',[LoanApplicationController::class,'approveApplication'])->name('approve.loan.application');

@@ -5,7 +5,7 @@
         {{-- Breadcrumb --}}
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
             <div class="breadcrumb-title pe-3">
-                <span class="text-lg font-bold text-slate-700">Loan Applications</span>
+                <span class="text-lg font-bold text-slate-700">{{ $page_title ?? 'Loan Applications' }}</span>
             </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
@@ -25,7 +25,7 @@
                     <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
                         <i class="bx bx-file text-white text-xl"></i>
                     </div>
-                    <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Loan Applications</h6>
+                    <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">{{ $page_title ?? 'Loan Applications' }}</h6>
                 </div>
                 <button class="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" id="filter-btn">
                     <i class="bx bx-filter text-lg"></i> Custom Filter
@@ -82,7 +82,7 @@
                         <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
                     </div>
                     <div class="flex items-end justify-end gap-2">
-                        <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" formaction="{{ route('loan.applications')}}" type="submit">
+                        <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" formaction="{{ $search_route ?? route('loan.applications')}}" type="submit">
                             <i class="bx bx-search"></i> Search
                         </button>
                         @if (Auth::user()->hasRole(['Admin','Super Admin']))
@@ -138,17 +138,78 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $loan->level_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
-                                    <a href="{{ route('loan.profile',$loan->uuid)}}" class="text-decoration-none">
-                                        <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors" title="View Profile">
-                                            <i class="bx bx-user text-sm"></i> View
+                                    <div class="btn-group">
+                                        <button type="button" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class='bx bx-cog'></i> Actions
                                         </button>
-                                    </a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('loan.profile',$loan->uuid)}}">
+                                                    <i class='bx bx-user me-2'></i> View
+                                                </a>
+                                            </li>
+                                            @if ($loan->is_mandate_sent)
+                                            <li>
+                                                <button type="button" class="dropdown-item confirm-mandate-btn" data-bs-toggle="modal" data-bs-target="#confirmMandateModal"
+                                                    data-loan-uuid="{{ $loan->uuid }}"
+                                                    data-customer-name="{{ $loan->customer->first_name.' '.$loan->customer->last_name }}"
+                                                    data-loan-amount="{{ number_format($loan->loan_amount) }}"
+                                                    data-installment-amount="{{ number_format($loan->installment_amount) }}"
+                                                    data-created-at="{{ $loan->created_at ? date('Y-m-d', strtotime($loan->created_at)) : '' }}">
+                                                    <i class='bx bx-check me-2'></i> Confirm Mandate
+                                                </button>
+                                            </li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmMandateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Mandate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="confirm_mandate_form">
+                    @csrf
+                    <input type="hidden" name="loan_uuid" id="mandate_loan_uuid">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" id="mandate_customer_name" readonly>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Total Loan Amount</label>
+                            <input type="text" class="form-control" id="mandate_loan_amount" readonly>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Installment Amount</label>
+                            <input type="text" class="form-control" id="mandate_installment_amount" readonly>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Created At <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="created_at" id="mandate_created_at" required>
+                        </div>
+                    </div>
+                    <div class="col-md-12" id="confirm_mandate_alert" style="margin-top: 10px">
+
+                    </div>
+                    <div class="col-md-12 mt-4" style="text-align:right">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-x"></span> Close</button>
+                        <button type="submit" class="btn btn-success" id="confirm_mandate_btn"> <span class="bx bx-check"></span> Confirm Mandate</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -164,6 +225,64 @@ document.addEventListener('DOMContentLoaded', function() {
             submitForm.style.display = submitForm.style.display === 'none' ? 'block' : 'none';
         });
     }
+
+    document.querySelectorAll('.confirm-mandate-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('mandate_loan_uuid').value = this.dataset.loanUuid;
+            document.getElementById('mandate_customer_name').value = this.dataset.customerName;
+            document.getElementById('mandate_loan_amount').value = this.dataset.loanAmount;
+            document.getElementById('mandate_installment_amount').value = this.dataset.installmentAmount;
+            document.getElementById('mandate_created_at').value = this.dataset.createdAt;
+            document.getElementById('confirm_mandate_alert').innerHTML = '';
+        });
+    });
+
+    $(document).ready(function(){
+        $('#confirm_mandate_form').on('submit',function(e){
+            e.preventDefault();
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type:'POST',
+                url:"{{ route('confirm.mandate.loan.application') }}",
+                data : new FormData(this),
+                contentType: false,
+                cache: false,
+                processData : false,
+                success:function(response){
+                    console.log(response);
+                    $('#confirm_mandate_alert').html('<div class="alert alert-success">'+response.message+'</div>');
+                    setTimeout(function(){
+                        location.reload();
+                    },500);
+                },
+                error:function(response){
+                    console.log(response.responseText);
+                    if (jQuery.type(response.responseJSON.errors) == "object") {
+                        $('#confirm_mandate_alert').html('');
+                        $.each(response.responseJSON.errors,function(key,value){
+                            $('#confirm_mandate_alert').append('<div class="alert alert-danger">'+value+'</div>');
+                        });
+                    } else {
+                        $('#confirm_mandate_alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
+                    }
+                },
+                beforeSend : function(){
+                    $('#confirm_mandate_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> Loading .........');
+                    $('#confirm_mandate_btn').attr('disabled', true);
+                },
+                complete : function(){
+                    $('#confirm_mandate_btn').html('<i class="bx bx-check"></i> Confirm Mandate');
+                    $('#confirm_mandate_btn').attr('disabled', false);
+                }
+            });
+        });
+    });
 });
 </script>
 @endsection

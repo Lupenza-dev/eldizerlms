@@ -117,6 +117,7 @@ class LoanApplicationController extends Controller
             'initial_deposit'     =>$request->initial_deposit ?? 0,
             'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05]),
             'customer_bank_detail_id' => $customerBankDetail?->id,
+            'is_mandate_sent'      =>false,
         ]);
       
 

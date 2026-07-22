@@ -230,15 +230,9 @@
             </a>
         </li>
         <li>
-            <a class="{{ (Route::is('loan.applications') or Route::is('loan.profile')) ? "li-active": ""}}" href="{{ route('loan.applications')}}" title="Loan Applications">
+            <a class="{{ (Route::is('loan.management') or Route::is('loan.applications') or Route::is('loan.profile') or Route::is('loan.contracts') or Route::is('loan.contract.profile') or Route::is('loan.applications.waiting.mandate')) ? "li-active": ""}}" href="{{ route('loan.management')}}" title="Loan Management">
                 <div class="parent-icon"><i class='bx bx-file'></i></div>
-                <div class="menu-title">Loan Applications</div>
-            </a>
-        </li>
-        <li>
-            <a class="{{ (Route::is('loan.contracts') or Route::is('loan.contract.profile')) ? "li-active": ""}}" href="{{ route('loan.contracts')}}" title="Loan Contracts">
-                <div class="parent-icon"><i class='bx bx-file'></i></div>
-                <div class="menu-title">Loan Contracts</div>
+                <div class="menu-title">Loan Management</div>
             </a>
         </li>
         @if (Auth::user()->hasRole(['Admin','Super Admin']))
