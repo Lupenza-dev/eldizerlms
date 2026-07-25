@@ -1,256 +1,139 @@
 @extends('layouts.master')
 @section('content')
-<div class="page-wrapper">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-           <div class="col">
-             <div class="card radius-10 border-start border-0 border-4 border-info">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary">Total Applications</p>
-                            <h4 class="my-1 text-info">{{ number_format($loan_applications->count())}}</h4>
-                            {{-- <p class="mb-0 font-13">+2.5% from last week</p> --}}
-                        </div>
-                        <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-intersect'></i>
-                        </div>
-                    </div>
-                </div>
-             </div>
-           </div>
-           <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-info">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-secondary">Approved Application</p>
-                           <h4 class="my-1 text-secondary">{{ number_format($loan_applications->where('level','GRANTED')->count())}}</h4>
-                           {{-- <p class="mb-0 font-13">+5.4% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-check-circle'></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-danger">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-danger">Rejected Application</p>
-                           <h4 class="my-1 text-danger">{{ number_format($loan_applications->whereIn('level',['Rejected by Agent','Rejected by Admin'])->count())}}</h4>
-                           {{-- <p class="mb-0 font-13">-4.5% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-burning text-white ms-auto"><i class='bx bx-error-alt' ></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card radius-10 border-start border-0 border-4 border-warning">
-               <div class="card-body">
-                   <div class="d-flex align-items-center">
-                       <div>
-                           <p class="mb-0 text-secondary">Total Disbursment</p>
-                           <h4 class="my-1 text-warning">{{ number_format($loan_contracts->sum('amount'))}}</h4>
-                           {{-- <p class="mb-0 font-13">+8.4% from last week</p> --}}
-                       </div>
-                       <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bx-money'></i>
-                       </div>
-                   </div>
-               </div>
-            </div>
-          </div> 
-        </div><!--end row-->
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-            <div class="col">
-              <div class="card radius-10 border-start border-0 border-4 border-info">
-                 <div class="card-body">
-                     <div class="d-flex align-items-center">
-                         <div>
-                             <p class="mb-0 text-secondary">Portofolio Size</p>
-                             <h4 class="my-1 text-info">{{ number_format($loan_contracts->sum('loan_amount'))}}</h4>
-                             {{-- <p class="mb-0 font-13">+2.5% from last week</p> --}}
-                         </div>
-                         <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-money'></i>
-                         </div>
-                     </div>
-                 </div>
-              </div>
-            </div>
-            <div class="col">
-             <div class="card radius-10 border-start border-0 border-4 border-info">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary">Granted Loans ({{ $loan_contracts->where('status','GRANTED')->count()}})</p>
-                            <h4 class="my-1 text-info">{{ number_format($loan_contracts->where('status','GRANTED')->sum('loan_amount'))}}</h4>
-                            {{-- <p class="mb-0 font-13">+5.4% from last week</p> --}}
-                        </div>
-                        <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bx-list-ol'></i>
-                        </div>
-                    </div>
-                </div>
-             </div>
-           </div>
-           <div class="col">
-             <div class="card radius-10 border-start border-0 border-4 border-success">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary">Closed Loans ({{ $loan_contracts->where('status','CLOSED')->count()}})</p>
-                            <h4 class="my-1 text-success">{{ number_format($loan_contracts->where('status','CLOSED')->sum('loan_amount'))}}</h4>
-                            {{-- <p class="mb-0 font-13">-4.5% from last week</p> --}}
-                        </div>
-                        <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bx-list-ol' ></i>
-                        </div>
-                    </div>
-                </div>
-             </div>
-           </div>
-           <div class="col">
-             <div class="card radius-10 border-start border-0 border-4 border-warning">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary">Collected Amount</p>
-                            <h4 class="my-1 text-warning">{{ number_format($loan_contracts->sum('current_balance'))}}</h4>
-                            {{-- <p class="mb-0 font-13">+8.4% from last week</p> --}}
-                        </div>
-                        <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bx-money'></i>
-                        </div>
-                    </div>
-                </div>
-             </div>
-           </div> 
-         </div><!--end row--> 
-        @endif
-      
 
-        <div class="row">
-           <div class="col-12 col-lg-12 d-flex">
-              <div class="card radius-10 w-100">
-                <div class="card-header">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h6 class="mb-0">Loan Application Report 2021</h6>
-                        </div>
-                        <div class="dropdown ms-auto">
-                            {{-- <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                </li>
-                            </ul> --}}
-                        </div>
-                    </div>
+        {{-- Row 1: Always-visible stat cards --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+            {{-- Total Applications --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-intersect text-cyan-600 text-2xl"></i>
                 </div>
-                  <div class="card-body">
-                    <div class="d-flex align-items-center ms-auto font-13 gap-2 mb-3">
-                        <span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #14abef"></i>Approved Applications</span>
-                        <span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #F32755"></i>Rejected Applications</span>
-                        <span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #16CA20"></i>Granted Loans</span>
-                    </div>
-                    <div class="chart-container-1">
-                        <canvas id="chart1"></canvas>
-                      </div>
-                  </div>
-                  {{-- <div class="row row-cols-1 row-cols-md-3 row-cols-xl-3 g-0 row-group text-center border-top">
-                    <div class="col">
-                      <div class="p-3">
-                        <h5 class="mb-0">24.15M</h5>
-                        <small class="mb-0">Overall Visitor <span> <i class="bx bx-up-arrow-alt align-middle"></i> 2.43%</span></small>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="p-3">
-                        <h5 class="mb-0">12:38</h5>
-                        <small class="mb-0">Visitor Duration <span> <i class="bx bx-up-arrow-alt align-middle"></i> 12.65%</span></small>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="p-3">
-                        <h5 class="mb-0">639.82</h5>
-                        <small class="mb-0">Pages/Visit <span> <i class="bx bx-up-arrow-alt align-middle"></i> 5.62%</span></small>
-                      </div>
-                    </div>
-                  </div> --}}
-              </div>
-           </div>
-           @if (Auth::user()->hasRole(['Admin','Super Admin']))
-           <div class="col-12 col-lg-6 d-flex">
-            <div class="card radius-10 w-100">
-             <div class="card-header">
-                 <div class="d-flex align-items-center">
-                     <div>
-                         <h6 class="mb-0">Universtity Loan Distribution</h6>
-                     </div>
-                     {{-- <div class="dropdown ms-auto">
-                         <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                         </a>
-                         <ul class="dropdown-menu">
-                             <li><a class="dropdown-item" href="javascript:;">Action</a>
-                             </li>
-                             <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                             </li>
-                             <li>
-                                 <hr class="dropdown-divider">
-                             </li>
-                             <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                             </li>
-                         </ul>
-                     </div> --}}
-                 </div>
-             </div>
-                <div class="card-body">
-                 <div id="chart8"></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Total Applications</p>
+                    <h4 class="text-2xl font-bold text-cyan-600 mb-0">{{ number_format($loan_applications->count()) }}</h4>
+                </div>
+            </div>
+            {{-- Approved Applications --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-check-circle text-blue-600 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Approved Applications</p>
+                    <h4 class="text-2xl font-bold text-blue-600 mb-0">{{ number_format($loan_applications->where('level','GRANTED')->count()) }}</h4>
+                </div>
+            </div>
+            {{-- Rejected Applications --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-error-alt text-red-500 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Rejected Applications</p>
+                    <h4 class="text-2xl font-bold text-red-500 mb-0">{{ number_format($loan_applications->whereIn('level',['Rejected by Agent','Rejected by Admin'])->count()) }}</h4>
+                </div>
+            </div>
+            {{-- Total Disbursement --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-money text-amber-500 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Total Disbursement</p>
+                    <h4 class="text-2xl font-bold text-amber-500 mb-0">{{ number_format($loan_contracts->sum('amount')) }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-6 d-flex">
-            <div class="card radius-10 w-100">
-             <div class="card-header">
-                 <div class="d-flex align-items-center">
-                     <div>
-                         <h6 class="mb-0">Loan Status Distribution</h6>
-                     </div>
-                     {{-- <div class="dropdown ms-auto">
-                         <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                         </a>
-                         <ul class="dropdown-menu">
-                             <li><a class="dropdown-item" href="javascript:;">Action</a>
-                             </li>
-                             <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                             </li>
-                             <li>
-                                 <hr class="dropdown-divider">
-                             </li>
-                             <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                             </li>
-                         </ul>
-                     </div> --}}
-                 </div>
-             </div>
-                <div class="card-body">
-                 <div id="chart81"></div>
+
+        {{-- Row 2: Admin-only stat cards --}}
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+            {{-- Portfolio Size --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-money text-cyan-600 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Portfolio Size</p>
+                    <h4 class="text-2xl font-bold text-cyan-600 mb-0">{{ number_format($loan_contracts->sum('loan_amount')) }}</h4>
                 </div>
             </div>
-        </div> 
-           @endif
-          
-        </div><!--end row-->
+            {{-- Granted Loans --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-list-ol text-blue-600 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Granted Loans <span class="text-blue-400">({{ $loan_contracts->where('status','GRANTED')->count() }})</span></p>
+                    <h4 class="text-2xl font-bold text-blue-600 mb-0">{{ number_format($loan_contracts->where('status','GRANTED')->sum('loan_amount')) }}</h4>
+                </div>
+            </div>
+            {{-- Closed Loans --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-list-check text-emerald-600 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Closed Loans <span class="text-emerald-400">({{ $loan_contracts->where('status','CLOSED')->count() }})</span></p>
+                    <h4 class="text-2xl font-bold text-emerald-600 mb-0">{{ number_format($loan_contracts->where('status','CLOSED')->sum('loan_amount')) }}</h4>
+                </div>
+            </div>
+            {{-- Collected Amount --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bx bx-wallet text-amber-500 text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-0.5">Collected Amount</p>
+                    <h4 class="text-2xl font-bold text-amber-500 mb-0">{{ number_format($loan_contracts->sum('current_balance')) }}</h4>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Bar Chart --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-4">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h6 class="text-sm font-semibold text-slate-700 mb-0">Loan Application Report</h6>
+                <div class="flex items-center gap-3 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i class="bx bxs-circle text-cyan-400"></i> Approved</span>
+                    <span class="flex items-center gap-1"><i class="bx bxs-circle text-red-400"></i> Rejected</span>
+                    <span class="flex items-center gap-1"><i class="bx bxs-circle text-emerald-400"></i> Granted</span>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="chart-container-1">
+                    <canvas id="chart1"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- Pie Charts (Admin only) --}}
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100">
+                    <h6 class="text-sm font-semibold text-slate-700 mb-0">University Loan Distribution</h6>
+                </div>
+                <div class="p-6">
+                    <div id="chart8"></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100">
+                    <h6 class="text-sm font-semibold text-slate-700 mb-0">Loan Status Distribution</h6>
+                </div>
+                <div class="p-6">
+                    <div id="chart81"></div>
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>
-</div>    
+</div>
 @endsection
 @push('scripts')
 <script src="{{ asset('assets/plugins/apexcharts-bundle/js/apexcharts.min.js')}}"></script>

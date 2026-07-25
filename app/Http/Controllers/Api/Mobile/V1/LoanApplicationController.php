@@ -14,6 +14,8 @@ use Auth;
 use Str;
 use App\Http\Resources\LoanApplicationResource;
 use App\Models\Management\Customer;
+use App\Models\Management\CustomerBankDetail;
+use App\Models\Payment\PaymentMandate;
 
 class LoanApplicationController extends Controller
 {
@@ -81,6 +83,21 @@ class LoanApplicationController extends Controller
         $calculator =LoanCalculatorService::calculator($valid_data);
 
         $code_generator =new LoanCalculatorService;
+
+        // save bank details
+        $customerBankDetail = null;
+        if($request->bank_name && $request->account_number){
+           $customerBankDetail = CustomerBankDetail::updateOrCreate(
+                [
+                    'customer_id' =>Auth::user()->customer_id,
+                    'account_number' =>$request->account_number,
+                ],
+                [
+                    'bank_name'   =>$request->bank_name,
+                    'uuid'        =>(string)Str::orderedUuid(),
+                ]);
+        }
+        
         
         $loan_application =LoanApplication::create([
             'customer_id' =>Auth::user()->customer_id ?? 3,
@@ -98,7 +115,9 @@ class LoanApplicationController extends Controller
             'loan_type'           =>$valid_data['loan_type'],
             'device_id'           =>$request->device_id ?? null,
             'initial_deposit'     =>$request->initial_deposit ?? 0,
-            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05])
+            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05]),
+            'customer_bank_detail_id' => $customerBankDetail?->id,
+            'is_mandate_sent'      =>false,
         ]);
       
 
@@ -108,25 +127,25 @@ class LoanApplicationController extends Controller
             'uuid'                =>(string)Str::orderedUuid(),
         ]);
 
-        $guarantor1 =Guarantor::create([
-            'customer_id' =>Auth::user()->customer_id ?? 3,
-            'loan_application_id' =>$loan_application->id,
-            'full_name'           =>$request->guarantor1fs,
-            'relationship'        =>$request->guarantor1rs,
-            'phone_number'        =>$request->guarantor1pn,
-            'uuid'                =>(string)Str::orderedUuid(),
-        ]);
+        // $guarantor1 =Guarantor::create([
+        //     'customer_id' =>Auth::user()->customer_id ?? 3,
+        //     'loan_application_id' =>$loan_application->id,
+        //     'full_name'           =>$request->guarantor1fs,
+        //     'relationship'        =>$request->guarantor1rs,
+        //     'phone_number'        =>$request->guarantor1pn,
+        //     'uuid'                =>(string)Str::orderedUuid(),
+        // ]);
 
-        $guarantor2 =Guarantor::create([
-            'customer_id' =>Auth::user()->customer_id ?? 3,
-            'loan_application_id' =>$loan_application->id,
-            'full_name'           =>$request->guarantor2fs,
-            'relationship'        =>$request->guarantor2rs,
-            'phone_number'        =>$request->guarantor2pn,
-            'uuid'                =>(string)Str::orderedUuid(),
-        ]);
+        // $guarantor2 =Guarantor::create([
+        //     'customer_id' =>Auth::user()->customer_id ?? 3,
+        //     'loan_application_id' =>$loan_application->id,
+        //     'full_name'           =>$request->guarantor2fs,
+        //     'relationship'        =>$request->guarantor2rs,
+        //     'phone_number'        =>$request->guarantor2pn,
+        //     'uuid'                =>(string)Str::orderedUuid(),
+        // ]);
 
-        event (new LoanApplied($loan_application,1));
+       // event (new LoanApplied($loan_application,1));
 
         return response()->json([
             'success' =>true,
@@ -136,5 +155,43 @@ class LoanApplicationController extends Controller
         );
 
 
+    }
+
+    public function eMakatocallBack(Request $request)
+    {
+        if ($request['callback_type'] == 'MANDATE_STATUS') {
+              PaymentMandate::updateOrCreate([
+                'reference' =>$request['reference']
+            ],[
+                'channel' =>$request['channel'],
+                'periodicity' =>$request['mandate']['periodicity'],
+                'debit_type' =>$request['mandate']['debit_type'],
+                'installment_amount' =>$request['mandate']['installment_amount'],
+                'min_installment_amount' =>$request['mandate']['min_installment_amount'],
+                'max_installment_amount' =>$request['mandate']['max_installment_amount'],
+                'total_amount' =>$request['mandate']['total_amount'],
+                'paid_amount' =>$request['mandate']['paid_amount'],
+                'outstanding_amount' =>$request['mandate']['outstanding_amount'],
+                'number_of_installment' =>$request['mandate']['number_of_installment'],
+                'start_date' =>$request['mandate']['start_date'],
+                'end_date' =>$request['mandate']['end_date'],
+                'contract_status' =>$request['mandate']['contract_status'] ?? "Status",
+                'lifecycle_status' =>$request['mandate']['lifecycle_status'] ?? null,
+                'remarks' =>$request['mandate']['remarks'] ?? null,
+                'approved' =>$request['mandate']['approved'] ?? "Approved",
+            ]);
+        } else if ($request['callback_type'] == 'MANDATE_STATUS'){
+
+        }
+        else {
+            # code...
+        }
+        
+        // Handle eMakato callback here
+        return response()->json([
+            'success' => true,
+            'message' => 'Callback received successfully',
+            'data' => $request->all()
+        ]);
     }
 }

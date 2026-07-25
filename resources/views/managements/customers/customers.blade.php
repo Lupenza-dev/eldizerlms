@@ -1,228 +1,191 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    .custom-header{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-content: center
-    }
-    .divider{
-        margin-top: 10px !important;
-    }
-</style>
-<div class="page-wrapper">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Customers</div>
+        {{-- Breadcrumb --}}
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
+            <div class="breadcrumb-title pe-3">
+                <span class="text-lg font-bold text-slate-700">Customers</span>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
-            <div class="ms-auto">
-                <div class="btn-group">
-                </div>
-            </div>
         </div>
-        <!--end breadcrumb-->
-       
-        <div class="card">
-            <div class="card-body" >
-                <div class="custom-header">
-                    <div></div>
-                    <h6 class="mb-0 text-uppercase">Customers</h6>
+
+        {{-- Main Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            {{-- Card Header --}}
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-group text-white text-xl"></i>
+                    </div>
+                    <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Customers</h6>
+                </div>
+                <button class="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" id="filter-btn">
+                    <i class="bx bx-filter text-lg"></i> Customer Filter
+                </button>
+            </div>
+
+            {{-- Filter Panel --}}
+            <form action="" id="submit-form" class="border-b border-slate-200 bg-slate-50 px-6 py-5" style="display:none">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                        <button class="btn btn-info" id="filter-btn"><span style="color: #fff" class="bx bx-filter"></span> <span style="color: #fff">Customer Filter</span></button>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Start Date</label>
+                        <input type="date" name="start_date" class="form-control rounded-lg text-sm" value="{{ $requests['start_date'] ?? null}}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">End Date</label>
+                        <input type="date" name="end_date" class="form-control rounded-lg text-sm" value="{{ $requests['end_date'] ?? null}}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
+                        <input type="number" name="phone_number" class="form-control rounded-lg text-sm" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">ID Number</label>
+                        <input type="number" name="id_number" class="form-control rounded-lg text-sm" value="{{ $requests['id_number'] ?? null}}">
                     </div>
                 </div>
-                <form action="" id="submit-form" style="display: none">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <label for="">Start Date</label>
-                            <input type="date" name="start_date" class="form-control" value="{{ $requests['start_date'] ?? null}}">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">End Date</label>
-                            <input type="date" name="end_date" class="form-control" value="{{ $requests['end_date'] ?? null}}">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">Phone Number</label>
-                            <input type="number" name="phone_number" class="form-control" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">ID Number</label>
-                            <input type="number" name="id_number" class="form-control" value="{{ $requests['id_number'] ?? null}}">
-                        </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
+                        <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
                     </div>
-                    <div class="form-group row" style="margin-top: 10px">
-                        <div class="col-md-3">
-                            <label for="">Student Reg ID</label>
-                            <input type="text" name="student_reg_id" class="form-control" value="{{ $requests['student_reg_id'] ?? null}}">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">Gender</label>
-                            <select name="gender_id" class="form-control">
-                                <option value="">please choose Gender</option>
-                                @if ($requests['gender_id'] ?? null)
-                                <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
-                                <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
-                                @else
-                                <option value="1">Male</option>
-                                <option value="2">Female</option>  
-                                @endif
-                               
-                            </select>
-                        </div>
-                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                        <div class="col-md-3">
-                            <label for="">College</label>
-                            <select name="college_id" class="form-control">
-                                <option value="">please choose College</option>
-                                @foreach ($colleges as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">Region</label>
-                            <select name="region_id" class="form-control">
-                                <option value="">please choose Region</option>
-                                @foreach ($regions as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="form-group row" style="margin-top: 10px">
-                        <div class="col-md-12" style="text-align: right">
-                            <button class="btn btn-primary btn-sm" formaction="{{ route('customers.index')}}" type="submit"><span class="bx bx-search"></span> Search</button>
-                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                            <button class="btn btn-success btn-sm" formaction="{{ route('genderate.customer.report')}}"><span class="bx bx-file"></span> Generate </button>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Gender</label>
+                        <select name="gender_id" class="form-control rounded-lg text-sm">
+                            <option value="">Please choose Gender</option>
+                            @if ($requests['gender_id'] ?? null)
+                            <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
+                            <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
+                            @else
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
                             @endif
-                        </div>
-
+                        </select>
                     </div>
-                </form>
-                <hr>
-                <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Reg Date</th>
-                                <th>Customer Name</th>
-                                <td>Gender</td>
-                                <th>Id Number</th>
-                                <th>Address</th>
-                                <th>College</th>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                                <th>Role</th>
-                                <th>Action</th>
-                                @endif
+                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+                        <select name="college_id" class="form-control rounded-lg text-sm">
+                            <option value="">Please choose College</option>
+                            @foreach ($colleges as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
+                        <select name="region_id" class="form-control rounded-lg text-sm">
+                            <option value="">Please choose Region</option>
+                            @foreach ($regions as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+                </div>
+                <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
+                    <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="search-btn" type="submit">
+                        <i class="bx bx-search"></i> Search
+                    </button>
+                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                    <button class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" formaction="{{ route('genderate.customer.report')}}">
+                        <i class="bx bx-file"></i> Generate
+                    </button>
+                    @endif
+                </div>
+            </form>
 
+            {{-- Table --}}
+            <div class="p-6">
+                <div class="table-responsive">
+                    <table id="customers_table" class="table w-full" style="width:100%">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Reg Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Customer Information</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Gender</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">ID Number</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Address</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Customer Type</th>
+                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Roles</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                @endif
                             </tr>
                         </thead>
-                       <tbody>
-                        @foreach ($customers as $customer)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ date('d,M-Y',strtotime($customer->created_at))}}</td>
-                                <td>{{  $customer->customer_name }} <br>{{ $customer->phone_number}} <br> {{ $customer->email}} </td>
-                                <td>{{ $customer->gender?->name }}</td>
-                                <td>{{ $customer->id_number }}</td>
-                                <td>{!! $customer->address !!}</td>
-                                <td>{{ $customer->student?->college?->name}}</td>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                                <td>
-                                    @foreach ($customer->user?->roles ?? [] as $role)
-                                    {{ $role->name.' ,' }}
-                                    @endforeach
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-outline-primary">Actions</button>
-                                        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">	<span class="visually-hidden">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="{{ $customer->id }}" data-name="{{ $customer->customer_name}}" data-email="{{ $customer->email }}">Roles</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="{{ route('customers.show',$customer->uuid)}}">Profile</a>
-                                            </li>
-                                            @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                                            <li><a class="dropdown-item" href="{{ route('customers.edit',$customer->uuid)}}">Edit</a>
-                                            </li>   
-                                            @endif
-                                            {{-- <li><a class="dropdown-item" href="#">Something else here</a>
-                                            </li> --}}
-                                        </ul>
-                                    </div>
-                                </td>
-                                @endif
-
-                            </tr> 
-                        @endforeach
-                       </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{{-- Manage Roles Modal --}}
 <div class="modal fade" id="roleModel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">User Roles</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-user-voice text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Manage User Roles</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-6">
                 <form action="" id="update_form">
-                    <input type="hidden"  name="id" id="id">
-                    <div class="form-group row">
-                        <div class="col-md-12 divider">
-                            <label for="">Customer Name</label>
-                            <input type="text" name="" id="name" class="form-control" readonly>
+                    <input type="hidden" name="id" id="id">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Customer Name</label>
+                            <input type="text" id="name" class="form-control rounded-lg text-sm bg-slate-50" readonly>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Customer Email</label>
-                            <input type="text" name="" id="email" class="form-control" readonly>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Customer Email</label>
+                            <input type="text" id="email" class="form-control rounded-lg text-sm bg-slate-50" readonly>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">College</label>
-                            <select name="college_id" class="form-control">
-                                <option value="">please choose College</option>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+                            <select name="college_id" class="form-control rounded-lg text-sm">
+                                <option value="">Please choose College</option>
                                 @foreach ($colleges as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-12">
-                            @foreach ($roles as $role)
-                            <input type="checkbox" class="divider" id="vehicle1" name="role[]" value="{{ $role->id}}">
-                            <label for="role"> {{ $role->name }}</label><br>    
-                            @endforeach
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Roles</label>
+                            <div class="flex flex-wrap gap-3">
+                                @foreach ($roles as $role)
+                                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                                    <input type="checkbox" name="role[]" value="{{ $role->id}}" class="rounded border-slate-300 text-blue-600">
+                                    {{ $role->name }}
+                                </label>
+                                @endforeach
+                            </div>
                         </div>
-                       
-                       
-                        <div class="col-md-12 divider" id="update_alert" style="margin-top: 10px">
-
-                        </div>
+                        <div id="update_alert"></div>
                     </div>
-                    <div class="col-md-12 divider" style="text-align:right">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm"  id="update_btn"> <span class="bx bx-save"></span> Submit</button>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="update_btn">
+                            <i class="bx bx-save"></i> Submit
+                        </button>
                     </div>
                 </form>
-                
             </div>
-            
         </div>
     </div>
 </div>
@@ -234,11 +197,69 @@
         $('#submit-form').toggle();
     })
 
-    $('.role-btn').on('click',function(){
+    $(document).on('click','.role-btn',function(){
         $('#id').val($(this).data('id'));
         $('#name').val($(this).data('name'));
         $('#email').val($(this).data('email'));
     })
+</script>
+<script>
+    $(document).ready(function(){
+        var customersTable = $('#customers_table').DataTable({
+            processing: true,
+            serverSide: true,
+            searchDelay: 500,
+            ajax: {
+                url: "{{ route('customers.data') }}",
+                data: function (d) {
+                    d.start_date     = $('#submit-form [name=start_date]').val();
+                    d.end_date       = $('#submit-form [name=end_date]').val();
+                    d.phone_number   = $('#submit-form [name=phone_number]').val();
+                    d.id_number      = $('#submit-form [name=id_number]').val();
+                    d.student_reg_id = $('#submit-form [name=student_reg_id]').val();
+                    d.gender_id      = $('#submit-form [name=gender_id]').val();
+                    d.college_id     = $('#submit-form [name=college_id]').val();
+                    d.region_id      = $('#submit-form [name=region_id]').val();
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false, orderable: false},
+                {data: 'reg_date', name: 'created_at', searchable: false},
+                {data: 'customer_info', name: 'customer_info', searchable: true, orderable: false},
+                {data: 'gender', name: 'gender', searchable: false, orderable: false},
+                {data: 'id_number', name: 'id_number', searchable: true, orderable: false},
+                {data: 'address', name: 'address', searchable: false, orderable: false},
+                {data: 'customer_type', name: 'customer_type', searchable: false, orderable: false},
+                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                {data: 'roles', name: 'roles', searchable: false, orderable: false},
+                {data: 'actions', name: 'actions', searchable: false, orderable: false},
+                @endif
+            ],
+            order: [[1, 'desc']],
+            language: {
+                processing: '<i class="bx bx-loader bx-spin me-2"></i>Processing...',
+                search: '<i class="bx bx-search me-2"></i>Search:',
+                lengthMenu: 'Show _MENU_ entries',
+                info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+                paginate: {
+                    first: '<i class="bx bx-chevrons-left"></i>',
+                    last: '<i class="bx bx-chevrons-right"></i>',
+                    next: '<i class="bx bx-chevron-right"></i>',
+                    previous: '<i class="bx bx-chevron-left"></i>'
+                }
+            },
+            pageLength: 25,
+            responsive: true,
+            dom: '<"row mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                 '<"row"<"col-sm-12"tr>>' +
+                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+        });
+
+        $('#search-btn').on('click',function(e){
+            e.preventDefault();
+            customersTable.ajax.reload();
+        });
+    });
 </script>
 <script>
     $(document).ready(function(){

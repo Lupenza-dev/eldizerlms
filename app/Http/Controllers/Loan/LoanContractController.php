@@ -25,9 +25,9 @@ class LoanContractController extends Controller
                     ->whereHas('customer',function ($query) use ($requests){
                         $query->withfilters($requests);
                     })
-                    ->whereHas('student',function ($query) use ($requests ){
-                        $query->withfilters($requests);
-                    })
+                    // ->whereHas('student',function ($query) use ($requests ){
+                    //     $query->withfilters($requests);
+                    // })
                     ->when($filter,function ($query){
                         $query->where('college_id',getCollegeId());
                     })
@@ -37,7 +37,7 @@ class LoanContractController extends Controller
     }
 
     public function profile($uuid){
-        $contract =LoanContract::with('customer','loan_approval','installments','payments','guarantors')->where('uuid',$uuid)->first();
+        $contract =LoanContract::with('customer','loan_approval','installments','payments','guarantors','customer_mandate')->where('uuid',$uuid)->first();
         return view('loans.loan_contract_profile',compact('contract'));
     }
 

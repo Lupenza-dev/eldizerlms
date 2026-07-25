@@ -34,6 +34,7 @@ class CustomerResource extends JsonResource
             'resident_since'=>$this->resident_since ?? "N/A",
             'image'         =>asset('storage').'/'.$this->image,
             'customer_id'   =>$this->uuid,
+            'customer_type' =>$this->customer_type,
             'student'       =>new StudentResource($this->student),
         ];
     }

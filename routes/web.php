@@ -17,6 +17,7 @@ use App\Http\Controllers\Management\AppController;
 use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
+use App\Http\Controllers\Management\HospitalController;
 use App\Http\Controllers\Payment\PaymentController;
 
 /*
@@ -38,7 +39,7 @@ use App\Http\Controllers\Payment\PaymentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('due-days', [HomeController::class, 'dueDays'])->name('due.days');
-Route::get('test-pdf', [HomeController::class, 'testPdf'])->name('test.pdf');
+Route::get('test-api', [HomeController::class, 'testApi'])->name('test.api');
 Route::post('user/authentication',[LoginController::class,'authentication'])->name('authentication');
 
 Route::group(['middleware'=>'auth'],function(){
@@ -50,7 +51,10 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('password/change',[LoginController::class,'passwordChange'])->name('password.change');
     Route::get('bar/chart',[DashboardController::class,'barChart'])->name('admin.bar.chart');
     Route::post('bar/charts',[DashboardController::class,'barCharts'])->name('admin.bar.charts');
+    Route::get('loan/management',[LoanApplicationController::class,'loanManagement'])->name('loan.management');
     Route::get('loan/applications',[LoanApplicationController::class,'index'])->name('loan.applications');
+    Route::get('loan/applications/waiting/mandate',[LoanApplicationController::class,'waitingMandateConfirmation'])->name('loan.applications.waiting.mandate');
+    Route::post('loan/application/confirm/mandate',[LoanApplicationController::class,'confirmMandate'])->name('confirm.mandate.loan.application');
     Route::get('loan/application/profile/{uuid}',[LoanApplicationController::class,'profile'])->name('loan.profile');
     Route::post('reject/loan/application',[LoanApplicationController::class,'rejectApplication'])->name('reject.loan.application');
     Route::post('approve/loan/application',[LoanApplicationController::class,'approveApplication'])->name('approve.loan.application');
@@ -63,16 +67,21 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('nmb/subscribers',[PaymentController::class,'nmbSubscribers'])->name('nmb.subscribers');
     Route::post('nmb/create/transaction',[PaymentController::class,'nmbCreateTransaction'])->name('create.transaction');
     Route::post('college/update',[UniversityController::class,'collegeUpdate'])->name('update.college');
+    Route::post('hospital/update',[HospitalController::class,'hospitalUpdate'])->name('update.hospital');
+    Route::get('hospital/districts/{region_id}',[HospitalController::class,'getDistrictsByRegion'])->name('hospital.districts');
     Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
     Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');
     Route::post('user/update/roles',[UserController::class,'userUpdateRoles'])->name('update.user.roles');
     Route::post('college/status',[UniversityController::class,'collegeStatus'])->name('college.status');
+    Route::post('hospital/status',[HospitalController::class,'hospitalStatus'])->name('hospital.status');
     Route::post('user/status',[UserController::class,'userStatus'])->name('user.status');
     Route::post('delete/user',[UserController::class,'destroy'])->name('user.delete');
     Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
+    Route::post('hospital/delete',[HospitalController::class,'destroy'])->name('hospital.delete');
     Route::post('update/customer',[CustomerController::class,'update'])->name('update.customer');
     Route::post('delete/device',[DeviceController::class,'destroyDevice'])->name('device.delete');
     Route::get('beneficaries/data',[BenefeciariesController::class,'getBeneficariesData'])->name('beneficaries.data');
+    Route::get('customers/data',[CustomerController::class,'getCustomersData'])->name('customers.data');
     #### Report
     Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
     Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
@@ -81,11 +90,23 @@ Route::group(['middleware'=>'auth'],function(){
     #### App Management
     Route::get('app/management',[AppController::class,'index'])->name('app.management');
     Route::get('questions/list/{assignment}',[AssignmentQuestionController::class,'questionList'])->name('questions.list');
+    Route::get('participant/list/{assignment}',[AssignmentQuestionController::class,'participantList'])->name('participant.list');
     Route::get('questions/create/{assignment}',[AssignmentQuestionController::class,'create'])->name('question.create');
 
+    #### payment management
+    Route::get('payment/management',[PaymentController::class,'paymentManagement'])->name('payment.management');
+    Route::get('payment/mandates',[PaymentController::class,'paymentMandates'])->name('payment.mandates');
+    Route::get('sync/mandates',[PaymentController::class,'syncMandates'])->name('sync.mandate');
+    Route::get('view/payment/mandate/{reference}',[PaymentController::class,'viewPaymentMandate'])->name('view.payment.mandate');
+    Route::post('cancel/mandate',[PaymentController::class,'cancelMandate'])->name('cancel.mandate');
+    Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
+    Route::get('customer/loans/mandates',[PaymentController::class,'customerLoansMandates'])->name('customer.loans.mandates');
+    Route::post('mandate/resend/otp',[PaymentController::class,'resendMandateOtp'])->name('mandate.resend.otp');
+    Route::post('mandate/verify/otp',[PaymentController::class,'verifyMandateOtp'])->name('mandate.verify.otp');
     Route::resources([
         'users'          =>UserController::class,
         'colleges'       =>UniversityController::class,
+        'hospitals'      =>HospitalController::class,
         'agents'         =>AgentController::class,
         'customers'      =>CustomerController::class,
         'devices'        =>DeviceController::class,

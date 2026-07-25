@@ -1,11 +1,228 @@
 @extends('layouts.master')
 @section('content')
 <style>
-    td{
-        align-content: center;
+    .contract-profile-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    .table th{
-        background-color: aliceblue;
+    
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .section-title {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #28a745;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: #28a745;
+    }
+    
+    .info-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .info-table th {
+        background: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        font-size: 0.9rem;
+        text-align: left;
+        width: 25%;
+    }
+    
+    .info-table td {
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        color: #2c3e50;
+        font-weight: 500;
+        background: #ffffff;
+    }
+    
+    .info-table tr:hover td {
+        background: #f8f9ff;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-overdue {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .action-buttons .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .action-buttons .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .customer-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #28a745;
+        object-fit: cover;
+    }
+    
+    .highlight-amount {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+    
+    .highlight-negative {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #dc3545;
+    }
+    
+    .contract-code {
+        background: #28a745;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        background: #f8f9fa;
+        color: #495057;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 8px 8px 0 0;
+        margin-right: 0.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: #28a745;
+        color: white;
+        border: none;
+    }
+    
+    .nav-tabs .nav-link:hover:not(.active) {
+        background: #e9ecef;
+        color: #28a745;
+    }
+    
+    .tab-content {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0 0 12px 12px;
+        padding: 1.5rem;
+    }
+    
+    .payment-table {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .payment-table thead {
+        background: #28a745;
+        color: white;
+    }
+    
+    .payment-table th {
+        padding: 1rem;
+        font-weight: 600;
+        border: none;
+    }
+    
+    .payment-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .payment-table tbody tr:hover {
+        background: #f8f9ff;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+        .info-table th,
+        .info-table td {
+            display: block;
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-table th {
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .contract-profile-header {
+            padding: 1.5rem;
+        }
+        
+        .nav-tabs .nav-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 <div class="page-wrapper">
@@ -38,347 +255,466 @@
         <!--end breadcrumb-->
        
         {{-- <hr/> --}}
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12" style="display: flex; flex-direction:row; justify-content: space-between; padding: 5px 5px 10px 5px">
-                        <div>{{ date('d,M-Y')}}</div>
-                        <div>
-                            <h6 class="mb-0 text-uppercase text-center">Loan Applications</h6>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <!-- Header Section -->
+                <div class="contract-profile-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-3">
+                               
+                                    <div class="customer-avatar d-flex align-items-center justify-content-center" style="background: white; color: #28a745; font-size: 2rem; font-weight: bold;">
+                                        {{ substr($contract->customer?->first_name ?? '', 0, 1) }}{{ substr($contract->customer?->last_name ?? '', 0, 1) }}
+                                    </div>
+                                <div>
+                                    <h4 class="mb-1">{{ ($contract->customer?->first_name ?? '').' '.($contract->customer?->last_name ?? '') }}</h4>
+                                    <p class="mb-0 opacity-75">{{ $contract->customer?->phone_number ?? 'N/A' }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-primary">Actions</button>
-                                <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">	<span class="visually-hidden">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <button class="dropdown-item btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal"> <span class="bx bx-plus"></span> Add Repayment </button>
-                                    </li>
-                                </ul>
+                        <div class="col-md-4 text-center">
+                            <h5 class="mb-2">Loan Contract</h5>
+                            <span class="contract-code">{{ $contract->contract_code }}</span>
+                            <div class="mt-2">
+                                <span class="status-badge status-active">{{ $contract->status }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="action-buttons">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-light">Actions</button>
+                                    <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button class="dropdown-item btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                                                <i class="bx bx-plus me-2"></i> Add Repayment
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <table class="table table-bordered" style="width:100%">
-                    <tbody>
-                        <tr>
-                            <th>Customer Name</th>
-                            <td>{{ $contract->customer->first_name.' '.$contract->customer->last_name }}</td>
-                            <th>Gender</th>
-                            <td>{{ $contract->customer?->gender?->name }}</td>
-                            <td colspan="2" rowspan="5" class="text-center">
-                                @if ($contract->customer->image)
-                                <img style="height: 170px; width: 170px; border-radius: 50%; " src="{{ asset('storage').'/'.$contract->customer->image}}" alt="">   
-                                @else
-                                   <span class="bx bx-user-circle" style="font-size: 150px"></span> 
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Maritial Status</th>
-                            <td>{{ $contract->customer?->marital_status?->name}}</td>
-                            <th>DOB</th>
-                            <td>{{ date('d,M-Y',strtotime($contract->customer->dob))}}</td>
-                        </tr>
-                        <tr>
-                            <th>Phone</th>
-                            <td>{{ $contract->customer->phone_number}}</td>
-                            <th>Email</th>
-                            <td>{{ $contract->customer->email}}</td>
-                           
-                        </tr>
-                        <tr>
-                            <th>Region</th>
-                            <td>{{ $contract->customer->region?->name }}</td>
-                            <th>District</th>
-                            <td>{{ $contract->customer->district?->name }}</td>
-                        </tr>
-                        <tr>
-                            <th>Ward</th>
-                            <td>{{ $contract->customer->ward?->name }}</td>
-                            <th>Resident Since</th>
-                            <td>{{ $contract->customer->resident_since }}</td>
-                        </tr>
-                        <tr>
-                            <th>College Name</th>
-                            <td>{{ $contract->customer?->student->college?->name }}</td>
-                            <th>Study year</th>
-                            <td>{{ $contract->customer?->student?->study_year}}</td>
-                            <th>Student Reg Id</th>
-                            <td>{{ $contract->customer?->student?->student_reg_id}}</td>
-                        </tr>
-                        <tr>
-                            <th>Course Name</th>
-                            <td>{{ $contract->customer?->student?->course}}</td>
-                            <th>Position</th>
-                            <td>Student</td>
-                            <th>HESLB Benefeciary</th>
-                            <td>{{ $contract->customer?->student?->heslb_status}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="col">
-                    <h6 class="mb-0 text-uppercase text-center">Other Details</h6>
-                    <hr/>
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs nav-success" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" data-bs-toggle="tab" href="#successhome" role="tab" aria-selected="true">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-file font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Loan Details</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#successprofile" role="tab" aria-selected="false">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-list-ol font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Payment Schedule</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#successcontact" role="tab" aria-selected="false">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-money font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Payments</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#bondTab" role="tab" aria-selected="false">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-box font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Bond</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#agentTab" role="tab" aria-selected="false">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-user font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Agent</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#guarantorTab" role="tab" aria-selected="false">
-                                        <div class="d-flex align-items-center">
-                                            <div class="tab-icon"><i class='bx bx-user font-18 me-1'></i>
-                                            </div>
-                                            <div class="tab-title">Loan Guarantor's</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="tab-content py-3">
-                                <div class="tab-pane fade show active" id="successhome" role="tabpanel">
-                                    <h6 class="mb-0 text-center">Loan Contract Details</h6>
-                                    <table class="table table-bordered" style="width:100%; margin-top: 5px">
-                                        <tbody>
-                                            <tr>
-                                                <th>Contract Code</th>
-                                                <td>{{ $contract->contract_code}}</td>
-                                                <th>Contract Status</th>
-                                                <td>{{ $contract->status}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Start Date</th>
-                                                <td>{{ date('d,M-Y',strtotime($contract->start_date))}}</td>
-                                                <th>Expected End Date</th>
-                                                <td>{{ date('d,M-Y',strtotime($contract->expected_end_date))}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Amount</th>
-                                                <td>{{ number_format($contract->amount) }}</td>
-                                                <th>Total Loan Amount</th>
-                                                <td>{{ number_format($contract->loan_amount)}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Total Paid In</th>
-                                                <td>{{ number_format($contract->current_balance) }}</td>
-                                                <th>Oustanding Amount</th>
-                                                <td>{{ number_format($contract->outstanding_amount)}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Plan</th>
-                                                <td>{{ $contract->plan }}</td>
-                                                <th>Installment Amount</th>
-                                                <td>{{ number_format($contract->installment_amount) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Interest Rate</th>
-                                                <td>{{ $contract->interest_rate}}</td>
-                                                <th>Interest Amount</th>
-                                                <td>{{ number_format($contract->interest_amount) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Past Due Days</th>
-                                                <td>{{ number_format($contract->past_due_days)}}</td>
-                                                <th>Past Due Amount</th>
-                                                <td>{{ number_format($contract->past_due_amount) }}</td>
-                                            </tr>
-                                           
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="successprofile" role="tabpanel">
-                                    <table class="table table-bordered" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Payment Date</th>
-                                                <th>Amount</th>
-                                                <th>Paid Amount</th>
-                                                <th>OutStanding Amount</th>
-                                                <th>Due Days</th>
-                                                <th>Status</th>
-                                            </tr>
+                <!-- Customer Information Section -->
+                <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-user"></i>
+                        Customer Information
+                    </h6>
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>Full Name</th>
+                                <td>{{ ($contract->customer?->first_name ?? '').' '.($contract->customer?->last_name ?? '') }}</td>
+                                <th>Gender</th>
+                                <td>{{ $contract->customer?->gender?->name }}</td>
+                            </tr>
+                            <tr>
+                                <th>ID Number</th>
+                                <td>{{ $contract->customer?->id_number ?? 'N/A'}}</td>
+                                <th>Date of Birth</th>
+                                <td>{{ $contract->customer?->dob ? date('d M Y',strtotime($contract->customer?->dob)) : 'N/A'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone Number</th>
+                                <td>{{ $contract->customer?->phone_number ?? 'N/A'}}</td>
+                                <th>Email Address</th>
+                                <td>{{ $contract->customer?->email ?? 'N/A'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Region</th>
+                                <td>{{ $contract->customer?->region?->name ?? 'N/A' }}</td>
+                                <th>District</th>
+                                <td>{{ $contract->customer?->district?->name ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Ward</th>
+                                <td>{{ $contract->customer?->ward?->name ?? 'N/A' }}</td>
+                                <th>Resident Since</th>
+                                <td>{{ $contract->customer?->resident_since ?? 'N/A' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                     <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-user"></i>
+                        Customer Bank and Mandate Status
+                    </h6>
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>Bank Name</th>
+                                <td>{{ $contract->customer_mandate?->customer_bank_name }}</td>
+                                <th>Bank Account Number</th>
+                                <td>{{ $contract->customer_mandate?->customer_account_number }}</td>
+                            </tr>
+                            <tr>
+                                <th>Mandate Status</th>
+                                    <td>{{ $contract->customer_mandate?->status ?? 'N/A' }}</td>
+                                <th>Mandate Reference</th>
+                                <td>{{ $contract->customer_mandate?->mandate_reference }}</td>
+                            </tr>
+                          
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Student Details Section -->
+                <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-book"></i>
+                        Student Details
+                    </h6>
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>College Name</th>
+                                <td>{{ $contract->customer?->student?->college?->name ?? 'N/A' }}</td>
+                                <th>Study Year</th>
+                                <td>{{ $contract->customer?->student?->study_year ?? 'N/A'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Student Reg ID</th>
+                                <td>{{ $contract->customer?->student?->student_reg_id ?? 'N/A'}}</td>
+                                <th>Course</th>
+                                <td>{{ $contract->customer?->student?->course ?? 'N/A'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Position</th>
+                                <td><span class="status-badge status-active">Student</span></td>
+                                <th>HESLB Beneficiary</th>
+                                <td>{{ $contract->customer?->student?->heslb_status ?? 'N/A'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="info-card">
+                    <h6 class="section-title">
+                        <i class="bx bx-plus-medical"></i>
+                        Hospital Information
+                    </h6>
+                    @if($contract->customer?->intern)
+                        <table class="info-table">
+                            <tbody>
+                                <tr>
+                                    <th>Hospital Name</th>
+                                    <td>{{ $contract->customer?->intern?->hospital?->name }}</td>
+                                    <th>Professional Title</th>
+                                    <td>{{ $contract->customer?->intern?->professional }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <td>{{ $contract->customer?->intern?->start_date }}</td>
+                                    <th>End Date</th>
+                                    <td>{{ $contract->customer?->intern?->end_date }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Letter</th>
+                                    <td colspan="3">
+                                        @if($contract->customer?->intern?->letter)
+                                            <a href="{{ asset('storage/' . $contract->customer?->intern?->letter) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                                                <i class='bx bx-file'></i>
+                                                View Letter
+                                            </a>
+                                        @else
+                                            <span class="text-sm text-slate-400">No letter uploaded</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="empty-state">
+                            <i class="bx bx-plus-medical" style="font-size: 2rem; color: #dee2e6;"></i>
+                            <p class="mt-2">No Hospital information available</p>
+                            <small class="text-muted">Hospital details will be displayed here once added</small>
+                        </div>
+                    @endif
+                </div>
+                <!-- Tabbed Details Section -->
+                <div class="info-card">
+                    <div class="card-body p-0">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#successhome" role="tab" aria-selected="true">
+                                    <i class='bx bx-file font-18 me-1'></i>
+                                    Loan Details
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#successprofile" role="tab" aria-selected="false">
+                                    <i class='bx bx-list-ol font-18 me-1'></i>
+                                    Payment Schedule
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#successcontact" role="tab" aria-selected="false">
+                                    <i class='bx bx-money font-18 me-1'></i>
+                                    Payments
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#bondTab" role="tab" aria-selected="false">
+                                    <i class='bx bx-box font-18 me-1'></i>
+                                    Bond
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#agentTab" role="tab" aria-selected="false">
+                                    <i class='bx bx-user font-18 me-1'></i>
+                                    Agent
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#guarantorTab" role="tab" aria-selected="false">
+                                    <i class='bx bx-group font-18 me-1'></i>
+                                    Guarantors
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="successhome" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-dollar"></i>
+                                    Contract Financial Details
+                                </h6>
+                                <table class="info-table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Contract Code</th>
+                                            <td><span class="contract-code">{{ $contract->contract_code}}</span></td>
+                                            <th>Contract Status</th>
+                                            <td><span class="status-badge status-active">{{ $contract->status}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Start Date</th>
+                                            <td>{{ $contract->start_date ? date('d M Y',strtotime($contract->start_date)) : 'N/A'}}</td>
+                                            <th>Expected End Date</th>
+                                            <td>{{ $contract->expected_end_date ? date('d M Y',strtotime($contract->expected_end_date)) : 'N/A'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Original Amount</th>
+                                            <td>{{ number_format($contract->amount) }}</td>
+                                            <th>Total Loan Amount</th>
+                                            <td class="highlight-amount">{{ number_format($contract->loan_amount)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Paid In</th>
+                                            <td class="highlight-amount">{{ number_format($contract->current_balance) }}</td>
+                                            <th>Outstanding Amount</th>
+                                            <td class="highlight-negative">{{ number_format($contract->outstanding_amount)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Payment Plan</th>
+                                            <td>{{ $contract->plan }}</td>
+                                            <th>Installment Amount</th>
+                                            <td>{{ number_format($contract->installment_amount) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Interest Rate</th>
+                                            <td>{{ $contract->interest_rate}}%</td>
+                                            <th>Interest Amount</th>
+                                            <td>{{ number_format($contract->interest_amount) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Past Due Days</th>
+                                            <td>
+                                                @if($contract->past_due_days > 0)
+                                                    <span class="status-badge status-overdue">{{ number_format($contract->past_due_days) }} days</span>
+                                                @else
+                                                    <span class="status-badge status-active">On Time</span>
+                                                @endif
+                                            </td>
+                                            <th>Past Due Amount</th>
+                                            <td class="highlight-negative">{{ number_format($contract->past_due_amount) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="successprofile" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-calendar"></i>
+                                    Payment Schedule
+                                </h6>
+                                @if($contract->installments->count() > 0)
+                                    <div class="table-responsive payment-table">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Payment Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Paid Amount</th>
+                                                    <th>Outstanding</th>
+                                                    <th>Due Days</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 @foreach ($contract->installments as $item)
                                                     <tr>
                                                         <td>{{ $item->installment_order }}</td>
-                                                        <td>{{ $item->payment_date}}</td>
+                                                        <td>{{ date('d M Y', strtotime($item->payment_date)) }}</td>
                                                         <td>{{ number_format($item->total_amount)}}</td>
-                                                        <td>{{ number_format($item->current_balance)}}</td>
-                                                        <td>{{ number_format($item->outstanding_amount)}}</td>
-                                                        <td>{{ number_format($item->due_days)}}</td>
-                                                        <td>{{ $item->status}}</td>
+                                                        <td class="highlight-amount">{{ number_format($item->current_balance)}}</td>
+                                                        <td class="highlight-negative">{{ number_format($item->outstanding_amount)}}</td>
+                                                        <td>
+                                                            @if($item->due_days > 0)
+                                                                <span class="status-badge status-overdue">{{ number_format($item->due_days) }}</span>
+                                                            @else
+                                                                <span class="status-badge status-active">0</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @php
+                                                                $statusClass = 'status-pending';
+                                                                if (strtolower($item->status) == 'paid') $statusClass = 'status-active';
+                                                                elseif (strtolower($item->status) == 'overdue') $statusClass = 'status-overdue';
+                                                            @endphp
+                                                            <span class="status-badge {{ $statusClass }}">{{ $item->status }}</span>
+                                                        </td>
                                                     </tr> 
                                                 @endforeach
                                             </tbody>
-                                        </thead>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="successcontact" role="tabpanel">
-                                    <table class="table table-bordered" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Payment Date</th>
-                                                <th>Amount</th>
-                                                <th>Payment Reference</th>
-                                                <th>Payment Method</th>
-                                                <th>Payment Channel</th>
-                                                <th>Remark</th>
-                                            </tr>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="empty-state">
+                                        <i class="bx bx-calendar-x" style="font-size: 2rem; color: #dee2e6;"></i>
+                                        <p class="mt-2">No payment schedule available</p>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="tab-pane fade" id="successcontact" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-receipt"></i>
+                                    Payment History
+                                </h6>
+                                @if($contract->payments->count() > 0)
+                                    <div class="table-responsive payment-table">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Payment Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Reference</th>
+                                                    <th>Method</th>
+                                                    <th>Channel</th>
+                                                    <th>Remark</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 @foreach ($contract->payments as $item)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $item->payment_date}}</td>
-                                                        <td>{{ number_format($item->amount)}}</td>
-                                                        <td>{{ $item->payment_reference}}</td>
+                                                        <td>{{ date('d M Y', strtotime($item->payment_date)) }}</td>
+                                                        <td class="highlight-amount">{{ number_format($item->amount)}}</td>
+                                                        <td><span class="contract-code">{{ $item->payment_reference}}</span></td>
                                                         <td>{{ $item->payment_method}}</td>
                                                         <td>{{ $item->payment_channel}}</td>
-                                                        <td>{{ $item->remarks}}</td>
+                                                        <td>{{ $item->remarks ?: '-' }}</td>
                                                     </tr> 
                                                 @endforeach
                                             </tbody>
-                                        </thead>
-                                    </table>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="empty-state">
+                                        <i class="bx bx-money" style="font-size: 2rem; color: #dee2e6;"></i>
+                                        <p class="mt-2">No payments recorded yet</p>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="tab-pane fade" id="bondTab" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-file"></i>
+                                    Bond Details
+                                </h6>
+                                <div class="empty-state">
+                                    <i class="bx bx-file-blank" style="font-size: 2rem; color: #dee2e6;"></i>
+                                    <p class="mt-2">No bond details available yet</p>
+                                    <small class="text-muted">Bond information will be displayed here once added</small>
                                 </div>
-                                <div class="tab-pane fade" id="bondTab" role="tabpanel">
-                                    <h6 class="mb-0 text-center">Loan Bond Details</h6>
-                                    <table class="table table-bordered" style="width:100%; margin-top: 5px">
-                                        <tbody>
-                                            <tr>
-                                                <th>Bond Name</th>
-                                                <td>name</td>
-                                                <th>Bond Type</th>
-                                                <td>type</td>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <th>Bond Value</th>
-                                                <td>78888</td>
-                                                <th>Remark</th>
-                                                <td>Remark</td>
-                                               
-                                            </tr>
-                                            <tr>
-                                                <th>Status</th>
-                                                <td>Status</td>
-                                                <th>Desc</th>
-                                                <td>Desc</td>
-                                               
-                                            </tr>
-                                            <tr>
-                                                <th>Image</th>
-                                                <td>Remark</td>
-                                                <th>Action</th>
-                                                <td>Status</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Bond Reg Number</th>
-                                                <td>6777777</td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="agentTab" role="tabpanel">
-                                    <h6 class="mb-0 text-center">Agent</h6>
-                                    <table class="table table-bordered" style="width:100%; margin-top: 5px">
-                                        <tbody>
-                                            <tr>
-                                                <th>Agent Name</th>
-                                                <td>{{ $contract->loan_approval?->agent?->name }}</td> 
-                                                <th>Agent College</th>
-                                                <td>{{ $contract->customer?->student?->college?->name  }}</td>
-                                                <th>Phone Number</th>
-                                                <td>{{ $contract->loan_approval?->agent?->phone_number}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Status</th>
-                                                <td>{{ $contract->loan_approval?->status }}</td>
-                                                <th>Remark</th>
-                                                <td>{{ $contract->loan_approval?->remark}}</td>
-                                                <th>Attended Date</th>
-                                                <td>{{ $contract->loan_approval?->attended_date ? date('d,M-Y',strtotime($contract->loan_approval?->attended_date)) : ""}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="guarantorTab" role="tabpanel">
-                                    <h6 class="mb-0 text-center">Loan Guarantor's</h6>
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Guarantor Name</th>
-                                                <th>Relationship</th>
-                                                <th>Phone Number</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($contract->guarantors as $item)
-                                            <tr>
-                                                <td>{{ $loop->iteration}}</td>
-                                                <td>{{ ucwords($item->full_name)}}</td>
-                                                <td>{{ ucwords($item->relationship)}}</td>
-                                                <td>{{ $item->phone_number }}</td>
-                                            </tr>  
-                                            @empty
-                                               <tr class="text-center">
-                                                <td colspan="4">No Data Available</td>
-                                            </tr> 
-                                            @endforelse
-                                        </tbody>
-                    
-                                    </table>
-                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="agentTab" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-user-voice"></i>
+                                    Agent Information
+                                </h6>
+                                <table class="info-table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Agent Name</th>
+                                            <td>{{ $contract->loan_approval?->agent?->name ?: 'Not Assigned' }}</td>
+                                            <th>Agent College</th>
+                                            <td>{{ $contract->customer?->student?->college?->name  ?: 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone Number</th>
+                                            <td>{{ $contract->loan_approval?->agent?->phone_number ?: 'N/A' }}</td>
+                                            <th>Application Status</th>
+                                            <td>
+                                                @php
+                                                    $status = $contract->loan_approval?->status;
+                                                    $statusClass = 'status-pending';
+                                                    if ($status == 'Approved') $statusClass = 'status-active';
+                                                    elseif ($status == 'Rejected') $statusClass = 'status-overdue';
+                                                @endphp
+                                                <span class="status-badge {{ $statusClass }}">
+                                                    {{ $status ?: 'Pending' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Remark</th>
+                                            <td>{{ $contract->loan_approval?->remark ?: 'No remarks' }}</td>
+                                            <th>Attended Date</th>
+                                            <td>{{ $contract->loan_approval?->attended_date ? date('d M Y',strtotime($contract->loan_approval?->attended_date)) : 'Not attended' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="guarantorTab" role="tabpanel">
+                                <h6 class="section-title mb-3">
+                                    <i class="bx bx-group"></i>
+                                    Guarantor Details
+                                </h6>
+                                @if($contract->guarantors->count() > 0)
+                                    <div class="table-responsive payment-table">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Guarantor Name</th>
+                                                    <th>Relationship</th>
+                                                    <th>Phone Number</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($contract->guarantors as $item)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration}}</td>
+                                                        <td>{{ ucwords($item->full_name)}}</td>
+                                                        <td>{{ ucwords($item->relationship)}}</td>
+                                                        <td>{{ $item->phone_number }}</td>
+                                                    </tr>  
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="empty-state">
+                                        <i class="bx bx-info-circle" style="font-size: 2rem; color: #dee2e6;"></i>
+                                        <p class="mt-2">No guarantors added yet</p>
+                                    </div>
+                                @endif
+                            </div>
                             </div>
                         </div>
                     </div>

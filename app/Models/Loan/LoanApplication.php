@@ -6,6 +6,8 @@ use App\Models\Management\College;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Management\Customer;
+use App\Models\Management\CustomerBankDetail;
+use App\Models\Management\CustomerMandate;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use  App\Models\Management\Device;
 
@@ -14,7 +16,7 @@ class LoanApplication extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable=['customer_id','college_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'level','loan_code','uuid','start_date','loan_type','device_id','initial_deposit','other_fees'];
+    'level','loan_code','uuid','start_date','loan_type','device_id','initial_deposit','other_fees','customer_bank_detail_id','is_mandate_sent'];
 
     public function customer(){
         return $this->belongsTo(Customer::class);
@@ -28,12 +30,20 @@ class LoanApplication extends Model
         return $this->hasOne(LoanApproval::class);
     }
 
+    public function customer_mandate(){
+      return $this->hasOne(CustomerMandate::class,'loan_application_id','id');
+    }
+
     public function college(){
         return $this->hasOne(College::class,'id','college_id');
     }
 
     public function guarantors(){
       return $this->hasMany(Guarantor::class);
+    }
+
+    public function customer_bank_detail(){
+      return $this->hasOne(CustomerBankDetail::class,'id','customer_bank_detail_id');
     }
 
     public function scopeWithFilters($query,$request){

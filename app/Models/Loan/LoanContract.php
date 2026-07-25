@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Management\Customer;
 use App\Models\Management\Student;
 use App\Models\Management\College;
+use App\Models\Management\CustomerMandate;
 use App\Models\Payment\Payment;
 
 class LoanContract extends Model
@@ -46,6 +47,10 @@ class LoanContract extends Model
 
   public function guarantors(){
     return $this->hasMany(Guarantor::class,'loan_application_id','loan_application_id');
+  }
+
+  public function customer_mandate(){
+    return $this->hasOne(CustomerMandate::class,'loan_application_id','loan_application_id');
   }
 
   public function scopeWithFilters($query,$request){

@@ -25,7 +25,8 @@ class AssignmentResource extends JsonResource
             'image' => $this->getFirstMediaUrl('images'),
             'questions' => AssignmentQuestionResource::collection($this->questions),
             'participant' =>$this->user_participation,
-            'participation_status' =>$this->user_participation ? true: false
+            'participation_status' =>participationStatus($this->id)
+            // 'participation_status' =>$this->user_participation ? true: false
         ];
     }
 }

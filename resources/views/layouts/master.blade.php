@@ -32,6 +32,7 @@
 	<link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css')}}"/>
 	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css')}}"/>
 	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css')}}"/>
+	<script src="https://cdn.tailwindcss.com"></script>
 	<title>ELDIZER FINANCE</title>
 </head>
 
@@ -232,6 +233,60 @@
 			$('#example').DataTable();
 		  } );
 	</script>
+	
+	<!-- Mobile Menu Toggle Script -->
+	<script>
+		$(document).ready(function() {
+			// Mobile sidebar toggle
+			$('.mobile-toggle-menu').on('click', function() {
+				$('body').toggleClass('sidebar-open');
+				$('.sidebar-wrapper').toggleClass('open');
+				$('.overlay').toggleClass('show');
+			});
+			
+			// Close sidebar when clicking on overlay
+			$('.overlay').on('click', function() {
+				$('body').removeClass('sidebar-open');
+				$('.sidebar-wrapper').removeClass('open');
+				$('.overlay').removeClass('show');
+			});
+			
+			// Close sidebar when clicking toggle icon in sidebar
+			$('.toggle-icon').on('click', function() {
+				$('body').toggleClass('sidebar-open');
+				$('.sidebar-wrapper').toggleClass('open');
+				$('.overlay').toggleClass('show');
+			});
+		});
+	</script>
+	
+	<style>
+		/* Mobile Sidebar Styles */
+		@media (max-width: 992px) {
+			.sidebar-wrapper {
+				position: fixed;
+				top: 0;
+				left: -280px;
+				width: 280px;
+				height: 100vh;
+				z-index: 1000;
+				transition: left 0.3s ease;
+			}
+			
+			.sidebar-wrapper.open {
+				left: 0;
+			}
+			
+			.overlay.show {
+				display: block !important;
+				opacity: 1 !important;
+			}
+			
+			.sidebar-open .page-wrapper {
+				margin-left: 0;
+			}
+		}
+	</style>
     @stack('scripts')
 </body>
 

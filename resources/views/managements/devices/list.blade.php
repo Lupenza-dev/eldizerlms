@@ -1,354 +1,245 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-    .divider{
-        margin-top: 10px !important;
-    }
-    label{
-        margin-bottom: 5px !important;
-    }
-</style>
-<div class="page-wrapper">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">Devices</div>
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
+            <div class="breadcrumb-title pe-3">
+                <span class="text-lg font-bold text-slate-700">Device Management</span>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
-            <div class="ms-auto">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleLargeModal"> <span class="bx bx-plus"></span> Add Device</button>
-                    {{-- <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
-                        <a class="dropdown-item" href="javascript:;">Another action</a>
-                        <a class="dropdown-item" href="javascript:;">Something else here</a>
-                        <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
-                    </div> --}}
-                </div>
+            <div class="ms-auto flex items-center gap-3">
+                <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
+                    {{ $devices->count() }} Devices
+                </span>
+                <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
+                    <i class="bx bx-plus"></i> Add Device
+                </button>
             </div>
         </div>
-        <!--end breadcrumb-->
-      
-        <div class="card">
-            <div class="card-body">
-                <h6 class="mb-0 text-uppercase text-center">Devices</h6>
-                <hr/>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-devices text-white text-xl"></i>
+                </div>
+                <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Device Inventory</h6>
+            </div>
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                    <table id="example" class="table w-full" style="width:100%">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Image</th>
-                                <th>Reg Date</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>Plan</th>
-                                <th>Initial Deposit</th>
-                                <th>Category</th>
-                                <th>Action</th>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Reg Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Price</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Plan</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Initial Deposit</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                       <tbody>
+                        <tbody>
                         @foreach ($devices as $device)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td><img style="height: 70px; width: 70px; border-radius: 50%" src="{{ asset('storage/attachments').'/'.$device->image}}" alt=""></td>
-                                <td>{{ date('d,M-Y',strtotime($device->created_at))}}</td>
-                                <td>{{ $device->name }}</td>
-                                <td>{{ $device->price }}</td>
-                                <td>{{ $device->plan }}</td>
-                                <td>{{ $device->initial_deposit }}</td>
-                                <td>{{ $device->device_category?->name }}</td>
-                                <td>
-                                <button class="btn btn-danger btn-sm" id="{{ $device->uuid}}" onclick="delete_device(id)"><i class="bx bx-trash text-white"></i></button>
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <img class="h-12 w-12 rounded-xl object-cover border-2 border-slate-200 shadow-sm"
+                                         src="{{ asset('storage/attachments').'/'.$device->image}}"
+                                         alt="{{ $device->name }}"
+                                         onerror="this.src='https://picsum.photos/seed/device{{$device->id}}/64/64.jpg'">
                                 </td>
-                            </tr> 
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($device->created_at)) }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $device->name }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-slate-700 whitespace-nowrap">{{ number_format($device->price, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ $device->plan }} months</td>
+                                <td class="px-4 py-3 text-sm font-medium text-blue-600 whitespace-nowrap">{{ number_format($device->initial_deposit, 2) }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                                        {{ $device->device_category?->name ?? 'Uncategorized' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors" id="{{ $device->uuid }}" onclick="delete_device(id)" title="Delete Device">
+                                        <i class="bx bx-trash text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         @endforeach
-                       </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Device Registration Modal -->
 <div class="modal fade" id="exampleLargeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Device Registration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-mobile-alt text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Device Registration</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-6">
                 <form action="" id="registration_form">
-                    <div class="form-group row">
-                        <div class="col-md-12 divider">
-                            <label for="">Device Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Write device name ......." required>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Name</label>
+                            <input type="text" name="name" class="form-control rounded-lg text-sm" placeholder="Enter device name..." required>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Device Price</label>
-                            <input type="number" name="price" class="form-control" required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text text-sm">TZS</span>
+                                <input type="number" name="price" class="form-control rounded-r-lg text-sm" placeholder="0.00" required>
+                            </div>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Initial Deposit</label>
-                            <input type="number" name="initial_deposit" class="form-control" required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Initial Deposit</label>
+                            <div class="input-group">
+                                <span class="input-group-text text-sm">TZS</span>
+                                <input type="number" name="initial_deposit" class="form-control rounded-r-lg text-sm" placeholder="0.00" required>
+                            </div>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Plan</label>
-                            <input type="number" name="plan" class="form-control"  required>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Payment Plan (months)</label>
+                            <input type="number" name="plan" class="form-control rounded-lg text-sm" placeholder="Enter payment plan..." required>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Device Categories</label>
-                            <select name="device_category" class="form-control" required>
-                                <option value="">Please Choose Categories</option>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Category</label>
+                            <select name="device_category" class="form-control rounded-lg text-sm" required>
+                                <option value="">Select a category</option>
                                 @foreach ($categories as $item)
-                                    <option value="{{ $item->id}}">{{ $item->name }}</option>    
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-12 divider">
-                            <label for="">Device Image</label>
-                            <input type="file" name="image" class="form-control" required>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Device Image</label>
+                            <input type="file" name="image" class="form-control rounded-lg text-sm" accept="image/*" required>
+                            <p class="text-xs text-slate-400 mt-1">Supported formats: JPG, PNG, GIF. Max size: 2MB</p>
                         </div>
-                        <div class="col-md-12 divider" id="alert" style="margin-top: 10px">
-
-                        </div>
-                        <div class="col-md-12 divider" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="reg_btn"> <span class="bx bx-save"></span> Submit</button>
-                        </div>
+                        <div class="sm:col-span-2" id="alert"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Cancel
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="reg_btn">
+                            <i class="bx bx-save"></i> Register Device
+                        </button>
                     </div>
                 </form>
-                
             </div>
-            
         </div>
     </div>
 </div>
-@endsection
-
-@push('scripts')
 
 <script>
-    $(document).ready(function(){
-      $('#registration_form').on('submit',function(e){ 
-          e.preventDefault();
-
-      $.ajaxSetup({
-      headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-           }
-          });
-      $.ajax({
-      type:'POST',
-      url:"{{ route('devices.store')}}",
-      data : new FormData(this),
-      contentType: false,
-      cache: false,
-      processData : false,
-      success:function(response){
-        console.log(response);
-        $('#alert').html('<div class="alert alert-success">'+response.message+'</div>');
-        setTimeout(function(){
-         location.reload();
-      },500);
-      },
-      error:function(response){
-          console.log(response.responseText);
-          if (jQuery.type(response.responseJSON.errors) == "object") {
-            $('#alert').html('');
-          $.each(response.responseJSON.errors,function(key,value){
-              $('#alert').append('<div class="alert alert-danger">'+value+'</div>');
-          });
-          } else {
-             $('#alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
-          }
-      },
-      beforeSend : function(){
-                   $('#reg_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> Register .........');
-                   $('#reg_btn').attr('disabled', true);
-              },
-              complete : function(){
-                $('#reg_btn').html('<i class="fa fa-save"></i> Register');
-                $('#reg_btn').attr('disabled', false);
-              }
-      });
-  });
-  });
-</script>
-
-<script>
-      function enable_user(id){
-      var csrf_tokken =$('meta[name="csrf-token"]').attr('content');
-      swal({
-      title: "Activate User",
-      text: "Are you sure you want to Activate this User?",
-      type: "success",
-      showCancelButton: true,
-      confirmButtonColor: "#0D6855",
-      confirmButtonText: "Yes, Activate",
-      closeOnConfirmation: false
-    },
-    function(){
-      $.ajax({
-            url: "{{ route('user.status')}}", 
-            method: "POST",
-            data: {uuid:id,'_token':csrf_tokken,action:'activate'},
-            success: function(response)
-           { 
-           // console.log(response); 
-            $.notify(response.message, "success");
-            setTimeout(function(){
-                location.reload();
-            },500);
-            },
-            error: function(response){
-               // console.log(response.responseText);
-                $.notify(response.responseJson.errors,'error');  
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    const recordCount = document.getElementById('record-count');
+    if(recordCount) {
+        const count = {{ $devices->count() }};
+        recordCount.textContent = count + ' Device' + (count !== 1 ? 's' : '');
     }
-    );
-  }
-
-      function deactivate_user(id){
-      var csrf_tokken =$('meta[name="csrf-token"]').attr('content');
-      swal({
-      title: "Deactivate User",
-      text: "Are you sure you want to Deactivate this User?",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#0D6855",
-      confirmButtonText: "Yes, Deactivate",
-      closeOnConfirmation: false
-    },
-    function(){
-      $.ajax({
-            url: "{{ route('user.status')}}", 
-            method: "POST",
-            data: {uuid:id,'_token':csrf_tokken,action:'deactivate'},
-            success: function(response)
-           { 
-           // console.log(response); 
-            $.notify(response.message, "success");
-            setTimeout(function(){
-                location.reload();
-            },500);
-            },
-            error: function(response){
-               // console.log(response.responseText);
-                $.notify(response.responseJson.errors,'error');  
-            }
-        });
-    }
-    );
-  }
-
-  function delete_device(id){
-      var csrf_tokken =$('meta[name="csrf-token"]').attr('content');
-      swal({
-      title: "Delete Device",
-      text: "Are you sure you want to Delete this Device?",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#0D6855",
-      confirmButtonText: "Yes, Delete",
-      closeOnConfirmation: false
-    },
-    function(){
-      $.ajax({
-            url: "{{ route('device.delete')}}", 
-            method: "POST",
-            data: {uuid:id,'_token':csrf_tokken,action:'deactivate'},
-            success: function(response)
-           { 
-            $.notify(response.message, "success");
-            setTimeout(function(){
-                location.reload();
-            },500);
-            },
-            error: function(response){
-                $.notify(response.responseJson.errors,'error');  
-            }
-        });
-    }
-    );
-  }
-</script>
-<script>
-    $('.edit-btn').on('click',function(){
-        var id =$(this).data('id');
-        var name =$(this).data('name');
-        var email =$(this).data('email');
-        var phone_number =$(this).data('phone_number');
-        var student_reg =$(this).data('student_reg');
-        var college_id =$(this).data('college_id');
-
-        $('#id').val(id);
-        $('#name').val(name);
-        $('#email').val(email);
-        $('#phone_number').val(phone_number);
-        $('#student_reg').val(student_reg);
-        $('#college_id').val(college_id);
-    })
-</script>
-<script>
-    $(document).ready(function(){
-      $('#update_form').on('submit',function(e){ 
-          e.preventDefault();
-
-      $.ajaxSetup({
-      headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-           }
-          });
-      $.ajax({
-      type:'POST',
-      url:"{{ route('update.agent')}}",
-      data : new FormData(this),
-      contentType: false,
-      cache: false,
-      processData : false,
-      success:function(response){
-        console.log(response);
-        $('#update_alert').html('<div class="alert alert-success">'+response.message+'</div>');
-        setTimeout(function(){
-         location.reload();
-      },500);
-      },
-      error:function(response){
-          console.log(response.responseText);
-          if (jQuery.type(response.responseJSON.errors) == "object") {
-            $('#update_alert').html('');
-          $.each(response.responseJSON.errors,function(key,value){
-              $('#update_alert').append('<div class="alert alert-danger">'+value+'</div>');
-          });
-          } else {
-             $('#update_alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
-          }
-      },
-      beforeSend : function(){
-                   $('#update_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> Register .........');
-                   $('#update_btn').attr('disabled', true);
-              },
-              complete : function(){
-                $('#update_btn').html('<i class="fa fa-save"></i> Register');
-                $('#update_btn').attr('disabled', false);
-              }
-      });
-  });
-  });
-</script>
     
-@endpush
+    // Form submission
+    document.getElementById('registration_form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const regBtn = document.getElementById('reg_btn');
+        const alertDiv = document.getElementById('alert');
+        
+        // Show loading state
+        regBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Registering...';
+        regBtn.disabled = true;
+        
+        // Clear previous alerts
+        alertDiv.innerHTML = '';
+        
+        const formData = new FormData(this);
+        
+        fetch("{{ route('devices.store') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alertDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bx bx-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bx bx-error-circle me-2"></i>${data.message || 'An error occurred'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bx bx-error-circle me-2"></i>An error occurred. Please try again.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+        })
+        .finally(() => {
+            // Reset button state
+            regBtn.innerHTML = '<i class="bx bx-save me-1"></i> Register Device';
+            regBtn.disabled = false;
+        });
+    });
+});
+
+// Delete device function (keeping original SweetAlert)
+function delete_device(id){
+    var csrf_tokken = $('meta[name="csrf-token"]').attr('content');
+    swal({
+        title: "Delete Device",
+        text: "Are you sure you want to Delete this Device?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        closeOnConfirmation: false
+    },
+    function(){
+        $.ajax({
+            url: "{{ route('device.delete') }}", 
+            method: "POST",
+            data: {uuid:id,'_token':csrf_tokken,action:'deactivate'},
+            success: function(response) { 
+                $.notify(response.message, "success");
+                setTimeout(function(){
+                    location.reload();
+                },500);
+            },
+            error: function(response){
+                $.notify(response.responseJson.errors,'error');  
+            }
+        });
+    });
+}
+</script>
+@endsection

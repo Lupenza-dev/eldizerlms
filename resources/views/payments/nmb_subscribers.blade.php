@@ -1,63 +1,81 @@
 @extends('layouts.master')
 @section('content')
-<style>
-    td{
-        align-content: center;
-    }
-</style>
-<div class="page-wrapper">
+<div class="page-wrapper" style="background-color:#f1f5f9;">
     <div class="page-content">
-        <!--breadcrumb-->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <div class="breadcrumb-title pe-3">NMB Subscribers</div>
+        {{-- Breadcrumb --}}
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-5">
+            <div class="breadcrumb-title pe-3">
+                <span class="text-lg font-bold text-slate-700">NMB Subscribers</span>
+            </div>
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">List</li>
+                        <li class="breadcrumb-item"><a href="javascript:;" class="text-slate-400"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active text-slate-500" aria-current="page">List</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group">
-                </div>
+                <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
+                    {{ $subscribers->count() }} Subscribers
+                </span>
             </div>
         </div>
-        <!--end breadcrumb-->
-       
-        <div class="card">
-            <div class="card-body">
-                <h6 class="mb-0 text-uppercase text-center">NMB Subscribers</h6>
-                <hr/>
+
+        {{-- Main Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            {{-- Card Header --}}
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-user text-white text-xl"></i>
+                </div>
+                <h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">NMB Bank Subscribers</h6>
+            </div>
+
+            {{-- Table --}}
+            <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                    <table id="example" class="table w-full" style="width:100%">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Date</th>
-                                <th>Name</th>
-                                <th>Account</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Account</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                       <tbody>
+                        <tbody>
                         @foreach ($subscribers as $subcriber)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ date('d,M-Y',strtotime($subcriber->consent_request?->created_at))}}</td>
-                                <td>{{ $subcriber->nmb_username }}</td>
-                                <td>{{ $subcriber->consent_request?->from_account_number }}</td>
-                                <td>{{ $subcriber->consent_request?->status }}</td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm edit-btn"  data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
-                                    data-id="{{ $subcriber->consent_request?->uuid}}" 
-                                    title="Edit"> <i class="bx bx-edit"></i> </button>
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">{{ date('d M Y', strtotime($subcriber->consent_request?->created_at)) }}</td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ $subcriber->nmb_username }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                        {{ $subcriber->consent_request?->from_account_number }}
+                                    </span>
                                 </td>
-                            </tr> 
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    @switch($subcriber->consent_request?->status)
+                                        @case('APPROVED') <span class="badge bg-success">Approved</span> @break
+                                        @case('PENDING') <span class="badge bg-warning">Pending</span> @break
+                                        @case('REJECTED') <span class="badge bg-danger">Rejected</span> @break
+                                        @default <span class="badge bg-secondary">{{ $subcriber->consent_request?->status }}</span>
+                                    @endswitch
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors edit-btn"
+                                            data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
+                                            data-id="{{ $subcriber->consent_request?->uuid }}"
+                                            title="Create Transaction">
+                                        <i class="bx bx-edit text-sm"></i> Transact
+                                    </button>
+                                </td>
+                            </tr>
                         @endforeach
-                       </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -65,93 +83,114 @@
     </div>
 </div>
 
+<!-- Transaction Modal -->
 <div class="modal fade" id="exampleLargeModalEdit" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create Transaction</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-dollar-circle text-white text-lg"></i>
+                    </div>
+                    <h5 class="text-white font-semibold text-base mb-0">Create Transaction</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-6">
                 <form action="" id="update_form">
                     <input type="hidden" name="uuid" id="id">
-                    <div class="form-group row">
-                        <div class="col-md-12 divider">
-                            <label for="">Amount</label>
-                            <input type="number"  name="amount" class="form-control" placeholder="Write Amount ......." required>
-                        </div>
-                        <div class="col-md-12 mt-2" id="update_alert">
-
-                        </div>
-                        <div class="col-md-12 divider mt-2" style="text-align:right">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <span class="bx bx-times"></span> Close</button>
-                            <button type="submit" class="btn btn-primary" id="update_btn"> <span class="bx bx-save"></span> Submit</button>
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Transaction Amount
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-slate-100 text-slate-600 font-semibold border-slate-200">TZS</span>
+                            <input type="number" name="amount" class="form-control rounded-r-lg border-slate-200" placeholder="Enter amount..." required>
                         </div>
                     </div>
+
+                    <div class="alert-container" id="update_alert"></div>
+
+                    <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-100">
+                        <button type="button" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            <i class="bx bx-x"></i> Close
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="update_btn">
+                            <i class="bx bx-save"></i> Submit Transaction
+                        </button>
+                    </div>
                 </form>
-                
             </div>
-            
         </div>
     </div>
 </div>
 
-@endsection
-@push('scripts')
 <script>
-    $('.edit-btn').on('click',function(){
-        var id =$(this).data('id');
-        $('#id').val(id);
-      
-    })
-</script>
-<script>
-    $(document).ready(function(){
-      $('#update_form').on('submit',function(e){ 
-          e.preventDefault();
-
-      $.ajaxSetup({
-      headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-           }
-          });
-      $.ajax({
-      type:'POST',
-      url:"{{ route('create.transaction')}}",
-      data : new FormData(this),
-      contentType: false,
-      cache: false,
-      processData : false,
-      success:function(response){
-        console.log(response);
-        $('#update_alert').html('<div class="alert alert-success">'+response.message+'</div>');
-        setTimeout(function(){
-         location.reload();
-      },500);
-      },
-      error:function(response){
-          console.log(response.responseText);
-          if (jQuery.type(response.responseJSON.errors) == "object") {
-            $('#update_alert').html('');
-          $.each(response.responseJSON.errors,function(key,value){
-              $('#update_alert').append('<div class="alert alert-danger">'+value+'</div>');
-          });
-          } else {
-             $('#update_alert').html('<div class="alert alert-danger">'+response.responseJSON.errors+'</div>');
-          }
-      },
-      beforeSend : function(){
-                   $('#update_btn').html('<i class="fa fa-spinner fa-pulse fa-spin"></i> loading .........');
-                   $('#update_btn').attr('disabled', true);
-              },
-              complete : function(){
-                $('#update_btn').html('<i class="fa fa-save"></i> Submit');
-                $('#update_btn').attr('disabled', false);
-              }
-      });
-  });
-  });
-</script>
+document.addEventListener('DOMContentLoaded', function() {
+    const recordCount = document.getElementById('record-count');
+    if(recordCount) {
+        const count = {{ $subscribers->count() }};
+        recordCount.textContent = count + ' Subscriber' + (count !== 1 ? 's' : '');
+    }
     
-@endpush
+    // Edit button handler
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            document.getElementById('id').value = id;
+        });
+    });
+    
+    // Form submission
+    document.getElementById('update_form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const updateBtn = document.getElementById('update_btn');
+        const updateAlert = document.getElementById('update_alert');
+        
+        // Show loading state
+        updateBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Processing...';
+        updateBtn.disabled = true;
+        
+        // Clear previous alerts
+        updateAlert.innerHTML = '';
+        
+        fetch("{{ route('create.transaction') }}", {
+            method: 'POST',
+            body: new FormData(this),
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateAlert.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bx bx-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                updateAlert.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bx bx-error-circle me-2"></i>${data.message || 'An error occurred'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            updateAlert.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bx bx-error-circle me-2"></i>An error occurred. Please try again.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+        })
+        .finally(() => {
+            // Reset button state
+            updateBtn.innerHTML = '<i class="bx bx-save me-1"></i> Submit Transaction';
+            updateBtn.disabled = false;
+        });
+    });
+});
+</script>
+@endsection
 

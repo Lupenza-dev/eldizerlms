@@ -262,4 +262,8 @@ class HomeController extends Controller
         return $pdf->stream('loan_contract.pdf');
     }
 
+    public function testApi(){
+        return getApiToken()['corporate_reference'];
+    }
+
 }
