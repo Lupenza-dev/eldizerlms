@@ -22,5 +22,6 @@ class MandatePaymentCollection extends Model
         'reference',
         'status',
         'remarks',
+        'channel'
     ];
 }

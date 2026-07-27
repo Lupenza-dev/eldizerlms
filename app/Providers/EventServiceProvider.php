@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanContract;
+use App\Models\Payment\MandatePaymentCollection;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -12,6 +13,7 @@ use App\Observers\UserObserver;
 use App\Observers\LoanApplicationObserver;
 use App\Models\User;
 use App\Observers\LoanContractObserver;
+use App\Observers\MandatePaymentCollectionObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -43,6 +45,7 @@ class EventServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         LoanApplication::observe(LoanApplicationObserver::class);
         LoanContract::observe(LoanContractObserver::class);
+        MandatePaymentCollection::observe(MandatePaymentCollectionObserver::class);
     }
 
     /**

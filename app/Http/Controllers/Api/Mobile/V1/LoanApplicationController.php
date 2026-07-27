@@ -15,6 +15,7 @@ use Str;
 use App\Http\Resources\LoanApplicationResource;
 use App\Models\Management\Customer;
 use App\Models\Management\CustomerBankDetail;
+use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\PaymentMandate;
 
 class LoanApplicationController extends Controller
@@ -180,11 +181,28 @@ class LoanApplicationController extends Controller
                 'remarks' =>$request['mandate']['remarks'] ?? null,
                 'approved' =>$request['mandate']['approved'] ?? "Approved",
             ]);
-        } else if ($request['callback_type'] == 'MANDATE_STATUS'){
-
+        } else if ($request['callback_type'] == 'COLLECTION_STATUS'){
+            MandatePaymentCollection::updateOrCreate([
+                'mandate_reference' =>$request['collection']['mandate']['reference'],
+                'reference' =>$request['collection']['reference'],
+            ],[
+                'installment_order' =>1,
+                'installment_amount' =>$request['collection']['installment_amount'],
+                'current_balance' =>$request['collection']['current_balance'],
+                'outstanding_amount' =>$request['collection']['outstanding_amount'],
+                'payment_date' =>$request['collection']['payment_date'],
+                'last_paid_amount' =>$request['collection']['last_paid_amount'],
+                'status' =>$request['collection']['status'],
+                'channel' =>$request['channel'],
+                'remarks' =>$request['collection']['remarks'],
+            ]);
         }
         else {
-            # code...
+             return response()->json([
+            'success' => false,
+            'message' => 'Callback Failed to process',
+            'data' => $request->all()
+        ],500);
         }
         
         // Handle eMakato callback here
