@@ -148,7 +148,7 @@
                                                     <i class='bx bx-user me-2'></i> View
                                                 </a>
                                             </li>
-                                            @if ($loan->is_mandate_sent)
+                                            @if (!$loan->is_mandate_sent)
                                             <li>
                                                 <button type="button" class="dropdown-item confirm-mandate-btn" data-bs-toggle="modal" data-bs-target="#confirmMandateModal"
                                                     data-loan-uuid="{{ $loan->uuid }}"
