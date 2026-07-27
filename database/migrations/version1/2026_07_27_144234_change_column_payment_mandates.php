@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mandate_payment_collections', function (Blueprint $table) {
-            $table->string('installment_order')->nullable()->change();
+            // $table->string('installment_order')->nullable()->change();
             $table->string('installment_amount')->nullable()->change();
-            $table->string('min_installment_amount')->nullable()->change();
-            $table->string('max_installment_amount')->nullable()->change();
+            // $table->string('min_installment_amount')->nullable()->change();
+            // $table->string('max_installment_amount')->nullable()->change();
             $table->string('outstanding_amount')->nullable()->change();
             $table->string('payment_date')->nullable()->change();
             $table->string('last_paid_amount')->nullable()->change();
@@ -27,10 +27,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('mandate_payment_collections', function (Blueprint $table) {
-            $table->string('installment_order')->nullable(false)->change();
+            // $table->string('installment_order')->nullable(false)->change();
             $table->string('installment_amount')->nullable(false)->change();
-            $table->string('min_installment_amount')->nullable(false)->change();
-            $table->string('max_installment_amount')->nullable(false)->change();
+            // $table->string('min_installment_amount')->nullable(false)->change();
+            // $table->string('max_installment_amount')->nullable(false)->change();
             $table->string('outstanding_amount')->nullable(false)->change();
             $table->string('payment_date')->nullable(false)->change();
             $table->string('last_paid_amount')->nullable(false)->change();

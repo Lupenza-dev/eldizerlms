@@ -186,7 +186,7 @@ class LoanApplicationController extends Controller
                 'mandate_reference' =>$request['collection']['mandate']['reference'],
                 'reference' =>$request['collection']['reference'],
             ],[
-                'installment_order' =>1,
+                // 'installment_order' =>1,
                 'installment_amount' =>$request['collection']['installment_amount'],
                 'current_balance' =>$request['collection']['current_balance'],
                 'outstanding_amount' =>$request['collection']['outstanding_amount'],

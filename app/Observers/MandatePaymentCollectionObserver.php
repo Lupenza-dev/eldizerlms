@@ -21,8 +21,8 @@ class MandatePaymentCollectionObserver
     public function created(MandatePaymentCollection $mandatePaymentCollection): void
     {
         // after creation update payment
-          $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
-          ->where('loan_contract_id', '!=', null)->first();
+        //   $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
+        //   ->where('loan_contract_id', '!=', null)->first();
 
           $customer_mandate = CustomerMandate::where('mandate_reference', $mandatePaymentCollection->mandate_reference)->first();
 
@@ -36,7 +36,7 @@ class MandatePaymentCollectionObserver
 
         $payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)->first();
 
-        if (!$payment) {
+        if (!$payment && $loan_contract) {
             $payment = Payment::create([
                 'phone_number' => $loan_contract->customer->phone_number,
                 'amount'       => $mandatePaymentCollection->current_balance,
@@ -50,14 +50,16 @@ class MandatePaymentCollectionObserver
                 'loan_contract_id'      => $loan_contract->id,
                 'customer_id'           => $loan_contract->customer_id,
             ]);
+
+            $installment = new LoanInstallmentService();
+            $installment_result = $installment->updateInstallment($payment);
+    
+            $payment->remarks = "Loan Repayment";
+            $payment->status  = "Success";
+            $payment->save();
         }
 
-        $installment = new LoanInstallmentService();
-        $installment_result = $installment->updateInstallment($payment);
-
-        $payment->remarks = "Loan Repayment";
-        $payment->status  = "Success";
-        $payment->save();
+       
 
         // return response()->json([
         //     'success' => true,
