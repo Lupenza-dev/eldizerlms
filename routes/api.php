@@ -25,7 +25,7 @@ use App\Http\Controllers\HomeController as TestController;
 //     return $request->user();
 // });
 
-Route::get('call-back', [LoanApplicationController::class, 'eMakatocallBack']);
+Route::post('call-back', [LoanApplicationController::class, 'eMakatocallBack']);
 Route::post('upload-loans', [TestController::class, 'uploadLoans']);
 Route::get('verify-vrp', [NmbController::class, 'verifyVrp']);
 Route::get('get-assignments', [HomeController::class, 'getAssignments']);

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Loan\LoanContract;
+use App\Models\Management\CustomerBankDetail;
 use App\Models\Management\CustomerMandate;
 use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\Payment;
@@ -33,7 +34,7 @@ class MandatePaymentCollectionObserver
         //         'errors'  => 'Payment Already exist',
         //     ], 500);
         // }
-
+        $customer_bank =CustomerBankDetail::where('customer_id',$loan_contract->customer_id)->first();
         $payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)->first();
 
         if (!$payment && $loan_contract) {
@@ -42,7 +43,7 @@ class MandatePaymentCollectionObserver
                 'amount'       => $mandatePaymentCollection->current_balance,
                 'payment_reference'       => $mandatePaymentCollection->reference,
                 'payment_method'       => 'Mandate',
-                'payment_channel'       => $mandatePaymentCollection->channel,
+                'payment_channel'       => $customer_bank?->bank_name ?? "Bank",
                 'payment_date'          => $mandatePaymentCollection->payment_date,
                 'added_by'              => 1,
                 'uuid'                  => (string)Str::orderedUuid(),
