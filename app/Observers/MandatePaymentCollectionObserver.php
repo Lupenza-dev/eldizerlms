@@ -21,6 +21,9 @@ class MandatePaymentCollectionObserver
      */
     public function created(MandatePaymentCollection $mandatePaymentCollection): void
     {
+
+        if ($mandatePaymentCollection->status == 'PAID' || $mandatePaymentCollection->status ='PARTIAL_PAID') {
+            # code...
         // after creation update payment
         //   $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
         //   ->where('loan_contract_id', '!=', null)->first();
@@ -59,6 +62,8 @@ class MandatePaymentCollectionObserver
             $payment->status  = "Success";
             $payment->save();
         }
+    }
+
 
        
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Management\CustomerMandate;
 use App\Models\Payment\PaymentMandate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +35,7 @@ class LoadPaymentMandates implements ShouldQueue
         $response =Http::withToken($token_request['data']['token'])
                     ->get(env('SOLOCODE_BASE_URL').''.'mandate/all');
         $result =json_decode($response,true);
-        Log::info('response: '.json_encode($result));
+       // Log::info('response: '.json_encode($result));
 
         if ( $result['success']) {
 
@@ -59,6 +60,13 @@ class LoadPaymentMandates implements ShouldQueue
                 'remarks' =>$mandate['remarks'] ?? null,
                 'approved' =>$mandate['approved'] ?? "Approved",
             ]);
+
+            $customer =CustomerMandate::where('mandate_reference',$mandate['reference'])->first();
+            if( $customer){
+                $customer->update([
+                    'status' =>$mandate['lifecycle_status'] ?? null,
+                ]);
+            }
             }
            
         } else {

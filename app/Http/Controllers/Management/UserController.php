@@ -19,8 +19,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users =User::latest()->get();
-        return view('managements.users.list',compact('users'));
+        $users = User::with('roles')
+            ->whereHas('roles', function ($query) {
+                $query->whereIn('name', ['Admin','Super Admin','Agent']);
+            })
+            ->latest()
+            ->get();
+        return view('managements.users.list', compact('users'));
     }
 
     /**
@@ -36,39 +41,38 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $valid_data =$request->validated();
+        $valid_data = $request->validated();
 
-        $user =User::create([
-            'name'  =>ucwords($valid_data['name']),
-            'email' =>$valid_data['email'],
-            'phone_number' =>$valid_data['phone_number'],
-            'password'     =>Hash::make(123456),
-            'uuid'         =>(string)Str::orderedUuid(),
+        $user = User::create([
+            'name'  => ucwords($valid_data['name']),
+            'email' => $valid_data['email'],
+            'phone_number' => $valid_data['phone_number'],
+            'password'     => Hash::make(123456),
+            'uuid'         => (string)Str::orderedUuid(),
         ]);
 
         $user->assignRole('Admin');
 
         return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
-
-
+            'success' => true,
+            'message' => "Request Done Successfully"
+        ], 200);
     }
 
-    public function userStatus(Request $request){
-        $uuid   =$request->uuid;
-        $action =$request->action;
-        $status =($action == "activate") ? 1 : 2;
+    public function userStatus(Request $request)
+    {
+        $uuid   = $request->uuid;
+        $action = $request->action;
+        $status = ($action == "activate") ? 1 : 2;
 
-        $user =User::where('uuid',$uuid)->first();
-        $user->active    =$status;
+        $user = User::where('uuid', $uuid)->first();
+        $user->active    = $status;
         $user->save();
 
         return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
+            'success' => true,
+            'message' => "Request Done Successfully"
+        ], 200);
     }
 
     /**
@@ -92,21 +96,21 @@ class UserController extends Controller
      */
     public function userUpdate(Request $request)
     {
-        $valid_data =$this->validate($request,[
-            'name'           =>['required','min:3','max:50'],
-            'id'             =>['required'],
-            'phone_number'   =>['required','min:12','max:12'],
+        $valid_data = $this->validate($request, [
+            'name'           => ['required', 'min:3', 'max:50'],
+            'id'             => ['required'],
+            'phone_number'   => ['required', 'min:12', 'max:12'],
         ]);
 
-        $user =User::where('uuid',$valid_data['id'])->update([
-            'name' =>ucwords($valid_data['name']),
-            'phone_number' =>$valid_data['phone_number']
+        $user = User::where('uuid', $valid_data['id'])->update([
+            'name' => ucwords($valid_data['name']),
+            'phone_number' => $valid_data['phone_number']
         ]);
 
         return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
+            'success' => true,
+            'message' => "Request Done Successfully"
+        ], 200);
     }
 
     /**
@@ -114,43 +118,45 @@ class UserController extends Controller
      */
     public function destroy(Request  $request)
     {
-        $uuid   =$request->uuid;
+        $uuid   = $request->uuid;
 
-        $user   =User::where('uuid',$uuid)->first();
-        $agent  =Agent::where('user_id',$user->id)->first();
+        $user   = User::where('uuid', $uuid)->first();
+        $agent  = Agent::where('user_id', $user->id)->first();
         if ($agent) {
             $agent->delete();
         }
         $user->delete();
 
         return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
+            'success' => true,
+            'message' => "Request Done Successfully"
+        ], 200);
     }
 
-    public function userUpdateRoles(Request $request){
-       
-        DB::transaction(function () use ($request){
-            $customer =Customer::find($request->id);
-            $user     =$customer->user ?? null;
+    public function userUpdateRoles(Request $request)
+    {
 
-    
+        DB::transaction(function () use ($request) {
+            $customer = Customer::find($request->id);
+            $user     = $customer->user ?? null;
+
+
             foreach ($request->role as $key => $value) {
                 if ($value == 3) {
-                        $college_id =$request->college_id;
-    
-                        $agent =Agent::updateOrCreate(
-                            [
-                                'college_id' =>$college_id,
-                                'user_id'    =>$user->id,
-                            ],
-                            [
-                            'student_reg_id' =>$customer->student?->student_reg_id,
-                            'image'          =>$customer->image,
-                            'uuid'           =>(string)Str::orderedUuid(),
-                            'deleted_at'     =>null
-                        ]);
+                    $college_id = $request->college_id;
+
+                    $agent = Agent::updateOrCreate(
+                        [
+                            'college_id' => $college_id,
+                            'user_id'    => $user->id,
+                        ],
+                        [
+                            'student_reg_id' => $customer->student?->student_reg_id,
+                            'image'          => $customer->image,
+                            'uuid'           => (string)Str::orderedUuid(),
+                            'deleted_at'     => null
+                        ]
+                    );
                 }
             }
 
@@ -159,12 +165,11 @@ class UserController extends Controller
                 $user->syncRoles($request->role);
             }
         });
-       
+
 
         return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
-
+            'success' => true,
+            'message' => "Request Done Successfully"
+        ], 200);
     }
 }

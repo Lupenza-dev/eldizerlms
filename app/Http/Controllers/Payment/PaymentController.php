@@ -195,11 +195,11 @@ class PaymentController extends Controller
         ]);
 
         $token_request = getApiToken();
-        Log::info("++++++send++++");
-        Log::info($valid_data['reference']);
-        Log::info($valid_data['description']);
-        Log::info($token_request['data']['token']);
-        Log::info(env('SOLOCODE_BASE_URL') . '' . 'mandate/cancellation');
+        // Log::info("++++++send++++");
+        // Log::info($valid_data['reference']);
+        // Log::info($valid_data['description']);
+        // Log::info($token_request['data']['token']);
+        // Log::info(env('SOLOCODE_BASE_URL') . '' . 'mandate/cancellation');
         $response = Http::withToken($token_request['data']['token'])
             ->post(
                 env('SOLOCODE_BASE_URL') . '' . 'mandate/cancellation',
@@ -208,22 +208,22 @@ class PaymentController extends Controller
                     'reasons' => $valid_data['description'],
                 ]
             );
-        // $result =json_decode($response,true);
+         $result =json_decode($response,true);
 
-        Log::info($response);
+       // Log::info($response);
 
 
-        // if ($result['success']) {
-        //     return response()->json([
-        //     'success' => true,
-        //     'message' => 'Action completed successfully',
-        // ],200);
-        // }else{
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Failed to cancel mandate',
-        //     ],500);
-        // }
+        if ($result['success']) {
+            return response()->json([
+            'success' => true,
+            'message' => 'Action completed successfully',
+        ],200);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to cancel mandate',
+            ],500);
+        }
 
 
     }

@@ -15,8 +15,10 @@ use Str;
 use App\Http\Resources\LoanApplicationResource;
 use App\Models\Management\Customer;
 use App\Models\Management\CustomerBankDetail;
+use App\Models\Management\CustomerMandate;
 use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\PaymentMandate;
+use Illuminate\Support\Facades\Log;
 
 class LoanApplicationController extends Controller
 {
@@ -160,9 +162,11 @@ class LoanApplicationController extends Controller
 
     public function eMakatocallBack(Request $request)
     {
+        Log::info('------from call bak-------');
+        Log::info(json_encode($request->all()));
         if ($request['callback_type'] == 'MANDATE_STATUS') {
               PaymentMandate::updateOrCreate([
-                'reference' =>$request['reference']
+                'reference' =>$request['mandate']['reference']
             ],[
                 'channel' =>$request['channel'],
                 'periodicity' =>$request['mandate']['periodicity'],
@@ -181,6 +185,13 @@ class LoanApplicationController extends Controller
                 'remarks' =>$request['mandate']['remarks'] ?? null,
                 'approved' =>$request['mandate']['approved'] ?? "Approved",
             ]);
+
+            $customer =CustomerMandate::where('mandate_reference',$request['mandate']['reference'])->first();
+            if( $customer){
+                $customer->update([
+                    'status' =>$request['mandate']['lifecycle_status'] ?? null,
+                ]);
+            }
         } else if ($request['callback_type'] == 'COLLECTION_STATUS'){
             MandatePaymentCollection::updateOrCreate([
                 'mandate_reference' =>$request['collection']['mandate']['reference'],

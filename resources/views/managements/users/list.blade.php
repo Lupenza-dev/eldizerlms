@@ -46,6 +46,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Name</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Email</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Phone Number</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Role</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                             </tr>
@@ -65,6 +66,11 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
                                         {{ $user->phone_number }}
                                     </span>
+                                </td>
+                                <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">
+                                    @foreach ($user->roles as $role)
+                                    <span>{{ $role->name }},</span>
+                                @endforeach
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $user->status_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
