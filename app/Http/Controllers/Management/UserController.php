@@ -10,6 +10,8 @@ use App\Models\Management\Agent;
 use App\Models\Management\Customer;
 use Hash;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Str;
 
 class UserController extends Controller
@@ -25,7 +27,8 @@ class UserController extends Controller
             })
             ->latest()
             ->get();
-        return view('managements.users.list', compact('users'));
+        $roles = Role::all();
+        return view('managements.users.list', compact('users','roles'));
     }
 
     /**
@@ -46,12 +49,14 @@ class UserController extends Controller
         $user = User::create([
             'name'  => ucwords($valid_data['name']),
             'email' => $valid_data['email'],
-            'phone_number' => $valid_data['phone_number'],
+            'phone_number' => '255' . substr($valid_data['phone_number'], -9),
             'password'     => Hash::make(123456),
             'uuid'         => (string)Str::orderedUuid(),
         ]);
 
-        $user->assignRole('Admin');
+        if (!empty($valid_data['roles'])) {
+            $user->assignRole($valid_data['roles']);
+        }
 
         return response()->json([
             'success' => true,
@@ -86,9 +91,21 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $uuid)
     {
-        //
+        $user = User::where('uuid', $uuid)->first();
+        if (!$user) {
+            abort(404);
+        }
+
+        $roles = Role::all();
+        $permissions = Permission::all();
+
+        return view('managements.users.edit', compact(
+            'user',
+            'roles',
+            'permissions'
+        ));
     }
 
     /**
@@ -99,13 +116,28 @@ class UserController extends Controller
         $valid_data = $this->validate($request, [
             'name'           => ['required', 'min:3', 'max:50'],
             'id'             => ['required'],
-            'phone_number'   => ['required', 'min:12', 'max:12'],
+            'phone_number'   => ['required', 'min:9', 'max:12'],
+            'roles'          => ['nullable', 'array'],
+            'roles.*'        => ['string', 'exists:roles,name'],
+            'permissions'    => ['nullable', 'array'],
+            'permissions.*'  => ['string', 'exists:permissions,name'],
         ]);
 
-        $user = User::where('uuid', $valid_data['id'])->update([
+        $user = User::where('uuid', $valid_data['id'])->first();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User Not Found'
+            ], 404);
+        }
+
+        $user->update([
             'name' => ucwords($valid_data['name']),
-            'phone_number' => $valid_data['phone_number']
+            'phone_number' => '255' . substr($valid_data['phone_number'], -9)
         ]);
+
+        $user->syncRoles($valid_data['roles'] ?? []);
+        $user->syncPermissions($valid_data['permissions'] ?? []);
 
         return response()->json([
             'success' => true,

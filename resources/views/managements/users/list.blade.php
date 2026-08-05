@@ -75,15 +75,9 @@
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $user->status_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
-                                        <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
-                                                data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
-                                                data-id="{{ $user->uuid}}"
-                                                data-name="{{ $user->name }}"
-                                                data-email="{{ $user->email}}"
-                                                data-phone_number="{{ $user->phone_number }}"
-                                                title="Edit User">
+                                        <a href="{{ route('user.edit', $user->uuid) }}" class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Edit User">
                                             <i class="bx bx-edit text-sm"></i>
-                                        </button>
+                                        </a>
                                         @if ($user->active == 2)
                                             <button class="inline-flex items-center justify-center w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors" id="{{ $user->uuid }}" onclick="enable_user(id)" title="Activate">
                                                 <i class="bx bx-check text-sm"></i>
@@ -136,6 +130,15 @@
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
                             <input type="tel" name="phone_number" class="form-control rounded-lg text-sm" placeholder="Enter phone number..." required>
                         </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Roles</label>
+                            <select name="roles[]" class="form-control rounded-lg text-sm" multiple size="4" required>
+                                @foreach ($roles as $role)
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-slate-400 mt-1">Hold Ctrl/Cmd to select multiple roles</p>
+                        </div>
                         <div id="alert"></div>
                     </div>
                     <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
@@ -182,6 +185,15 @@
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
                             <input type="tel" id="phone_number" name="phone_number" class="form-control rounded-lg text-sm" placeholder="Enter phone number..." required>
                         </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Roles</label>
+                            <select name="roles[]" id="edit_roles" class="form-control rounded-lg text-sm" multiple size="4" required>
+                                @foreach ($roles as $role)
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-slate-400 mt-1">Hold Ctrl/Cmd to select multiple roles</p>
+                        </div>
                         <div id="update_alert"></div>
                     </div>
                     <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-100">
@@ -213,11 +225,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = this.dataset.name;
             const email = this.dataset.email;
             const phone_number = this.dataset.phone_number;
+            let roles = [];
+            if (this.dataset.roles) {
+                try {
+                    roles = JSON.parse(this.dataset.roles);
+                } catch (e) {
+                    roles = [];
+                }
+            }
 
             document.getElementById('id').value = id;
             document.getElementById('name').value = name;
             document.getElementById('email').value = email;
             document.getElementById('phone_number').value = phone_number;
+
+            const rolesSelect = document.getElementById('edit_roles');
+            Array.from(rolesSelect.options).forEach(option => {
+                option.selected = roles.includes(option.value);
+            });
         });
     });
     
@@ -241,10 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             body: formData,
             headers: {
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
+        .then(response => response.json().catch(() => ({})))
         .then(data => {
             if (data.success) {
                 alertDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -253,8 +279,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
                 setTimeout(() => location.reload(), 1500);
             } else {
+                let message = data.message || 'An error occurred';
+                if (data.errors && typeof data.errors === 'object') {
+                    message = Object.values(data.errors).flat().join('<br>');
+                }
                 alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bx bx-error-circle me-2"></i>${data.message || 'An error occurred'}
+                    <i class="bx bx-error-circle me-2"></i>${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>`;
             }
@@ -293,10 +323,11 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             body: formData,
             headers: {
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
+        .then(response => response.json().catch(() => ({})))
         .then(data => {
             if (data.success) {
                 updateAlert.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -305,8 +336,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
                 setTimeout(() => location.reload(), 1500);
             } else {
+                let message = data.message || 'An error occurred';
+                if (data.errors && typeof data.errors === 'object') {
+                    message = Object.values(data.errors).flat().join('<br>');
+                }
                 updateAlert.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bx bx-error-circle me-2"></i>${data.message || 'An error occurred'}
+                    <i class="bx bx-error-circle me-2"></i>${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>`;
             }

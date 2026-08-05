@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            DeviceCategory::class
+            DeviceCategory::class,
+            RoleSeeder::class,
+            PermissionSeeder::class
         ]);
     }
 }

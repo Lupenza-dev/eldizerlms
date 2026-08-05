@@ -70,6 +70,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('hospital/update',[HospitalController::class,'hospitalUpdate'])->name('update.hospital');
     Route::get('hospital/districts/{region_id}',[HospitalController::class,'getDistrictsByRegion'])->name('hospital.districts');
     Route::post('agent/update',[AgentController::class,'agentUpdate'])->name('update.agent');
+    Route::get('user/edit/{uuid}',[UserController::class,'edit'])->name('user.edit');
     Route::post('user/update',[UserController::class,'userUpdate'])->name('update.user');
     Route::post('user/update/roles',[UserController::class,'userUpdateRoles'])->name('update.user.roles');
     Route::post('college/status',[UniversityController::class,'collegeStatus'])->name('college.status');
