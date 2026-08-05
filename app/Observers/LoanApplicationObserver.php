@@ -24,7 +24,7 @@ class LoanApplicationObserver
         // $student_reg     = $loanApplication->customer?->student?->student_reg_id;
         $message         = $customer_name . " has applied Loan of " . $loanApplication->amount . " Through Our Application Please Review It and Provide Feedback Through Portal";
         // $receiver_email  =$loanApplication->loan_approval?->agent?->email;
-        $receiver_email  = "lupenza10@gmail.com";
+        $receiver_email  = "elibariki.laizer@eldizerfinance.co.tz";
         $receiver_name   = "Admin";
         $subject         = "Loan Application Notification";
         SendEmailJob::dispatch($message, $receiver_email, $receiver_name, $subject)->onQueue('emails');
