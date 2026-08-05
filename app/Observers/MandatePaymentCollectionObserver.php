@@ -30,6 +30,9 @@ class MandatePaymentCollectionObserver
 
           $customer_mandate = CustomerMandate::where('mandate_reference', $mandatePaymentCollection->mandate_reference)->first();
 
+        if($customer_mandate){
+
+
         $loan_contract = LoanContract::where('loan_application_id', $customer_mandate->loan_application_id)->first();
         // if ($check_payment) {
         //     return response()->json([
@@ -62,6 +65,9 @@ class MandatePaymentCollectionObserver
             $payment->status  = "Success";
             $payment->save();
         }
+
+         }
+
     }
 
 
