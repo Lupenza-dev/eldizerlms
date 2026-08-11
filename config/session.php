@@ -198,4 +198,20 @@ return [
 
     'same_site' => 'lax',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Session Serialization
+    |--------------------------------------------------------------------------
+    |
+    | This option determines how the session component serializes data. Setting
+    | this to "json" will serialize data using JSON, which is safer and more
+    | performant than PHP serialization. However, it will not support storing
+    | PHP objects in the session. If you need to store objects, use "php".
+    |
+    | Supported: "php", "json"
+    |
+    */
+
+    'serialization' => 'php',
+
 ];
