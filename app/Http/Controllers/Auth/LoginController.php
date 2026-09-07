@@ -66,7 +66,7 @@ class LoginController extends Controller
             $user = User::find(auth()->user()->id);
             if ($user->active == 1) { 
 
-               if ($user->hasRole('Admin') || $user->hasRole('Super Admin')) {
+               if ($user->hasRole('Admin') || $user->hasRole('Super Admin') || $user->hasRole('Internal User')) {
                 return response()->json([
                     'success' =>true,
                     'message' =>greeting().' '.$user->name.' Welcome Again at ELDizer Finance LMS',

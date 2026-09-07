@@ -206,7 +206,8 @@
     </div>
     <!--navigation-->
     <ul class="metismenu" id="menu">
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @can('view dashboard')
+        @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
         <li>
             <a class="{{ Route::is('admin.dashboard') ? "li-active": ""}}" href="{{ route('admin.dashboard')}}" title="Dashboard">
                 <div class="parent-icon"><i class='bx bx-home-alt'></i></div>
@@ -221,22 +222,30 @@
             </a>
         </li>  
         @endif
+        @endcan
        
+        @canany(['view customers', 'view loans'])
         <li class="menu-label">Loan Management</li>
+        @endcanany
+        @can('view customers')
         <li>
             <a class="{{ (Route::is('customers.index') or Route::is('customers.show') or Route::is('customers.edit')) ? "li-active": ""}}" href="{{ route('customers.index')}}" title="Customer Management">
                 <div class="parent-icon"><i class='bx bx-user'></i></div>
                 <div class="menu-title">Customers</div>
             </a>
         </li>
+        @endcan
+        @can('view loans')
         <li>
             <a class="{{ (Route::is('loan.management') or Route::is('loan.applications') or Route::is('loan.profile') or Route::is('loan.contracts') or Route::is('loan.contract.profile') or Route::is('loan.applications.waiting.mandate')) ? "li-active": ""}}" href="{{ route('loan.management')}}" title="Loan Management">
                 <div class="parent-icon"><i class='bx bx-file'></i></div>
                 <div class="menu-title">Loan Management</div>
             </a>
         </li>
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @endcan
+        @canany(['view payments', 'manage mobile app', 'manage devices', 'manage universities', 'manage hospitals', 'manage beneficiaries', 'manage agents', 'manage users', 'manage roles'])
             
+        @can('view payments')
         <li class="menu-label">Payment Management</li>
         {{-- <li>
             <a class="{{ Route::is('payment.disbursed') ? "li-active": ""}}" href="{{ route('payment.disbursed')}}" title="Disbursement Management">
@@ -250,56 +259,81 @@
                 <div class="menu-title">Payments</div>
             </a>
         </li>
+        @endcan
         {{-- <li>
             <a class="{{ Route::is('nmb.subscribers') ? "li-active": ""}}" href="{{ route('nmb.subscribers')}}" title="NMB Subscribers">
                 <div class="parent-icon"><i class='bx bx-user'></i></div>
                 <div class="menu-title">NMB Subscribers</div>
             </a>
         </li> --}}
+        @canany(['manage mobile app', 'manage devices', 'manage universities', 'manage hospitals', 'manage beneficiaries', 'manage agents', 'manage users', 'manage roles'])
         <li class="menu-label">System Management</li>
+        @endcanany
+        @can('manage mobile app')
         <li>
             <a class="{{ Route::is('app.management') ? "li-active": ""}}" href="{{ route('app.management')}}" title="App Management">
                 <div class="parent-icon"><i class='bx bx-mobile-alt'></i></div>
                 <div class="menu-title">Mobile App</div>
             </a>
         </li>
+        @endcan
+        @can('manage devices')
         <li>
             <a class="{{ Route::is('devices.index') ? "li-active": ""}}" href="{{ route('devices.index')}}" title="Device Management">
                 <div class="parent-icon"><i class='bx bx-mobile'></i></div>
                 <div class="menu-title">Devices</div>
             </a>
         </li>
+        @endcan
+        @can('manage universities')
         <li>
             <a class="{{ Route::is('colleges.index') ? "li-active": ""}}" href="{{ route('colleges.index')}}" title="University Management">
                 <div class="parent-icon"><i class='bx bx-buildings'></i></div>
                 <div class="menu-title">Universities</div>
             </a>
         </li>
+        @endcan
+        @can('manage hospitals')
         <li>
             <a class="{{ Route::is('hospitals.index') ? "li-active": ""}}" href="{{ route('hospitals.index')}}" title="Hospital Management">
                 <div class="parent-icon"><i class='bx bx-buildings'></i></div>
                 <div class="menu-title">Hospitals</div>
             </a>
         </li>
+        @endcan
+        @can('manage beneficiaries')
         <li>
             <a class="{{ Route::is('beneficaries.index') ? "li-active": ""}}" href="{{ route('beneficaries.index')}}" title="HESLB Beneficiaries">
                 <div class="parent-icon"><i class='bx bx-award'></i></div>
                 <div class="menu-title">HESLB Beneficiaries</div>
             </a>
         </li>
+        @endcan
+        @can('manage agents')
         <li>
             <a class="{{ Route::is('agents.index') ? "li-active": ""}}" href="{{ route('agents.index')}}" title="Agent Management">
                 <div class="parent-icon"><i class='bx bx-user-voice'></i></div>
                 <div class="menu-title">Agents</div>
             </a>
         </li>
+        @endcan
+        @can('manage users')
         <li>
             <a class="{{ Route::is('users.index') ? "li-active": ""}}" href="{{ route('users.index')}}" title="User Management">
                 <div class="parent-icon"><i class='bx bx-users'></i></div>
                 <div class="menu-title">Users</div>
             </a>
         </li>
-        @endif
+        @endcan
+        @can('manage roles')
+        <li>
+            <a class="{{ Route::is('roles.*') ? 'li-active': '' }}" href="{{ route('roles.index') }}" title="Role Management">
+                <div class="parent-icon"><i class='bx bx-shield-quarter'></i></div>
+                <div class="menu-title">Roles & Permissions</div>
+            </a>
+        </li>
+        @endcan
+        @endcanany
         <li>
             <a href="{{ route('logout')}}" title="Logout">
                 <div class="parent-icon"><i class='bx bx-log-out-circle'></i></div>
