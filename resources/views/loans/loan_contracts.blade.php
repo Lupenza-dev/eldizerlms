@@ -118,7 +118,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Paid</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Outstanding</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
                                 @endif
                             </tr>
@@ -141,7 +141,7 @@
                                 <td class="px-4 py-3 text-sm font-medium text-emerald-600 whitespace-nowrap">{{ number_format($contract->current_balance) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-orange-500 whitespace-nowrap">{{ number_format($contract->outstanding_amount) }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $contract->status_formatted !!}</td>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <a href="{{ route('loan.contract.profile',$contract->uuid)}}" class="text-decoration-none">
                                         <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors" title="View Profile">
