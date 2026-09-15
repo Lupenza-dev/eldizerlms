@@ -97,7 +97,7 @@ class LoanContract extends Model
                 $query->whereBetween('past_due_days',[61,90]);
             }
             elseif ($past_due == "90 +") {
-                $query->whereBetween('past_due_days','>',90);
+                $query->where('past_due_days','>',90);
             }
         });
        

@@ -7,6 +7,7 @@ use Rap2hpoutre\FastExcel\FastExcel;
 trait LoanTrait
 {
     public function exportLoanReport($contracts){
+        ob_start();
         return (new FastExcel($this->loanGenerator($contracts)))->download('LoanReport.xlsx',function($contract){
             
             return [
@@ -28,23 +29,23 @@ trait LoanTrait
             'Student Reg ID'      =>$contract->student?->student_reg_id,
             'Student Course'      =>$contract->student?->course,
             'HESLB Status'        =>$contract->student?->heslb_status,
-            'Loan Start Date'     =>date('d-M-Y',strtotime($contract->start_date)),
-            'Loan Expected End Date' =>date('d-M-Y',strtotime($contract->expected_end_date)),
-            'Loan Code'           =>$contract->contract_code,
-            'Request Amount'      =>$contract->amount,
-            'Total Loan Amount'   =>$contract->loan_amount,
-            'Installment Amount'  =>$contract->installment_amount,
-            'Loan Plan'           =>$contract->plan,
-            'Loan Status'         =>$contract->status,
-            'Total Paid In'       =>$contract->current_balance,
-            'Outstanding Balance' =>$contract->outstanding_amount,
-            'Interest Rate'       =>$contract->interest_rate,
-            'Interest Amount'     =>$contract->interest_amount,
-            'Fees Amount'         =>$contract->fees_amount,
-            'Past Due Days'       =>$contract->past_due_days,
-            'Past Due Amount'     =>$contract->past_due_amount,
-            'Penalt Amount'       =>$contract->penalt_amount,
-            'Penalt Amount Paid'  =>$contract->penalt_amount_paid,
+            'Loan Start Date'     =>date('d-M-Y',strtotime($contract?->start_date)),
+            'Loan Expected End Date' =>date('d-M-Y',strtotime($contract?->expected_end_date)),
+            'Loan Code'           =>$contract?->contract_code,
+            'Request Amount'      =>$contract?->amount,
+            'Total Loan Amount'   =>$contract?->loan_amount,
+            'Installment Amount'  =>$contract?->installment_amount,
+            'Loan Plan'           =>$contract?->plan,
+            'Loan Status'         =>$contract?->status,
+            'Total Paid In'       =>$contract?->current_balance,
+            'Outstanding Balance' =>$contract?->outstanding_amount,
+            'Interest Rate'       =>$contract?->interest_rate,
+            'Interest Amount'     =>$contract?->interest_amount,
+            'Fees Amount'         =>$contract?->fees_amount,
+            'Past Due Days'       =>$contract?->past_due_days,
+            'Past Due Amount'     =>$contract?->past_due_amount,
+            'Penalt Amount'       =>$contract?->penalt_amount,
+            'Penalt Amount Paid'  =>$contract?->penalt_amount_paid,
            
             ];
         });
