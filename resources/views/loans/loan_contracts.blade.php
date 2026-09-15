@@ -42,15 +42,23 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Start Date</label>
-                        <input type="date" class="form-control rounded-lg text-sm" name="start_date" value="{{ $requests['start_date'] ?? null}}">
+                        <input type="date" class="form-control rounded-lg text-sm" name="loan_start_date" value="{{ $requests['loan_start_date'] ?? null}}">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">End Date</label>
-                        <input type="date" class="form-control rounded-lg text-sm" name="end_date" value="{{ $requests['end_date'] ?? null}}">
+                        <input type="date" class="form-control rounded-lg text-sm" name="loan_end_date" value="{{ $requests['loan_end_date'] ?? null}}">
                     </div>
-                    <div>
+                    {{-- <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Loan Code</label>
                         <input type="text" class="form-control rounded-lg text-sm" name="contract_code" placeholder="Write Loan Code" value="{{ $requests['contract_code'] ?? null}}">
+                    </div> --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bank</label>
+                        <select name="bank" class="form-control rounded-lg text-sm">
+                            <option value="">Choose Bank</option>
+                            <option value="NMB">NMB</option>
+                            <option value="CRDB">CRDB</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
@@ -72,13 +80,13 @@
                             <option value="90+">90+</option>
                         </select>
                     </div>
-                    <div>
+                    {{-- <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
                         <input type="number" class="form-control rounded-lg text-sm" name="phone_number" value="{{ $requests['phone_number'] ?? null}}" placeholder="2557*****">
-                    </div>
+                    </div> --}}
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">University</label>
-                        <select name="university_id" class="form-control rounded-lg text-sm">
+                        <select name="college_id" class="form-control rounded-lg text-sm">
                             <option value="">Choose University</option>
                             @foreach ($universities as $item)
                             <option value="{{ $item->id}}">{{ $item->name }}</option>
@@ -86,9 +94,18 @@
                         </select>
                     </div>
                     <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Hospital</label>
+                        <select name="hospital_id" class="form-control rounded-lg text-sm">
+                            <option value="">Choose Hospital</option>
+                            @foreach ($hospitals as $item)
+                            <option value="{{ $item->id}}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
                         <input type="text" class="form-control rounded-lg text-sm" name="student_reg_id" value="{{ $requests['student_reg_id'] ?? null}}" placeholder="Student Reg ID">
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
                     <button formaction="{{ route('loan.contracts') }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
