@@ -21,6 +21,10 @@ class LoanContract extends Model
     return $this->belongsTo(Customer::class);
   }
 
+  public function loan_application(){
+    return $this->belongsTo(LoanApplication::class);
+  }
+
   public function loan_approval(){
     return $this->hasOne(LoanApproval::class,'loan_application_id','loan_application_id');
   }
@@ -55,8 +59,8 @@ class LoanContract extends Model
 
   public function scopeWithFilters($query,$request){
         
-    $start_date        =$request['start_date'] ?? null;
-    $end_date          =$request['end_date'] ?? null;
+    $start_date        =$request['loan_start_date'] ?? null;
+    $end_date          =$request['loan_end_date'] ?? null;
     $contract_status   =$request['contract_status'] ?? null;
     $college_id        =$request['college_id'] ?? null;
     $past_due_days     =$request['past_due_days'] ?? null;
