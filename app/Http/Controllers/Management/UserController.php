@@ -23,7 +23,7 @@ class UserController extends Controller
     {
         $users = User::with('roles')
             ->whereHas('roles', function ($query) {
-                $query->whereIn('name', ['Admin','Super Admin','Agent']);
+                $query->whereIn('name', ['Admin','Super Admin','Agent','Internal User']);
             })
             ->latest()
             ->get();
