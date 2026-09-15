@@ -68,7 +68,7 @@ class LoanContractController extends Controller
     public function generateExcelReport(Request $request)
     {
         $requests  = $request->all();
-         $filter   = Auth::user()->hasRole('Agent') ? true : false;
+        $filter   = Auth::user()->hasRole('Agent') ? true : false;
         $contracts = LoanContract::with('customer', 'student', 'customer.intern', 'customer.intern.hospital','loan_application','loan_application.customer_bank_detail')
             ->orderBy('start_date', 'DESC')
             ->when($requests, function ($query) use ($requests) {
