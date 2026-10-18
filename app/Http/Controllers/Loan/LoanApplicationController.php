@@ -406,7 +406,7 @@ class LoanApplicationController extends Controller
                 ->withHeaders(['auth-token' => $token, 'sender' => $sender])
                 ->connectTimeout(10)
                 ->timeout(30)
-                ->post(rtrim($base_url, '/') . 'student_register', $payload);
+                ->post(rtrim($base_url, '/') . '/student_register', $payload);
         } catch (ConnectionException $e) {
             Log::error('EcoWater registration failed: ' . $e->getMessage());
             return ['success' => false, 'message' => 'EcoWater registration could not be confirmed. Check EcoWater before retrying.'];
