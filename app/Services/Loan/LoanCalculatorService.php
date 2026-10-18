@@ -11,11 +11,12 @@ class LoanCalculatorService
     // }
 
     public static function calculator($data){
-        $rate =($data['loan_type'] == 2)? 1.15 : 1.20;
+        $loan_type = $data['loan_type'];
+        $rate =($loan_type == 2)? 1.15 : 1.20;
         $amount =$data['amount'];
         $plan   =$data['plan'];
 
-        $details['total_amount']       =$amount*$rate;
+        $details['total_amount']       =$loan_type == 3 ? 15000 : $amount*$rate;
         $details['installment_amount'] =$details['total_amount']/$plan;
         $details['start_date']          =date('Y-m-d');
         $details['end_date']           =date('Y-m-d', strtotime("+".$plan." months", strtotime($details['start_date'])));

@@ -91,5 +91,6 @@ Route::group(['prefix' => 'V2'], function () {
         Route::post('submit-assignment', [HomeController::class, 'submitAssignment']);
         Route::get('get-assignments', [HomeController::class, 'getAssignments']);
         Route::post('complete-intern-registration', [RegistrationController::class, 'completeInternRegistration']);
+        Route::get('get-eco-water-campuses', [HomeController::class, 'getEcoWaterCampuses']);
     });
 });

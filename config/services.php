@@ -2,6 +2,11 @@
 
 return [
 
+    'ecowater' => [
+        'auth_token' => env('ECOWATER_AUTH_TOKEN'),
+        'sender' => env('ECOWATER_SENDER'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

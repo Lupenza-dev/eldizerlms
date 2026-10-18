@@ -27,6 +27,7 @@ use App\Models\Management\AssignmentParticipant;
 use App\Models\Management\AssignmentQuestion;
 use App\Models\Management\Device;
 use App\Models\Management\DeviceCategory;
+use App\Models\Management\EcoWaterCampus;
 use App\Models\Management\Group;
 use App\Models\Management\Hospital;
 use App\Models\Management\Term;
@@ -175,7 +176,15 @@ class HomeController extends Controller
          return response()->json([
             'success' =>true,
             'data'    =>HospitalResource::collection(Hospital::latest()->get()),
-        ]);   
+        ],200);   
+    }
+
+    public function getEcoWaterCampuses(){
+        $data = EcoWaterCampus::latest()->get(['id','campus_name']);
+        return response()->json([
+            'success' =>true,
+            'data'    =>$data,
+        ],200);   
     }
 
     public function dashboard(){
