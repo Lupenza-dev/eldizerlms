@@ -106,8 +106,14 @@ class LoanApplication extends Model
       public function getLoanTypeFormatAttribute(){
         if ($this->loan_type == 1) {
           return "<span class='badge bg-success text-white'>Cash</span>";
-        } else {
+        }else if ($this->loan_type == 2){
           return "<span class='badge bg-success text-white'>Pay Later</span>";
+        }else if ($this->loan_type == 3){
+          return "<span class='badge bg-success text-white'>Eco Water</span>";
+        } 
+         else {
+          return "<span class='badge bg-success text-white'>Cash</span>";
+
         }
         
       }

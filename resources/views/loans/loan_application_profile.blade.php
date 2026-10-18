@@ -451,7 +451,7 @@
                                 <th>Interest Amount</th>
                                 <td>{{ number_format($loan->interest_amount) }}</td>
                                 <th>Total Repayment</th>
-                                <td class="highlight-amount">{{ number_format($loan->loan_amount + $loan->interest_amount) }}</td>
+                                <td class="highlight-amount">{{ number_format($loan->loan_amount) }}</td>
                             </tr>
                         </tbody>
                     </table>

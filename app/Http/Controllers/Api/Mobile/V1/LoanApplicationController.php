@@ -107,7 +107,7 @@ class LoanApplicationController extends Controller
             'customer_id' =>Auth::user()->customer_id ?? 3,
             'amount'      =>$calculator['amount'],
             'loan_amount' =>$calculator['total_amount'],
-            'plan'        =>3,
+            'plan'        =>$valid_data['loan_type']  == 3 ? 1: 3,
             // 'plan'        =>$calculator['plan'],
             'installment_amount'  =>$calculator['installment_amount'],
             'interest_rate'       =>0.035,
