@@ -131,4 +131,8 @@ class LoanApplication extends Model
         $fees =json_decode($this->other_fees,true);
         return ($fees['late_payment'] * 100).'%';
       }
+
+      public function ecoWaterApplicant(){
+        return $this->hasOne(EcoWaterApplicants::class,'loan_application_id','id');
+      }
 }

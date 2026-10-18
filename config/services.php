@@ -3,8 +3,9 @@
 return [
 
     'ecowater' => [
-        'auth_token' => env('ECOWATER_AUTH_TOKEN'),
-        'sender' => env('ECOWATER_SENDER'),
+        'auth_token' => env('ECO_TOKEN', env('ECOWATER_AUTH_TOKEN')),
+        'sender' => env('ECO_SENDER', env('ECOWATER_SENDER')),
+        'base_url' => env('ECO_BASE_URL', 'https://ecowatercloud.com'),
     ],
 
     /*

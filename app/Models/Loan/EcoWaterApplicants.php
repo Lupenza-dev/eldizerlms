@@ -14,6 +14,7 @@ class EcoWaterApplicants extends Model
         'loan_application_id',
         'eco_water_campus_id',
         'remarks',
+        'registration_code',
     ];
     
     public function loanApplication()
