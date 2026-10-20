@@ -25,7 +25,7 @@ class AgentStoreRequest extends FormRequest
             'name'           =>['required','min:3','max:50'],
             'email'          =>['required','unique:users,email'],
             'student_reg_id' =>['required','unique:agents,student_reg_id'],
-            'phone_number'   =>['required','min:12','max:12'],
+            'phone_number'   =>['required','min:10','max:12'],
             'image'          =>['required'],
             'college_id'     =>['required']
         ];
