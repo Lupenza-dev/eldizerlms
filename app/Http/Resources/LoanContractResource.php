@@ -35,7 +35,8 @@ class LoanContractResource extends JsonResource
             'guarantor_relation'   =>$this->guarantor?->relationship,
             'admin_remark'         =>$this->remark,
             'fee_charges' =>$this->fee_charges,
-            'late_charges' =>$this->late_charges
+            'late_charges' =>$this->late_charges,
+            'loan_type' =>$this->loan_application?->loan_type,
         ];
     }
 }
