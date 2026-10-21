@@ -190,12 +190,12 @@
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
-                                Device Images <span class="text-xs text-blue-600 normal-case font-normal">(unaweza kuchagua zaidi ya moja)</span>
+                                Device Images <span class="text-xs text-blue-600 normal-case font-normal">(multiple allowed)</span>
                             </label>
                             <input type="file" name="images[]" multiple
                                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                    accept="image/jpeg,image/png,image/gif,image/webp" required>
-                            <p class="text-xs text-slate-400 mt-1">Formats: JPG, PNG, GIF, WebP. Kila picha max 2MB. Ctrl/Cmd + click kuchagua nyingi.</p>
+                            <p class="text-xs text-slate-400 mt-1">Formats: JPG, PNG, GIF, WebP. Max 2MB per image. Use Ctrl/Cmd + click to select multiple.</p>
                         </div>
                         <div class="sm:col-span-2" id="alert"></div>
                     </div>
@@ -288,12 +288,12 @@
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
-                                Add New Images <span class="text-xs text-blue-600 normal-case font-normal">(hiari)</span>
+                                Add New Images <span class="text-xs text-blue-600 normal-case font-normal">(optional)</span>
                             </label>
                             <input type="file" name="images[]" multiple
                                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                    accept="image/jpeg,image/png,image/gif,image/webp">
-                            <p class="text-xs text-slate-400 mt-1">Picha mpya zitaongezwa kwenye zilizopo.</p>
+                            <p class="text-xs text-slate-400 mt-1">New images will be added to the existing ones.</p>
                         </div>
                         <div class="sm:col-span-2" id="update_alert"></div>
                     </div>
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!contentType.includes('application/json')) {
                 const text = await response.text();
                 console.error('Non-JSON response:', response.status, text.slice(0, 500));
-                throw new Error(`Server returned ${response.status}. Angalia Network tab.`);
+                throw new Error(`Server returned ${response.status}. Check the Network tab.`);
             }
 
             const data = await response.json();
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(msgs || data.message || 'Validation failed');
             }
             if (response.status === 419) {
-                throw new Error('Session imeisha muda. Reload page.');
+                throw new Error('Session expired. Please reload the page.');
             }
             if (response.status >= 500) {
                 throw new Error(data.debug || data.message || 'Server error.');
@@ -406,13 +406,13 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     });
 
-    // ═══ Edit button — populate + set action ═══
+    // ═══ Edit button — populate fields + set action ═══
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const uuid = this.dataset.uuid;
             const form = document.getElementById('update_form');
 
-            // Weka action: /devices/{uuid}
+            // Set action: /devices/{uuid}
             form.action = form.dataset.urlTemplate.replace('__UUID__', uuid);
 
             // Populate fields
@@ -424,16 +424,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit_initial_deposit').value = this.dataset.initial_deposit || '';
             document.getElementById('edit_device_category').value = this.dataset.category_id || '';
 
-            // Onyesha current images
+            // Show current images
             const images = JSON.parse(this.dataset.images || '[]');
             const container = document.getElementById('current_images');
             container.innerHTML = '';
 
-            // Safisha remove_images[] zilizobaki kutoka edit ya awali
+            // Remove leftover remove_images[] from previous edit session
             form.querySelectorAll('input[name="remove_images[]"]').forEach(el => el.remove());
 
             if (!images.length) {
-                container.innerHTML = '<span class="text-xs text-slate-400">Hakuna picha. Ongeza mpya chini.</span>';
+                container.innerHTML = '<span class="text-xs text-slate-400">No images. Add new ones below.</span>';
                 return;
             }
 
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     wrapper.remove();
 
                     if (!container.children.length) {
-                        container.innerHTML = '<span class="text-xs text-slate-400">Picha zote zimeondolewa. Ongeza mpya.</span>';
+                        container.innerHTML = '<span class="text-xs text-slate-400">All images removed. Add new ones.</span>';
                     }
                 });
                 container.appendChild(wrapper);

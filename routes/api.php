@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Mobile\V1\LoanApplicationController;
 use App\Http\Controllers\Api\Mobile\V1\AuthController;
 use App\Http\Controllers\Api\Mobile\V1\HomeController;
 use App\Http\Controllers\Api\Mobile\V2\NmbController;
+use App\Http\Controllers\Api\Mobile\V2\ProfessionalController;
 use App\Http\Controllers\Api\Mobile\V2\RegistrationController;
 use App\Http\Controllers\HomeController as TestController;
 
@@ -80,6 +81,7 @@ Route::group(['prefix' => 'V2'], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('dashboard', [HomeController::class, 'dashboard']);
         Route::get('get-devices', [HomeController::class, 'getDevices']);
+        Route::get('professionals', [ProfessionalController::class, 'index']);
         Route::post('student-registration', [CustomerController::class, 'storeStudent']);
         Route::post('loan-application', [LoanApplicationController::class, 'loanApplication']);
         Route::post('loan-calculator', [LoanApplicationController::class, 'loanCalculator']);

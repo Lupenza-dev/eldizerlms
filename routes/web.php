@@ -20,6 +20,7 @@ use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
 use App\Http\Controllers\Management\HospitalController;
+use App\Http\Controllers\Management\ProfessionalController;
 use App\Http\Controllers\Payment\PaymentController;
 
 /*
@@ -42,70 +43,89 @@ use App\Http\Controllers\Payment\PaymentController;
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('due-days', [HomeController::class, 'dueDays'])->name('due.days');
 Route::get('test-api', [HomeController::class, 'testApi'])->name('test.api');
-Route::post('user/authentication',[LoginController::class,'authentication'])->name('authentication');
+Route::post('user/authentication', [LoginController::class, 'authentication'])->name('authentication');
 
-Route::group(['middleware'=>'auth'],function(){
-    Route::get('logout',[LoginController::class,'logout'])->name('logout');
-    Route::get('dashboard',[DashboardController::class,'index'])->middleware('permission:view dashboard')->name('dashboard');
-    Route::get('admin/dashboard',[DashboardController::class,'adminDashboardForm'])->middleware(['permission:view dashboard', 'role:Admin|Super Admin|Internal User'])->name('admin.dashboard');
-    Route::post('dashboard/data',[DashboardController::class,'dashboardData'])->name('dashboard.data');
-    Route::get('change/password',[LoginController::class,'changePassword'])->name('change.password');
-    Route::post('password/change',[LoginController::class,'passwordChange'])->name('password.change');
-    Route::get('bar/chart',[DashboardController::class,'barChart'])->name('admin.bar.chart');
-    Route::post('bar/charts',[DashboardController::class,'barCharts'])->name('admin.bar.charts');
-    Route::get('loan/management',[LoanApplicationController::class,'loanManagement'])->middleware('permission:view loans')->name('loan.management');
-    Route::get('loan/applications',[LoanApplicationController::class,'index'])->middleware('permission:view loans')->name('loan.applications');
-    Route::get('loan/applications/waiting/mandate',[LoanApplicationController::class,'waitingMandateConfirmation'])->name('loan.applications.waiting.mandate');
-    Route::post('loan/application/confirm/mandate',[LoanApplicationController::class,'confirmMandate'])->name('confirm.mandate.loan.application');
-    Route::get('loan/application/profile/{uuid}',[LoanApplicationController::class,'profile'])->name('loan.profile');
-    Route::post('reject/loan/application',[LoanApplicationController::class,'rejectApplication'])->name('reject.loan.application');
-    Route::post('approve/loan/application',[LoanApplicationController::class,'approveApplication'])->name('approve.loan.application');
-    Route::post('agent/approve/loan/application',[LoanApplicationController::class,'agentApproveApplication'])->name('agent.approve.loan.application');
-    Route::get('loan/contracts',[LoanContractController::class,'index'])->name('loan.contracts');
-    Route::get('loan/contract/profile/{uuid}',[LoanContractController::class,'profile'])->name('loan.contract.profile');
-    Route::get('payments/disbursed',[PaymentController::class,'disbursments'])->name('payment.disbursed');
-    Route::post('loan/repayment',[PaymentController::class,'loanRepayment'])->name('loan.repayment');
-    Route::get('payments',[PaymentController::class,'payments'])->name('payments');
-    Route::get('nmb/subscribers',[PaymentController::class,'nmbSubscribers'])->name('nmb.subscribers');
-    Route::post('nmb/create/transaction',[PaymentController::class,'nmbCreateTransaction'])->name('create.transaction');
-    Route::post('college/update',[UniversityController::class,'collegeUpdate'])->middleware('permission:manage universities')->name('update.college');
-    Route::post('hospital/update',[HospitalController::class,'hospitalUpdate'])->middleware('permission:manage hospitals')->name('update.hospital');
-    Route::get('hospital/districts/{region_id}',[HospitalController::class,'getDistrictsByRegion'])->middleware('permission:manage hospitals')->name('hospital.districts');
-    Route::post('agent/update',[AgentController::class,'agentUpdate'])->middleware('permission:manage agents')->name('update.agent');
-    Route::get('user/edit/{uuid}',[UserController::class,'edit'])->middleware('permission:manage users')->name('user.edit');
-    Route::post('user/update',[UserController::class,'userUpdate'])->middleware('permission:manage users')->name('update.user');
-    Route::post('user/update/roles',[UserController::class,'userUpdateRoles'])->middleware('permission:manage users')->name('update.user.roles');
-    Route::post('college/status',[UniversityController::class,'collegeStatus'])->middleware('permission:manage universities')->name('college.status');
-    Route::post('hospital/status',[HospitalController::class,'hospitalStatus'])->middleware('permission:manage hospitals')->name('hospital.status');
-    Route::post('user/status',[UserController::class,'userStatus'])->middleware('permission:manage users')->name('user.status');
-    Route::post('delete/user',[UserController::class,'destroy'])->middleware('permission:manage users')->name('user.delete');
-    Route::post('college/delete',[UniversityController::class,'destroy'])->name('college.delete');
-    Route::post('hospital/delete',[HospitalController::class,'destroy'])->name('hospital.delete');
-    Route::post('update/customer',[CustomerController::class,'update'])->middleware('permission:view customers')->name('update.customer');
-    Route::post('delete/device',[DeviceController::class,'destroyDevice'])->middleware('permission:manage devices')->name('device.delete');
-    Route::get('beneficaries/data',[BenefeciariesController::class,'getBeneficariesData'])->middleware('permission:manage beneficiaries')->name('beneficaries.data');
-    Route::get('customers/data',[CustomerController::class,'getCustomersData'])->middleware('permission:view customers')->name('customers.data');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('dashboard', [DashboardController::class, 'index'])->middleware('permission:view dashboard')->name('dashboard');
+    Route::get('admin/dashboard', [DashboardController::class, 'adminDashboardForm'])->middleware(['permission:view dashboard', 'role:Admin|Super Admin|Internal User'])->name('admin.dashboard');
+    Route::post('dashboard/data', [DashboardController::class, 'dashboardData'])->name('dashboard.data');
+    Route::get('change/password', [LoginController::class, 'changePassword'])->name('change.password');
+    Route::post('password/change', [LoginController::class, 'passwordChange'])->name('password.change');
+    Route::get('bar/chart', [DashboardController::class, 'barChart'])->name('admin.bar.chart');
+    Route::post('bar/charts', [DashboardController::class, 'barCharts'])->name('admin.bar.charts');
+    Route::get('loan/management', [LoanApplicationController::class, 'loanManagement'])->middleware('permission:view loans')->name('loan.management');
+    Route::get('loan/applications', [LoanApplicationController::class, 'index'])->middleware('permission:view loans')->name('loan.applications');
+    Route::get('loan/applications/waiting/mandate', [LoanApplicationController::class, 'waitingMandateConfirmation'])->name('loan.applications.waiting.mandate');
+    Route::post('loan/application/confirm/mandate', [LoanApplicationController::class, 'confirmMandate'])->name('confirm.mandate.loan.application');
+    Route::get('loan/application/profile/{uuid}', [LoanApplicationController::class, 'profile'])->name('loan.profile');
+    Route::post('reject/loan/application', [LoanApplicationController::class, 'rejectApplication'])->name('reject.loan.application');
+    Route::post('approve/loan/application', [LoanApplicationController::class, 'approveApplication'])->name('approve.loan.application');
+    Route::post('agent/approve/loan/application', [LoanApplicationController::class, 'agentApproveApplication'])->name('agent.approve.loan.application');
+    Route::get('loan/contracts', [LoanContractController::class, 'index'])->name('loan.contracts');
+    Route::get('loan/contract/profile/{uuid}', [LoanContractController::class, 'profile'])->name('loan.contract.profile');
+    Route::get('payments/disbursed', [PaymentController::class, 'disbursments'])->name('payment.disbursed');
+    Route::post('loan/repayment', [PaymentController::class, 'loanRepayment'])->name('loan.repayment');
+    Route::get('payments', [PaymentController::class, 'payments'])->name('payments');
+    Route::get('nmb/subscribers', [PaymentController::class, 'nmbSubscribers'])->name('nmb.subscribers');
+    Route::post('nmb/create/transaction', [PaymentController::class, 'nmbCreateTransaction'])->name('create.transaction');
+    Route::post('college/update', [UniversityController::class, 'collegeUpdate'])->middleware('permission:manage universities')->name('update.college');
+    Route::post('hospital/update', [HospitalController::class, 'hospitalUpdate'])->middleware('permission:manage hospitals')->name('update.hospital');
+    Route::get('hospital/districts/{region_id}', [HospitalController::class, 'getDistrictsByRegion'])->middleware('permission:manage hospitals')->name('hospital.districts');
+    Route::post('agent/update', [AgentController::class, 'agentUpdate'])->middleware('permission:manage agents')->name('update.agent');
+    Route::get('user/edit/{uuid}', [UserController::class, 'edit'])->middleware('permission:manage users')->name('user.edit');
+    Route::post('user/update', [UserController::class, 'userUpdate'])->middleware('permission:manage users')->name('update.user');
+    Route::post('user/update/roles', [UserController::class, 'userUpdateRoles'])->middleware('permission:manage users')->name('update.user.roles');
+    Route::post('college/status', [UniversityController::class, 'collegeStatus'])->middleware('permission:manage universities')->name('college.status');
+    Route::post('hospital/status', [HospitalController::class, 'hospitalStatus'])->middleware('permission:manage hospitals')->name('hospital.status');
+    Route::post('user/status', [UserController::class, 'userStatus'])->middleware('permission:manage users')->name('user.status');
+    Route::post('delete/user', [UserController::class, 'destroy'])->middleware('permission:manage users')->name('user.delete');
+    Route::post('college/delete', [UniversityController::class, 'destroy'])->name('college.delete');
+    Route::post('hospital/delete', [HospitalController::class, 'destroy'])->name('hospital.delete');
+    Route::post('update/customer', [CustomerController::class, 'update'])->middleware('permission:view customers')->name('update.customer');
+    Route::post('delete/device', [DeviceController::class, 'destroyDevice'])->middleware('permission:manage devices')->name('device.delete');
+    Route::get('beneficaries/data', [BenefeciariesController::class, 'getBeneficariesData'])->middleware('permission:manage beneficiaries')->name('beneficaries.data');
+    Route::get('customers/data', [CustomerController::class, 'getCustomersData'])->middleware('permission:view customers')->name('customers.data');
     #### Report
-    Route::get('generate/contract/report',[LoanContractController::class,'generateExcelReport'])->name('generate.loan.contracts');
-    Route::get('generate/customer/report',[CustomerController::class,'generateExcelReport'])->name('genderate.customer.report');
-    Route::get('generate/loan/application/report',[LoanApplicationController::class,'generateExcelReport'])->name('genderate.loan.application.report');
+    Route::get('generate/contract/report', [LoanContractController::class, 'generateExcelReport'])->name('generate.loan.contracts');
+    Route::get('generate/customer/report', [CustomerController::class, 'generateExcelReport'])->name('genderate.customer.report');
+    Route::get('generate/loan/application/report', [LoanApplicationController::class, 'generateExcelReport'])->name('genderate.loan.application.report');
 
     #### App Management
-    Route::get('app/management',[AppController::class,'index'])->middleware('permission:manage mobile app')->name('app.management');
-    Route::get('questions/list/{assignment}',[AssignmentQuestionController::class,'questionList'])->name('questions.list');
-    Route::get('participant/list/{assignment}',[AssignmentQuestionController::class,'participantList'])->name('participant.list');
-    Route::get('questions/create/{assignment}',[AssignmentQuestionController::class,'create'])->name('question.create');
+    Route::get('app/management', [AppController::class, 'index'])->middleware('permission:manage mobile app')->name('app.management');
+    Route::get('questions/list/{assignment}', [AssignmentQuestionController::class, 'questionList'])->name('questions.list');
+    Route::get('participant/list/{assignment}', [AssignmentQuestionController::class, 'participantList'])->name('participant.list');
+    Route::get('questions/create/{assignment}', [AssignmentQuestionController::class, 'create'])->name('question.create');
+
+    ######settings route managment
+    Route::get('settings', function () {
+        return view('settings.index');
+    })
+        ->middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries')
+        ->name('settings.index');
+
+
+    ######professional routes
+    Route::middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries')
+        ->prefix('settings/professionals')
+        ->name('professionals.')
+        ->group(function () {
+            Route::get('/',                 [ProfessionalController::class, 'index'])->name('index');
+            Route::post('/',                [ProfessionalController::class, 'store'])->name('store');
+            Route::put('/{professional}',   [ProfessionalController::class, 'update'])->name('update');
+            Route::delete('/{professional}', [ProfessionalController::class, 'destroy'])->name('destroy');
+        });
 
     #### payment management
-    Route::get('payment/management',[PaymentController::class,'paymentManagement'])->middleware('permission:view payments')->name('payment.management');
-    Route::get('payment/mandates',[PaymentController::class,'paymentMandates'])->name('payment.mandates');
-    Route::get('sync/mandates',[PaymentController::class,'syncMandates'])->name('sync.mandate');
-    Route::get('view/payment/mandate/{reference}',[PaymentController::class,'viewPaymentMandate'])->name('view.payment.mandate');
-    Route::post('cancel/mandate',[PaymentController::class,'cancelMandate'])->name('cancel.mandate');
-    Route::get('sync/mandate/payment/collection/{reference}',[PaymentController::class,'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
-    Route::get('customer/loans/mandates',[PaymentController::class,'customerLoansMandates'])->name('customer.loans.mandates');
-    Route::post('mandate/resend/otp',[PaymentController::class,'resendMandateOtp'])->name('mandate.resend.otp');
-    Route::post('mandate/verify/otp',[PaymentController::class,'verifyMandateOtp'])->name('mandate.verify.otp');
+    Route::get('payment/management', [PaymentController::class, 'paymentManagement'])->middleware('permission:view payments')->name('payment.management');
+    Route::get('payment/mandates', [PaymentController::class, 'paymentMandates'])->name('payment.mandates');
+    Route::get('sync/mandates', [PaymentController::class, 'syncMandates'])->name('sync.mandate');
+    Route::get('view/payment/mandate/{reference}', [PaymentController::class, 'viewPaymentMandate'])->name('view.payment.mandate');
+    Route::post('cancel/mandate', [PaymentController::class, 'cancelMandate'])->name('cancel.mandate');
+    Route::get('sync/mandate/payment/collection/{reference}', [PaymentController::class, 'syncMandatePaymentCollection'])->name('sync.mandate.payment.collection');
+    Route::get('customer/loans/mandates', [PaymentController::class, 'customerLoansMandates'])->name('customer.loans.mandates');
+    Route::post('mandate/resend/otp', [PaymentController::class, 'resendMandateOtp'])->name('mandate.resend.otp');
+    Route::post('mandate/verify/otp', [PaymentController::class, 'verifyMandateOtp'])->name('mandate.verify.otp');
     Route::resource('roles', RoleController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->middleware('permission:manage roles');
@@ -119,9 +139,9 @@ Route::group(['middleware'=>'auth'],function(){
     Route::resource('devices', DeviceController::class)->middleware('permission:manage devices');
     Route::resource('beneficaries', BenefeciariesController::class)->middleware('permission:manage beneficiaries');
     Route::resources([
-        'assignments'    =>AssignmentController::class,
-        'questions'      =>AssignmentQuestionController::class,
-        'groups'         =>GroupController::class,
-        'adverts'        =>AdvertController::class,
+        'assignments'    => AssignmentController::class,
+        'questions'      => AssignmentQuestionController::class,
+        'groups'         => GroupController::class,
+        'adverts'        => AdvertController::class,
     ]);
 });
