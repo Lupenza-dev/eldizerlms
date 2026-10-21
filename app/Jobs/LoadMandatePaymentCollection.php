@@ -41,9 +41,9 @@ class LoadMandatePaymentCollection implements ShouldQueue
         $result =json_decode($response,true);
         Log::info($response);
         if ( $result['success']) {
-
             foreach ($result['data']['collections'] as $collection) {
-                 MandatePaymentCollection::updateOrCreate([
+                
+                $record =MandatePaymentCollection::updateOrCreate([
                 'reference' =>$collection['reference'],
                 'mandate_reference' =>$collection['mandate']['reference'],
             ],[
@@ -59,6 +59,8 @@ class LoadMandatePaymentCollection implements ShouldQueue
                 'status' =>$collection['status'],
                 'remarks' =>$collection['remarks'],
             ]);
+
+            $record->touch();
             }
            
         } else {

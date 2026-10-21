@@ -117,12 +117,19 @@ class LoanApplication extends Model
       }
 
       public function getFeeChargesAttribute(){
-        $fees =json_decode($this->other_fees,true);
-        return ($fees['fees_and_charges'] * 100).'%';
+        if($this->other_fees ?? null){
+          $fees =json_decode($this->other_fees ?? '',true);
+          return ($fees['fees_and_charges'] * 100).'%';
+        }
+        return 10;
+       
       }
 
       public function getLateChargesAttribute(){
-        $fees =json_decode($this->other_fees,true);
+        if($this->other_fees ?? null){
+          $fees =json_decode($this->other_fees ?? "",true);
         return ($fees['late_payment'] * 100).'%';
+        }
+        
       }
 }

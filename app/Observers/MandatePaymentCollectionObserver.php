@@ -9,7 +9,9 @@ use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\Payment;
 use App\Services\InstallmentService;
 use App\Services\Loan\InstallmentService as LoanInstallmentService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 // use App\Models\MandatePaymentCollection;
@@ -22,56 +24,55 @@ class MandatePaymentCollectionObserver
     public function created(MandatePaymentCollection $mandatePaymentCollection): void
     {
 
-        if ($mandatePaymentCollection->status == 'PAID' || $mandatePaymentCollection->status ='PARTIAL_PAID') {
+        if ($mandatePaymentCollection->status == 'PAID' || $mandatePaymentCollection->status = 'PARTIAL_PAID') {
             # code...
-        // after creation update payment
-        //   $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
-        //   ->where('loan_contract_id', '!=', null)->first();
+            // after creation update payment
+            //   $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
+            //   ->where('loan_contract_id', '!=', null)->first();
 
-          $customer_mandate = CustomerMandate::where('mandate_reference', $mandatePaymentCollection->mandate_reference)->first();
+            $customer_mandate = CustomerMandate::where('mandate_reference', $mandatePaymentCollection->mandate_reference)->first();
 
-        if($customer_mandate){
+            if ($customer_mandate) {
 
 
-        $loan_contract = LoanContract::where('loan_application_id', $customer_mandate->loan_application_id)->first();
-        // if ($check_payment) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'errors'  => 'Payment Already exist',
-        //     ], 500);
-        // }
-        $customer_bank =CustomerBankDetail::where('customer_id',$loan_contract->customer_id)->first();
-        $payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)->first();
+                $loan_contract = LoanContract::where('loan_application_id', $customer_mandate->loan_application_id)->first();
+                // if ($check_payment) {
+                //     return response()->json([
+                //         'success' => false,
+                //         'errors'  => 'Payment Already exist',
+                //     ], 500);
+                // }
 
-        if (!$payment && $loan_contract) {
-            $payment = Payment::create([
-                'phone_number' => $loan_contract->customer->phone_number,
-                'amount'       => $mandatePaymentCollection->current_balance,
-                'payment_reference'       => $mandatePaymentCollection->reference,
-                'payment_method'       => 'Mandate',
-                'payment_channel'       => $customer_bank?->bank_name ?? "Bank",
-                'payment_date'          => $mandatePaymentCollection->payment_date,
-                'added_by'              => 1,
-                'uuid'                  => (string)Str::orderedUuid(),
-                'status'                 => "Posted",
-                'loan_contract_id'      => $loan_contract->id,
-                'customer_id'           => $loan_contract->customer_id,
-            ]);
+                $customer_bank = CustomerBankDetail::where('customer_id', $loan_contract->customer_id)->first();
+                $payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)->first();
 
-            $installment = new LoanInstallmentService();
-            $installment_result = $installment->updateInstallment($payment);
-    
-            $payment->remarks = "Loan Repayment";
-            $payment->status  = "Success";
-            $payment->save();
+                if (!$payment && $loan_contract) {
+                    $payment = Payment::create([
+                        'phone_number' => $loan_contract->customer->phone_number,
+                        'amount'       => $mandatePaymentCollection->current_balance,
+                        'payment_reference'       => $mandatePaymentCollection->reference,
+                        'payment_method'       => 'Mandate',
+                        'payment_channel'       => $customer_bank?->bank_name ?? "Bank",
+                        'payment_date'          => Carbon::parse($mandatePaymentCollection->payment_date)->toDateString(),
+                        'added_by'              => 1,
+                        'uuid'                  => (string)Str::orderedUuid(),
+                        'status'                 => "Posted",
+                        'loan_contract_id'      => $loan_contract->id,
+                        'customer_id'           => $loan_contract->customer_id,
+                    ]);
+
+                    $installment = new LoanInstallmentService();
+                    $installment_result = $installment->updateInstallment($payment);
+
+                    $payment->remarks = "Loan Repayment";
+                    $payment->status  = "Success";
+                    $payment->save();
+                }
+            }
         }
 
-         }
-
-    }
 
 
-       
 
         // return response()->json([
         //     'success' => true,
@@ -84,7 +85,53 @@ class MandatePaymentCollectionObserver
      */
     public function updated(MandatePaymentCollection $mandatePaymentCollection): void
     {
-        //
+        Log::info('observer');
+        if ($mandatePaymentCollection->status == 'PAID' || $mandatePaymentCollection->status = 'PARTIAL_PAID') {
+            # code...
+            // after creation update payment
+            //   $check_payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)
+            //   ->where('loan_contract_id', '!=', null)->first();
+
+            $customer_mandate = CustomerMandate::where('mandate_reference', $mandatePaymentCollection->mandate_reference)->first();
+
+            if ($customer_mandate) {
+
+
+                $loan_contract = LoanContract::where('loan_application_id', $customer_mandate->loan_application_id)->first();
+                // if ($check_payment) {
+                //     return response()->json([
+                //         'success' => false,
+                //         'errors'  => 'Payment Already exist',
+                //     ], 500);
+                // }
+
+                $customer_bank = CustomerBankDetail::where('customer_id', $loan_contract->customer_id)->first();
+                $payment = Payment::where('payment_reference', $mandatePaymentCollection->reference)->first();
+
+                if (!$payment && $loan_contract) {
+                    $payment = Payment::create([
+                        'phone_number' => $loan_contract->customer->phone_number,
+                        'amount'       => $mandatePaymentCollection->current_balance,
+                        'payment_reference'       => $mandatePaymentCollection->reference,
+                        'payment_method'       => 'Mandate',
+                        'payment_channel'       => $customer_bank?->bank_name ?? "Bank",
+                        'payment_date'          => Carbon::parse($mandatePaymentCollection->payment_date)->toDateString(),
+                        'added_by'              => 1,
+                        'uuid'                  => (string)Str::orderedUuid(),
+                        'status'                 => "Posted",
+                        'loan_contract_id'      => $loan_contract->id,
+                        'customer_id'           => $loan_contract->customer_id,
+                    ]);
+
+                    $installment = new LoanInstallmentService();
+                    $installment_result = $installment->updateInstallment($payment);
+
+                    $payment->remarks = "Loan Repayment";
+                    $payment->status  = "Success";
+                    $payment->save();
+                }
+            }
+        }
     }
 
     /**
