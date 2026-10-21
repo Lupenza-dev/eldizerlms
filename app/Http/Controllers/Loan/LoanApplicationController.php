@@ -21,6 +21,8 @@ use App\Traits\LoanTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Validator;
 
 class LoanApplicationController extends Controller
 {
@@ -86,7 +88,7 @@ class LoanApplicationController extends Controller
                 'phone'             => '0' . substr($loanApplication->customer?->phone_number ?? '', -9),
                 'NIN'               => $loanApplication->customer?->id_number,
                 'address'           => $loanApplication->customer?->region?->name,
-                'total_amount'       => $loanApplication->loan_amount * 2,
+                'total_amount'       =>$loanApplication->loan_type === 3 ? $loanApplication->loan_amount : $loanApplication->loan_amount * 2,
                 'debit_type'        => 'FIXED',
                 'min_installment_amount' => $loanApplication->installment_amount,
                 'installment_amount'    => $loanApplication->installment_amount,
@@ -120,11 +122,20 @@ class LoanApplicationController extends Controller
                         'mandate_created_by' => auth()->id(),
                     ]);
 
+                    if ($loanApplication->loan_type == 3) {
+                        $registration = $this->registerEcowaterStudent($loanApplication);
+                        if (! $registration['success']) {
+                            return response()->json([
+                                'success' => false,
+                                'errors' => 'Mandate created successfully, but ' . $registration['message'],
+                            ], 502);
+                        }
+                    }
+
                     return response()->json([
                         'success' => true,
                         'message' => 'Mandate Created Successfully',
                     ], 200);
-
                 } else {
                     Log::error('Error Mandate creation Error: ' . $result);
                     return response()->json([
@@ -373,5 +384,45 @@ class LoanApplicationController extends Controller
     public function loanManagement()
     {
         return view('loans.loan_management');
+    }
+
+    public function registerEcowaterStudent($loanApplication)
+    {
+        $token = env('ECO_TOKEN');
+        $sender = env('ECO_SENDER');
+        $base_url = env('ECO_BASE_URL');
+
+        $payload = [
+            'full_name' => $loanApplication?->customer?->customer_name,
+            'gender' => $loanApplication?->customer?->gender_id == 1 ? 'M' : 'F',
+            'mobile' => $loanApplication?->customer?->phone_number,
+            'email' => $loanApplication?->customer?->email,
+            'campus' => $loanApplication?->ecoWaterApplicant?->ecoWaterCampus?->campus_code ?? null,
+            'amount' => $loanApplication?->amount,
+        ];
+
+        try {
+            $response = Http::acceptJson()->asJson()
+                ->withHeaders(['auth-token' => $token, 'sender' => $sender])
+                ->connectTimeout(10)
+                ->timeout(30)
+                ->post(rtrim($base_url, '/') . '/student_register', $payload);
+        } catch (ConnectionException $e) {
+            Log::error('EcoWater registration failed: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'EcoWater registration could not be confirmed. Check EcoWater before retrying.'];
+        }
+
+        $data = $response->json();
+
+        $loanApplication->ecoWaterApplicant->update(
+            ['registration_code' => $data['data']['registration_code'],
+                'remarks' => $data['data']['remarks'] ?? null]
+        );
+
+        $loanApplication->customer->update([
+            'is_eco_water_eligible' => true,
+        ]);
+
+        return ['success' => true, 'data' => $data['data']];
     }
 }

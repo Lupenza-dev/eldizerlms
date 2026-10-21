@@ -132,8 +132,11 @@
                                 <td class="px-4 py-3 text-sm text-slate-500">
                                     <div class="flex flex-col gap-0.5">
                                         <span>{!! $loan->loan_type_format !!}</span>
+                                        @if ($loan->loan_type == 2)
                                         <span class="text-slate-400 text-xs">{{ $loan->get_device?->name }}</span>
-                                        <span class="text-xs font-semibold text-slate-600">ID: {{ number_format($loan->initial_deposit) }}</span>
+                                        <span class="text-xs font-semibold text-slate-600">ID: {{ number_format($loan->initial_deposit) }}</span>   
+                                        @endif
+                                      
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $loan->level_formatted !!}</td>

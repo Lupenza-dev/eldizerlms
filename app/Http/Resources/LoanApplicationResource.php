@@ -39,7 +39,8 @@ class LoanApplicationResource extends JsonResource
             'agent_attended_date'  =>$this->loan_approval?->attended_date ? date('d,M-Y',strtotime($this->loan_approval?->attended_date)) : "Not Attendeded",
             'device_name'         =>$this->get_device?->name,
             'fee_charges' =>$this->fee_charges,
-            'late_charges' =>$this->late_charges
+            'late_charges' =>$this->late_charges,
+            'loan_type'    =>$this->loan_type,
 
 
         ];

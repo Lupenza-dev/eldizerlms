@@ -292,6 +292,12 @@
                 <div class="menu-title">Universities</div>
             </a>
         </li>
+        <li>
+            <a class="{{ Route::is('campuses.*') ? 'li-active' : '' }}" href="{{ route('campuses.index') }}" title="Campus Management">
+                <div class="parent-icon"><i class='bx bx-building-house'></i></div>
+                <div class="menu-title">Campuses</div>
+            </a>
+        </li>
         @endcan
         @can('manage hospitals')
         <li>

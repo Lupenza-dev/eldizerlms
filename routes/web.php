@@ -10,6 +10,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Management\UserController;
 use App\Http\Controllers\Management\RoleController;
 use App\Http\Controllers\Management\UniversityController;
+use App\Http\Controllers\Management\EcoCampusController;
 use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
@@ -110,6 +111,8 @@ Route::group(['middleware'=>'auth'],function(){
         ->middleware('permission:manage roles');
     Route::resource('users', UserController::class)->middleware('permission:manage users');
     Route::resource('colleges', UniversityController::class)->middleware('permission:manage universities');
+    Route::get('campuses', [EcoCampusController::class, 'index'])->middleware('permission:manage universities')->name('campuses.index');
+    Route::post('campuses/sync', [EcoCampusController::class, 'sync'])->middleware('permission:manage universities')->name('campuses.sync');
     Route::resource('hospitals', HospitalController::class)->middleware('permission:manage hospitals');
     Route::resource('agents', AgentController::class)->middleware('permission:manage agents');
     Route::resource('customers', CustomerController::class)->middleware('permission:view customers');

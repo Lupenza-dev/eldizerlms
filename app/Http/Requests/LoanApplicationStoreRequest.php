@@ -47,6 +47,7 @@ class LoanApplicationStoreRequest extends FormRequest
             'plan'        =>['required'],
             'agent_id'    =>['required'],
             'loan_type'    =>['required'],
+            'eco_water_campus_id' =>'nullable',
         ];
     }
 }

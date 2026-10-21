@@ -13,6 +13,7 @@ use App\Models\Loan\Guarantor;
 use Auth;
 use Str;
 use App\Http\Resources\LoanApplicationResource;
+use App\Models\Loan\EcoWaterApplicants;
 use App\Models\Management\Customer;
 use App\Models\Management\CustomerBankDetail;
 use App\Models\Management\CustomerMandate;
@@ -106,7 +107,7 @@ class LoanApplicationController extends Controller
             'customer_id' =>Auth::user()->customer_id ?? 3,
             'amount'      =>$calculator['amount'],
             'loan_amount' =>$calculator['total_amount'],
-            'plan'        =>3,
+            'plan'        =>$valid_data['loan_type']  == 3 ? 1: 3,
             // 'plan'        =>$calculator['plan'],
             'installment_amount'  =>$calculator['installment_amount'],
             'interest_rate'       =>0.035,
@@ -123,12 +124,20 @@ class LoanApplicationController extends Controller
             'is_mandate_sent'      =>false,
         ]);
       
+        if($valid_data['loan_type'] == 1 || $valid_data['loan_type'] == 2){
+            $approval =LoanApproval::create([
+                'loan_application_id' =>$loan_application->id,
+                'agent_id'            =>$valid_data['agent_id'],
+                'uuid'                =>(string)Str::orderedUuid(),
+            ]);
+        }
 
-        $approval =LoanApproval::create([
-            'loan_application_id' =>$loan_application->id,
-            'agent_id'            =>$valid_data['agent_id'],
-            'uuid'                =>(string)Str::orderedUuid(),
-        ]);
+        if($valid_data['loan_type'] == 3){
+            EcoWaterApplicants::create([
+                'loan_application_id' =>$loan_application->id,
+                'eco_water_campus_id' =>$valid_data['eco_water_campus_id'],
+            ]);
+        }
 
         // $guarantor1 =Guarantor::create([
         //     'customer_id' =>Auth::user()->customer_id ?? 3,

@@ -486,6 +486,12 @@
                                 <table class="info-table">
                                     <tbody>
                                         <tr>
+                                            <th>Loan Type</th>
+                                            <td>{{ $contract->loan_application?->loan_type_format }}</td>
+                                            <th>Eco Water Reg Code</th>
+                                            <td>{{ $contract->loan_application?->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
                                             <th>Contract Code</th>
                                             <td><span class="contract-code">{{ $contract->contract_code}}</span></td>
                                             <th>Contract Status</th>

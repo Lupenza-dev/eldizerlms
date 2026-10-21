@@ -287,7 +287,7 @@
                                 <th>Full Name</th>
                                 <td>{{ ($loan->customer?->first_name ?? '').' '.($loan->customer?->last_name ?? '') }}</td>
                                 <th>Gender</th>
-                                <td>{{ $loan->customer?->gender_id ?? 'N/A'}}</td>
+                                <td>{{ $loan->customer?->gender?->name ?? 'N/A'}}</td>
                             </tr>
                             <tr>
                                 <th>ID Number</th>
@@ -430,6 +430,12 @@
                                 <td>{!! $loan->level_formatted !!}</td>
                             </tr>
                             <tr>
+                                <th>Loan Type</th>
+                                <td>{{ $loan->loan_type_format }}</td>
+                                <th>Eco Water Reg Code</th>
+                                <td>{{ $loan->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
                                 <th>Loan Code</th>
                                 <td><span class="loan-code">{{ $loan->loan_code }}</span></td>
                                 <th>Payment Plan</th>
@@ -451,7 +457,7 @@
                                 <th>Interest Amount</th>
                                 <td>{{ number_format($loan->interest_amount) }}</td>
                                 <th>Total Repayment</th>
-                                <td class="highlight-amount">{{ number_format($loan->loan_amount + $loan->interest_amount) }}</td>
+                                <td class="highlight-amount">{{ number_format($loan->loan_amount) }}</td>
                             </tr>
                         </tbody>
                     </table>
