@@ -40,42 +40,59 @@ class AgentController extends Controller
      */
     public function store(AgentStoreRequest $request)
     {
-        $valid_data =$request->validated();
-
-        if ($request->hasfile('image')) {
-            $file = $request->file('image');
-            $filename =time().$file->getClientOriginalName();
-            $path     =Storage::disk('local')->putFileAs('',$file,$filename);
-           
-        }
-
+        $valid_data = $request->validated();
+        $path = null;
+    
         try {
-            DB::transaction(function() use ($valid_data,$path){
-                $user =User::create([
-                    'name'  =>ucwords($valid_data['name']),
-                    'email' =>$valid_data['email'],
-                    'phone_number' =>$valid_data['phone_number'],
-                    'password'     =>Hash::make(123456),
-                    'uuid'         =>(string)Str::orderedUuid(),
+            if ($request->hasFile('image')) {
+                $file     = $request->file('image');
+                $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                            . '.' . $file->getClientOriginalExtension();
+    
+                $path = Storage::disk('public')->putFileAs('attachments', $file, $filename);
+            }
+    
+            DB::transaction(function () use ($valid_data, $path) {
+                $user = User::create([
+                    'name'         => ucwords($valid_data['name']),
+                    'email'        => $valid_data['email'],
+                    'phone_number' => $valid_data['phone_number'],
+                    'password'     => Hash::make('123456'),
+                    'uuid'         => (string) Str::orderedUuid(),
                 ]);
-        
+    
                 $user->assignRole('Agent');
-        
-                $agent =Agent::create([
-                    'student_reg_id' =>$valid_data['student_reg_id'],
-                    'user_id'        =>$user->id,
-                    'college_id'     =>$valid_data['college_id'],
-                    'image'          =>$path,
-                    'uuid'           =>(string)Str::orderedUuid(),
+    
+                Agent::create([
+                    'student_reg_id' => $valid_data['student_reg_id'],
+                    'user_id'        => $user->id,
+                    'college_id'     => $valid_data['college_id'],
+                    'image'          => $path,
+                    'uuid'           => (string) Str::orderedUuid(),
                 ]);
             });
-        } catch (\Exception $e) {
-            return $e->getMessage();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Agent registered successfully',
+            ], 201);
+    
+        } catch (\Throwable $e) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+    
+            \Log::error('Agent store failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'data'  => $valid_data,
+            ]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to register agent. Please try again.',
+                'debug'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
         }
-        return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
     }
 
     public function agentUpdate(Request $request){

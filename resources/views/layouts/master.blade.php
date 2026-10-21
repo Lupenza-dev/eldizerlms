@@ -3,23 +3,24 @@
 
 
 <!-- Mirrored from codervent.com/rocker/demo/vertical/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 15 May 2023 12:09:42 GMT -->
+
 <head>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
 
 	<!--favicon-->
-	<link rel="icon" href="{{ asset('assets/images/favicon_el.jpeg')}}" type="image/png"/>
+	<link rel="icon" href="{{ asset('assets/images/favicon_el.jpeg')}}" type="image/png" />
 	<!--plugins-->
-	<link href="{{ asset('assets/plugins/vectormap/jquery-jvectormap-2.0.2.css')}}" rel="stylesheet"/>
+	<link href="{{ asset('assets/plugins/vectormap/jquery-jvectormap-2.0.2.css')}}" rel="stylesheet" />
 	<link href="{{ asset('assets/plugins/simplebar/css/simplebar.css')}}" rel="stylesheet" />
 	<link href="{{ asset('assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css')}}" rel="stylesheet" />
-	<link href="{{ asset('assets/plugins/metismenu/css/metisMenu.min.css')}}" rel="stylesheet"/>
-    <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
+	<link href="{{ asset('assets/plugins/metismenu/css/metisMenu.min.css')}}" rel="stylesheet" />
+	<link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
 
 	<!-- loader-->
-	<link href="{{ asset('assets/css/pace.min.css')}}" rel="stylesheet"/>
+	<link href="{{ asset('assets/css/pace.min.css')}}" rel="stylesheet" />
 	<script src="{{ asset('assets/js/pace.min.js')}}"></script>
 	<!-- Bootstrap CSS -->
 	<link href="{{ asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
@@ -29,9 +30,9 @@
 	<link href="{{ asset('assets/css/icons.css')}}" rel="stylesheet">
 	<link href="{{ asset('assets/swtalrt/sweetalert.css')}}" rel="stylesheet">
 	<!-- Theme Style CSS -->
-	<link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css')}}"/>
-	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css')}}"/>
-	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css')}}"/>
+	<link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css')}}" />
+	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css')}}" />
+	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css')}}" />
 	<script src="https://cdn.tailwindcss.com"></script>
 	<title>ELDIZER FINANCE</title>
 </head>
@@ -49,10 +50,10 @@
 		@yield('content')
 		<!--end page wrapper -->
 		<!--start overlay-->
-		 <div class="overlay toggle-icon"></div>
+		<div class="overlay toggle-icon"></div>
 		<!--end overlay-->
 		<!--Start Back To Top Button-->
-		  <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+		<a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 		<!--End Back To Top Button-->
 		<x-layouts.footer />
 	</div>
@@ -60,7 +61,7 @@
 
 
 	<!-- search modal -->
-    {{-- <div class="modal" id="SearchModal" tabindex="-1">
+	{{-- <div class="modal" id="SearchModal" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-md-down">
 		  <div class="modal-content">
 			<div class="modal-header gap-2">
@@ -214,10 +215,10 @@
 	<script src=" {{ asset('assets/plugins/metismenu/js/metisMenu.min.js') }}"></script>
 	<script src=" {{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
 	<script src=" {{ asset('assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js') }}"></script>
-    <script src=" {{ asset('assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+	<script src=" {{ asset('assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
 	<script src=" {{ asset('assets/plugins/chartjs/js/chart.js') }}"></script>
 	<script src=" {{ asset('assets/js/index.js') }}"></script>
-    <script src=" {{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+	<script src=" {{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
 	<script src=" {{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 	<script src="{{ asset('assets/swtalrt/sweetalert.js')}}"></script>
 	<script src="{{ asset('assets/notify/notify.js')}}"></script>
@@ -225,15 +226,17 @@
 	<!--app JS-->
 	<script src=" {{ asset('assets/js/app.js') }}"></script>
 	<script>
-		new PerfectScrollbar(".app-container")
+		if (document.querySelector(".app-container")) {
+			new PerfectScrollbar(".app-container");
+		}
 	</script>
-   
+
 	<script>
 		$(document).ready(function() {
 			$('#example').DataTable();
-		  } );
+		});
 	</script>
-	
+
 	<!-- Mobile Menu Toggle Script -->
 	<script>
 		$(document).ready(function() {
@@ -243,14 +246,14 @@
 				$('.sidebar-wrapper').toggleClass('open');
 				$('.overlay').toggleClass('show');
 			});
-			
+
 			// Close sidebar when clicking on overlay
 			$('.overlay').on('click', function() {
 				$('body').removeClass('sidebar-open');
 				$('.sidebar-wrapper').removeClass('open');
 				$('.overlay').removeClass('show');
 			});
-			
+
 			// Close sidebar when clicking toggle icon in sidebar
 			$('.toggle-icon').on('click', function() {
 				$('body').toggleClass('sidebar-open');
@@ -259,7 +262,7 @@
 			});
 		});
 	</script>
-	
+
 	<style>
 		/* Mobile Sidebar Styles */
 		@media (max-width: 992px) {
@@ -272,24 +275,25 @@
 				z-index: 1000;
 				transition: left 0.3s ease;
 			}
-			
+
 			.sidebar-wrapper.open {
 				left: 0;
 			}
-			
+
 			.overlay.show {
 				display: block !important;
 				opacity: 1 !important;
 			}
-			
+
 			.sidebar-open .page-wrapper {
 				margin-left: 0;
 			}
 		}
 	</style>
-    @stack('scripts')
+	@stack('scripts')
 </body>
 
 
 <!-- Mirrored from codervent.com/rocker/demo/vertical/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 15 May 2023 12:18:04 GMT -->
+
 </html>
