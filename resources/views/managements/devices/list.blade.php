@@ -36,7 +36,7 @@
             </div>
             <div class="p-6">
                 <div class="table-responsive">
-                    <table id="example" class="table w-full" style="width:100%">
+                    <table id="devices_table" class="table w-full" style="width:100%">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600">
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">#</th>
@@ -103,7 +103,11 @@
                                                 data-plan="{{ $device->plan }}"
                                                 data-initial_deposit="{{ $device->initial_deposit }}"
                                                 data-category_id="{{ $device->device_category_id }}"
-                                                data-images='@json($device->images ?? [])'
+                                                data-images="{{ base64_encode(json_encode(
+                                                     is_array($device->images)
+                                                         ? $device->images
+                                                         : (json_decode($device->images ?? '[]', true) ?: [])
+                                                 )) }}"
                                                 title="Edit Device">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
@@ -190,12 +194,11 @@
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
-                                Device Images <span class="text-xs text-blue-600 normal-case font-normal">(multiple allowed)</span>
+                                Device Images <span class="text-xs text-blue-600 normal-case font-normal">(drag & drop or browse)</span>
                             </label>
-                            <input type="file" name="images[]" multiple
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            <input type="file" name="images[]" multiple id="image_upload"
                                    accept="image/jpeg,image/png,image/gif,image/webp" required>
-                            <p class="text-xs text-slate-400 mt-1">Formats: JPG, PNG, GIF, WebP. Max 2MB per image. Use Ctrl/Cmd + click to select multiple.</p>
+                            <p class="text-xs text-slate-400 mt-1">Formats: JPG, PNG, GIF, WebP. Max 2MB per image. Drag to reorder.</p>
                         </div>
                         <div class="sm:col-span-2" id="alert"></div>
                     </div>
@@ -288,10 +291,9 @@
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
-                                Add New Images <span class="text-xs text-blue-600 normal-case font-normal">(optional)</span>
+                                Add New Images <span class="text-xs text-blue-600 normal-case font-normal">(optional, drag & drop)</span>
                             </label>
-                            <input type="file" name="images[]" multiple
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            <input type="file" name="images[]" multiple id="edit_image_upload"
                                    accept="image/jpeg,image/png,image/gif,image/webp">
                             <p class="text-xs text-slate-400 mt-1">New images will be added to the existing ones.</p>
                         </div>
@@ -312,28 +314,94 @@
 </div>
 @endsection
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/filepond@4.32.7/dist/filepond.min.css">
+<link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.min.css">
+@endpush
 
-    // ═══ Record count ═══
-    const recordCount = document.getElementById('record-count');
-    if (recordCount) {
-        const count = @json($devices->count());
-        recordCount.textContent = count + ' Device' + (count !== 1 ? 's' : '');
+@push('scripts')
+<script src="https://unpkg.com/filepond@4.32.7/dist/filepond.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type@1.2.9/dist/filepond-plugin-file-validate-type.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size@2.2.8/dist/filepond-plugin-file-validate-size.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.FilePond) {
+        console.error('FilePond is not loaded. Check FilePond CSS/JS assets in layouts.master.');
+        return;
     }
 
-    // ═══ Shared submit helper ═══
-    async function submitForm(url, formData, btn, alertDiv, idleLabel) {
-        btn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Processing...';
-        btn.disabled = true;
-        alertDiv.innerHTML = '';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateType,
+        FilePondPluginFileValidateSize
+    );
+
+    const acceptedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const pondOptions = {
+        allowMultiple: true,
+        acceptedFileTypes: acceptedTypes,
+        maxFileSize: '2MB',
+        maxFiles: 10,
+        allowReorder: true,
+        allowBrowse: true,
+        allowDrop: true,
+        instantUpload: false,
+        storeAsFile: true,
+        labelIdle: 'Drag & drop images here or <span class="filepond--label-action">click to browse</span>',
+        imagePreviewHeight: 100,
+        stylePanelLayout: 'compact',
+        credits: false
+    };
+
+    const registrationInput = document.getElementById('image_upload');
+    const editInput = document.getElementById('edit_image_upload');
+    const registrationForm = document.getElementById('registration_form');
+    const updateForm = document.getElementById('update_form');
+    const editModal = document.getElementById('editDeviceModal');
+    const currentImages = document.getElementById('current_images');
+    const registrationAlert = document.getElementById('alert');
+    const updateAlert = document.getElementById('update_alert');
+
+    const pond = FilePond.create(registrationInput, pondOptions);
+    const editPond = FilePond.create(editInput, pondOptions);
+
+    function showAlert(element, message, type = 'danger') {
+        element.replaceChildren();
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.setAttribute('role', 'alert');
+        alert.append(document.createTextNode(message));
+
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'btn-close';
+        close.setAttribute('data-bs-dismiss', 'alert');
+        close.setAttribute('aria-label', 'Close');
+        alert.appendChild(close);
+        element.appendChild(alert);
+    }
+
+    function syncPondToInput(filePond, input) {
+        const transfer = new DataTransfer();
+        filePond.getFiles().forEach(item => {
+            if (item.file instanceof File) transfer.items.add(item.file);
+        });
+        input.files = transfer.files;
+    }
+
+    async function submitForm(form, button, alertElement, idleLabel) {
+        const originalHtml = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Processing...';
+        alertElement.replaceChildren();
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(form.action, {
                 method: 'POST',
-                body: formData,
+                body: new FormData(form),
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json',
@@ -343,143 +411,193 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const contentType = response.headers.get('content-type') || '';
             if (!contentType.includes('application/json')) {
-                const text = await response.text();
-                console.error('Non-JSON response:', response.status, text.slice(0, 500));
-                throw new Error(`Server returned ${response.status}. Check the Network tab.`);
+                const body = await response.text();
+                console.error('Non-JSON response:', response.status, body.slice(0, 500));
+                throw new Error(`Server returned ${response.status}. Check Laravel logs and the Network tab.`);
             }
 
             const data = await response.json();
 
             if (response.status === 422) {
-                const msgs = Object.values(data.errors || {}).flat().join('<br>');
-                throw new Error(msgs || data.message || 'Validation failed');
+                throw new Error(Object.values(data.errors || {}).flat().join(' ') || data.message || 'Validation failed.');
             }
             if (response.status === 419) {
-                throw new Error('Session expired. Please reload the page.');
+                throw new Error('Session expired. Please reload the page and try again.');
             }
-            if (response.status >= 500) {
-                throw new Error(data.debug || data.message || 'Server error.');
-            }
-            if (!data.success) {
-                throw new Error(data.message || 'An error occurred');
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Unable to save the device.');
             }
 
-            alertDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bx bx-check-circle me-2"></i>${data.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>`;
-            setTimeout(() => location.reload(), 1200);
-
-        } catch (err) {
-            console.error(err);
-            alertDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bx bx-error-circle me-2"></i>${err.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>`;
+            showAlert(alertElement, data.message || 'Device saved successfully.', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } catch (error) {
+            console.error('Device form submission failed:', error);
+            showAlert(alertElement, error.message || 'An unexpected error occurred.');
         } finally {
-            btn.innerHTML = idleLabel;
-            btn.disabled = false;
+            button.disabled = false;
+            button.innerHTML = idleLabel || originalHtml;
         }
     }
 
-    // ═══ Registration form ═══
-    document.getElementById('registration_form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    registrationForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (pond.getFiles().length === 0) {
+            showAlert(registrationAlert, 'Please add at least one image.');
+            return;
+        }
+
+        syncPondToInput(pond, registrationInput);
         submitForm(
-            this.action,
-            new FormData(this),
+            this,
             document.getElementById('reg_btn'),
-            document.getElementById('alert'),
+            registrationAlert,
             '<i class="bx bx-save me-1"></i> Register Device'
         );
     });
 
-    // ═══ Update form ═══
-    document.getElementById('update_form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    updateForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Only newly selected images are submitted as images[].
+        // Existing images remain on the server unless remove_images[] is submitted.
+        syncPondToInput(editPond, editInput);
         submitForm(
-            this.action,
-            new FormData(this),
+            this,
             document.getElementById('update_btn'),
-            document.getElementById('update_alert'),
+            updateAlert,
             '<i class="bx bx-save me-1"></i> Update Device'
         );
     });
 
-    // ═══ Edit button — populate fields + set action ═══
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const uuid = this.dataset.uuid;
-            const form = document.getElementById('update_form');
+    function decodeImages(encoded) {
+        if (!encoded) return [];
+        try {
+            const binary = atob(encoded);
+            const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+            const json = new TextDecoder().decode(bytes);
+            const parsed = JSON.parse(json);
+            if (typeof parsed === 'string') return JSON.parse(parsed);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.error('Unable to decode device images:', error);
+            return [];
+        }
+    }
 
-            // Set action: /devices/{uuid}
-            form.action = form.dataset.urlTemplate.replace('__UUID__', uuid);
+    function renderCurrentImages(images, form) {
+        currentImages.replaceChildren();
 
-            // Populate fields
-            document.getElementById('edit_uuid').value            = uuid;
-            document.getElementById('edit_name').value            = this.dataset.name || '';
-            document.getElementById('edit_description').value     = this.dataset.description || '';
-            document.getElementById('edit_price').value           = this.dataset.price || '';
-            document.getElementById('edit_plan').value            = this.dataset.plan || '';
-            document.getElementById('edit_initial_deposit').value = this.dataset.initial_deposit || '';
-            document.getElementById('edit_device_category').value = this.dataset.category_id || '';
+        if (!images.length) {
+            const empty = document.createElement('span');
+            empty.className = 'text-xs text-slate-400';
+            empty.textContent = 'No existing images. Add images below.';
+            currentImages.appendChild(empty);
+            return;
+        }
 
-            // Show current images
-            const images = JSON.parse(this.dataset.images || '[]');
-            const container = document.getElementById('current_images');
-            container.innerHTML = '';
+        images.forEach(path => {
+            if (typeof path !== 'string' || !path.trim()) return;
 
-            // Remove leftover remove_images[] from previous edit session
-            form.querySelectorAll('input[name="remove_images[]"]').forEach(el => el.remove());
+            const wrapper = document.createElement('div');
+            wrapper.className = 'relative group flex flex-col items-center gap-1';
 
-            if (!images.length) {
-                container.innerHTML = '<span class="text-xs text-slate-400">No images. Add new ones below.</span>';
-                return;
-            }
+            const image = document.createElement('img');
+            image.src = @json(asset('storage')) + '/' + path.replace(/^\/+/, '');
+            image.alt = 'Device image';
+            image.className = 'h-16 w-16 rounded-lg object-cover border-2 border-slate-200';
+            image.onerror = function () {
+                this.alt = 'Image could not be loaded';
+                this.classList.add('opacity-50');
+            };
 
-            images.forEach(path => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'relative group';
-                wrapper.innerHTML = `
-                    <img src="/storage/${path}" class="h-16 w-16 rounded-lg object-cover border-2 border-slate-200" onerror="this.onerror=null;this.src='https://picsum.photos/seed/fallback/64/64.jpg';">
-                    <button type="button" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity" data-path="${path}">
-                        <i class="bx bx-x"></i>
-                    </button>
-                `;
-                wrapper.querySelector('button').addEventListener('click', function() {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'remove_images[]';
-                    input.value = this.dataset.path;
-                    form.appendChild(input);
-                    wrapper.remove();
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'text-xs text-red-600 hover:text-red-800';
+            removeButton.textContent = 'Remove image';
+            removeButton.addEventListener('click', function () {
+                // Prevent duplicate remove markers for the same image.
+                const alreadyMarked = [...form.querySelectorAll('input[name="remove_images[]"]')]
+                    .some(input => input.value === path);
+                if (!alreadyMarked) {
+                    const hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'remove_images[]';
+                    hidden.value = path;
+                    form.appendChild(hidden);
+                }
 
-                    if (!container.children.length) {
-                        container.innerHTML = '<span class="text-xs text-slate-400">All images removed. Add new ones.</span>';
-                    }
-                });
-                container.appendChild(wrapper);
+                wrapper.remove();
+                if (!currentImages.children.length) {
+                    const empty = document.createElement('span');
+                    empty.className = 'text-xs text-slate-400';
+                    empty.textContent = 'No remaining images. Add new images below.';
+                    currentImages.appendChild(empty);
+                }
             });
+
+            wrapper.append(image, removeButton);
+            currentImages.appendChild(wrapper);
         });
+    }
+
+    // Populate data when the Edit modal is opened by an Edit button.
+    editModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        if (!button || !button.classList.contains('edit-btn')) return;
+
+        const uuid = button.dataset.uuid || '';
+        updateForm.action = updateForm.dataset.urlTemplate.replace(
+            '__UUID__',
+            encodeURIComponent(uuid)
+        );
+
+        document.getElementById('edit_uuid').value = uuid;
+        document.getElementById('edit_name').value = button.dataset.name || '';
+        document.getElementById('edit_description').value = button.dataset.description || '';
+        document.getElementById('edit_price').value = button.dataset.price || '';
+        document.getElementById('edit_plan').value = button.dataset.plan || '';
+        document.getElementById('edit_initial_deposit').value = button.dataset.initial_deposit || '';
+        document.getElementById('edit_device_category').value = button.dataset.category_id || '';
+
+        updateAlert.replaceChildren();
+        updateForm.querySelectorAll('input[name="remove_images[]"]').forEach(input => input.remove());
+        editPond.removeFiles();
+
+        const images = decodeImages(button.dataset.images || '');
+        renderCurrentImages(images, updateForm);
     });
+
+    document.getElementById('exampleLargeModal').addEventListener('hidden.bs.modal', function () {
+        registrationForm.reset();
+        pond.removeFiles();
+        registrationAlert.replaceChildren();
+    });
+
+    // Initialize DataTables once, if the plugin is available.
+    try {
+        if (window.jQuery && jQuery.fn.DataTable && document.getElementById('devices_table')) {
+            if (!jQuery.fn.DataTable.isDataTable('#devices_table')) {
+                jQuery('#devices_table').DataTable();
+            }
+        }
+    } catch (error) {
+        console.warn('DataTable initialization skipped:', error.message);
+    }
+
+    const recordCount = document.getElementById('record-count');
+    if (recordCount) {
+        const count = @json($devices->count());
+        recordCount.textContent = count + ' Device' + (count !== 1 ? 's' : '');
+    }
 });
 
-// ═══ Delete — fetch DELETE /devices/{uuid} ═══
+// Delete device — preserves the existing route pattern.
 function delete_device(uuid) {
-    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    var url = "{{ url('devices') }}/" + uuid;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const url = @json(url('devices')) + '/' + encodeURIComponent(uuid);
 
-    swal({
-        title: "Delete Device",
-        text: "Are you sure you want to Delete this Device?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc3545",
-        confirmButtonText: "Yes, Delete",
-        cancelButtonText: "Cancel",
-        closeOnConfirmation: false
-    },
-    function() {
+    const confirmDelete = () => {
         fetch(url, {
             method: 'DELETE',
             headers: {
@@ -488,26 +606,44 @@ function delete_device(uuid) {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(async (response) => {
+        .then(async response => {
             const contentType = response.headers.get('content-type') || '';
             if (!contentType.includes('application/json')) {
-                throw new Error('Server returned non-JSON (' + response.status + ')');
+                throw new Error('Server returned a non-JSON response (' + response.status + ').');
             }
-            return response.json();
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Failed to delete device.');
+            }
+            if (window.jQuery && jQuery.notify) {
+                jQuery.notify(data.message || 'Device deleted successfully.', 'success');
+            }
+            setTimeout(() => window.location.reload(), 500);
         })
-        .then(data => {
-            if (data.success) {
-                $.notify(data.message, 'success');
-                setTimeout(() => location.reload(), 500);
+        .catch(error => {
+            console.error('Delete device failed:', error);
+            if (window.jQuery && jQuery.notify) {
+                jQuery.notify(error.message || 'An error occurred.', 'error');
             } else {
-                $.notify(data.message || 'Failed', 'error');
+                alert(error.message || 'An error occurred.');
             }
-        })
-        .catch(err => {
-            console.error(err);
-            $.notify(err.message || 'Error occurred', 'error');
         });
-    });
+    };
+
+    if (window.swal) {
+        swal({
+            title: 'Delete Device',
+            text: 'Are you sure you want to delete this device?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            closeOnConfirmation: false
+        }, confirmDelete);
+    } else if (window.confirm('Are you sure you want to delete this device?')) {
+        confirmDelete();
+    }
 }
 </script>
 @endpush

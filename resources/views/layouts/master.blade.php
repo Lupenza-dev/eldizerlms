@@ -5,6 +5,7 @@
 <!-- Mirrored from codervent.com/rocker/demo/vertical/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 15 May 2023 12:09:42 GMT -->
 
 <head>
+@stack('styles')
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,7 +35,14 @@
 	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css')}}" />
 	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css')}}" />
 	<script src="https://cdn.tailwindcss.com"></script>
-	<title>ELDIZER FINANCE</title>
+
+	{{-- FilePond CSS --}}
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview@^4/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+
+    <title>ELDIZER FINANCE</title>
+
+    @stack('styles')
 </head>
 
 <body>
@@ -289,8 +297,48 @@
 				margin-left: 0;
 			}
 		}
+
+		/* ⬇️ FILEPOND CUSTOM STYLES ⬇️ */
+		.filepond--root {
+			margin-bottom: 0;
+			font-family: 'Roboto', sans-serif;
+		}
+
+		.filepond--panel-root {
+			background-color: #f8fafc;
+			border: 2px dashed #cbd5e1;
+			border-radius: 0.5rem;
+		}
+
+		.filepond--root:hover .filepond--panel-root {
+			border-color: #3b82f6;
+			background-color: #eff6ff;
+		}
+
+		.filepond--drop-label {
+			color: #64748b;
+			font-size: 13px;
+		}
+
+		.filepond--label-action {
+			color: #2563eb;
+			text-decoration: underline;
+			font-weight: 500;
+		}
+
+		.filepond--image-preview-wrapper {
+			border-radius: 0.5rem;
+		}
+		/* ⬆️ FILEPOND CUSTOM STYLES ⬆️ */
 	</style>
-	@stack('scripts')
+
+{{-- FilePond JS --}}
+    <script src="https://unpkg.com/filepond-plugin-image-preview@^4/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type@^4/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-size@^4/dist/filepond-plugin-file-validate-size.js"></script>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+
+    @stack('scripts')
 </body>
 
 
