@@ -74,7 +74,7 @@
                                     </span>
                                 </td>
 
-                                {{-- ✅ COLLEGES COLUMN (multiple) --}}
+                                {{-- COLLEGES COLUMN (multiple) --}}
                                 <td class="px-4 py-3">
                                     <div class="flex flex-col gap-1">
                                         <span class="text-xs font-mono text-slate-600">{{ $agent->student_reg_id }}</span>
@@ -162,27 +162,20 @@
                             <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" placeholder="Enter student reg ID..." required>
                         </div>
 
-                        {{-- ✅ COLLEGES as CHECKBOXES --}}
+                        {{-- COLLEGES as CHECKBOXES --}}
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                                 Colleges <span class="text-red-500">*</span>
                             </label>
                             <div class="border border-slate-200 rounded-lg p-3 max-h-56 overflow-y-auto bg-slate-50/50">
                                 @forelse ($colleges as $college)
-                                    @php $isTaken = !is_null($college->agent_id); @endphp
-                                    <label class="flex items-center gap-2 py-1.5 px-2 rounded transition-colors
-                                                {{ $isTaken ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white cursor-pointer' }}">
+                                    <label class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-white cursor-pointer transition-colors">
                                         <input type="checkbox"
                                                name="college_ids[]"
                                                value="{{ $college->id }}"
-                                               class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                               {{ $isTaken ? 'disabled' : '' }}>
+                                               class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                                         <span class="text-sm text-slate-700">{{ $college->name }}</span>
-                                        @if ($isTaken)
-                                            <span class="text-xs text-amber-600 ms-auto"><i class="bx bx-lock"></i> Has agent</span>
-                                        @else
-                                            <span class="text-xs text-slate-400 ms-auto">{{ $college->location }}</span>
-                                        @endif
+                                        <span class="text-xs text-slate-400 ms-auto">{{ $college->location }}</span>
                                     </label>
                                 @empty
                                     <p class="text-sm text-slate-400 text-center py-3">
@@ -190,7 +183,7 @@
                                     </p>
                                 @endforelse
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">Chagua college moja au zaidi. Colleges zenye agent hazionyeshwi kuchaguliwa.</p>
+                            <p class="text-xs text-slate-400 mt-1">Select one or more colleges.</p>
                         </div>
 
                         <div class="sm:col-span-2">
@@ -251,29 +244,26 @@
                             <input type="text" id="student_reg" name="student_reg_id" class="form-control rounded-lg text-sm" placeholder="Enter student reg ID..." required>
                         </div>
 
-                        {{-- ✅ COLLEGES as CHECKBOXES (edit) --}}
+                        {{-- COLLEGES as CHECKBOXES (edit) --}}
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                                 Colleges <span class="text-red-500">*</span>
                             </label>
                             <div class="border border-slate-200 rounded-lg p-3 max-h-56 overflow-y-auto bg-slate-50/50">
                                 @forelse ($colleges as $college)
-                                    <label class="edit-college-label flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer hover:bg-white transition-colors">
+                                    <label class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-white cursor-pointer transition-colors">
                                         <input type="checkbox"
                                                name="college_ids[]"
                                                value="{{ $college->id }}"
-                                               data-has-agent-id="{{ $college->agent_id ?? 0 }}"
                                                class="edit-college-cb rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
                                         <span class="text-sm text-slate-700">{{ $college->name }}</span>
-                                        <span class="edit-college-status text-xs text-slate-400 ms-auto">
-                                            @if ($college->agent_id) Has agent @else {{ $college->location }} @endif
-                                        </span>
+                                        <span class="text-xs text-slate-400 ms-auto">{{ $college->location }}</span>
                                     </label>
                                 @empty
                                     <p class="text-sm text-slate-400 text-center py-3">No colleges available</p>
                                 @endforelse
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">Unaweza kuongeza/kupunguza colleges za agent huyu.</p>
+                            <p class="text-xs text-slate-400 mt-1">You can add or remove colleges for this agent.</p>
                         </div>
 
                         <div class="sm:col-span-2" id="update_alert"></div>
@@ -328,7 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // =============== EDIT BUTTON HANDLER ===============
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-            const currentAgentId = Number(this.dataset.agent_id || 0);
             const collegeIds = this.dataset.college_ids
                 ? this.dataset.college_ids.split(',').map(Number)
                 : [];
@@ -339,27 +328,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('phone_number').value = this.dataset.phone_number;
             document.getElementById('student_reg').value  = this.dataset.student_reg;
 
-            // Reset + check checkboxes
             document.querySelectorAll('#update_form .edit-college-cb').forEach(cb => {
-                const hasAgentId       = Number(cb.dataset.hasAgentId || 0);
-                const isOwnCollege     = collegeIds.includes(Number(cb.value));
-                const isAssignedToOther = hasAgentId > 0 && hasAgentId !== currentAgentId;
-
-                cb.checked  = isOwnCollege;
-                cb.disabled = isAssignedToOther;
-
-                const label  = cb.closest('.edit-college-label');
-                const status = label.querySelector('.edit-college-status');
-                if (label) {
-                    label.classList.toggle('opacity-50', cb.disabled);
-                    label.classList.toggle('cursor-not-allowed', cb.disabled);
-                    label.classList.toggle('cursor-pointer', !cb.disabled);
-                    label.classList.toggle('hover:bg-white', !cb.disabled);
-                }
-                if (status && isAssignedToOther) {
-                    status.textContent = 'Has agent';
-                    status.classList.add('text-amber-600');
-                }
+                cb.checked = collegeIds.includes(Number(cb.value));
             });
         });
     });

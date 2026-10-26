@@ -43,16 +43,15 @@ class AgentController extends Controller
     {
         $valid_data = $request->validated();
         $path = null;
-    
+
         try {
             if ($request->hasFile('image')) {
                 $file     = $request->file('image');
                 $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                             . '.' . $file->getClientOriginalExtension();
-    
                 $path = Storage::disk('public')->putFileAs('attachments', $file, $filename);
             }
-    
+
             $agent = DB::transaction(function () use ($valid_data, $path) {
                 $user = User::create([
                     'name'         => ucwords($valid_data['name']),
@@ -61,38 +60,37 @@ class AgentController extends Controller
                     'password'     => Hash::make('123456'),
                     'uuid'         => (string) Str::orderedUuid(),
                 ]);
-    
+
                 $user->assignRole('Agent');
-    
+
                 $agent = Agent::create([
                     'student_reg_id' => $valid_data['student_reg_id'],
                     'user_id'        => $user->id,
                     'image'          => $path,
                     'uuid'           => (string) Str::orderedUuid(),
                 ]);
-    
-                // Assign colleges
-                College::whereIn('id', $valid_data['college_ids'])
-                    ->update(['agent_id' => $agent->id]);
-    
+
+                // Many-to-many: attach colleges
+                $agent->colleges()->attach($valid_data['college_ids']);
+
                 return $agent;
             });
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Agent registered successfully',
             ], 201);
-    
+
         } catch (\Throwable $e) {
             if ($path && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }
-    
+
             \Log::error('Agent store failed: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'data'  => $valid_data,
             ]);
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to register agent. Please try again.',
@@ -106,46 +104,42 @@ class AgentController extends Controller
         $valid_data = $this->validate($request, [
             'name'           => ['required', 'min:3', 'max:50'],
             'id'             => ['required', 'exists:agents,uuid'],
-            'student_reg_id' => ['required', 'unique:agents,student_reg_id,' . $this->agentIdFromUuid($request->id)],
+            'student_reg_id' => ['required'],
             'phone_number'   => ['required', 'min:10', 'max:12'],
             'college_ids'    => ['required', 'array', 'min:1'],
             'college_ids.*'  => ['integer', 'exists:colleges,id'],
             'email'          => ['required', 'email'],
         ]);
-    
+
         try {
             DB::transaction(function () use ($valid_data) {
                 $agent = Agent::where('uuid', $valid_data['id'])->firstOrFail();
-    
-                // 1. Update agent
-                $agent->student_reg_id = $valid_data['student_reg_id'];
-                $agent->save();
-    
-                // 2. Update user
-                User::where('id', $agent->user_id)->update([
+
+                $agent->update([
+                    'student_reg_id' => $valid_data['student_reg_id'],
+                ]);
+
+                $agent->user->update([
                     'name'         => ucwords($valid_data['name']),
                     'phone_number' => $valid_data['phone_number'],
                     'email'        => $valid_data['email'],
                 ]);
-    
-                // 3. Reset colleges agent
-                College::where('agent_id', $agent->id)->update(['agent_id' => null]);
-    
-                College::whereIn('id', $valid_data['college_ids'])
-                    ->update(['agent_id' => $agent->id]);
+
+                // Many-to-many: sync (detach old, attach new)
+                $agent->colleges()->sync($valid_data['college_ids']);
             });
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Request Done Successfully',
             ], 200);
-    
+
         } catch (\Throwable $e) {
             \Log::error('Agent update failed: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'data'  => $valid_data,
             ]);
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update agent.',
@@ -153,16 +147,9 @@ class AgentController extends Controller
             ], 500);
         }
     }
+
     
-    // Helper get aggent ID from Uuid
-    private function agentIdFromUuid(?string $uuid): ?int
-    {
-        if (! $uuid) {
-            return null;
-        }
-    
-        return Agent::where('uuid', $uuid)->value('id');
-    }
+ 
 
     /**
      * Display the specified resource.

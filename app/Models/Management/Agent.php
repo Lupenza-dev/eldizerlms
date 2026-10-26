@@ -19,7 +19,8 @@ class Agent extends Model
 
     public function colleges()
     {
-        return $this->hasMany(College::class);
+        return $this->belongsToMany(College::class, 'agent_college')
+            ->withTimestamps();
     }
 
     // public function college(){
