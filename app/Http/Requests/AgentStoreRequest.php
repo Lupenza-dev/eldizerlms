@@ -22,12 +22,21 @@ class AgentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'           =>['required','min:3','max:50'],
-            'email'          =>['required','unique:users,email'],
-            'student_reg_id' =>['required','unique:agents,student_reg_id'],
-            'phone_number'   =>['required','min:10','max:12'],
-            'image'          =>['required'],
-            'college_id'     =>['required']
+            'name'           => ['required', 'min:3', 'max:50'],
+            'email'          => ['required', 'unique:users,email'],
+            'student_reg_id' => ['required', 'unique:agents,student_reg_id'],
+            'phone_number'   => ['required', 'min:10', 'max:12'],
+            'image'          => ['required', 'image', 'max:2048'],
+            'college_ids'    => ['required', 'array', 'min:1'],
+            'college_ids.*'  => ['integer', 'exists:colleges,id'],
+        ];
+    }
+    
+    public function messages(): array
+    {
+        return [
+            'college_ids.required' => 'Select Atleast one college.',
+            'college_ids.*.exists' => 'College Not found.',
         ];
     }
 }

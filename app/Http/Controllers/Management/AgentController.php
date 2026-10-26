@@ -22,9 +22,10 @@ class AgentController extends Controller
      */
     public function index()
     {
-        $agents =Agent::with('user','college')->latest()->get();
-        $colleges =College::orderBy('name','ASC')->get();
-        return view('managements.agents.list',compact('colleges','agents'));
+        $agents   = Agent::with(['user', 'colleges'])->latest()->get();
+        $colleges = College::orderBy('name', 'ASC')->get();
+    
+        return view('managements.agents.list', compact('agents', 'colleges'));
     }
 
     /**
@@ -52,7 +53,7 @@ class AgentController extends Controller
                 $path = Storage::disk('public')->putFileAs('attachments', $file, $filename);
             }
     
-            DB::transaction(function () use ($valid_data, $path) {
+            $agent = DB::transaction(function () use ($valid_data, $path) {
                 $user = User::create([
                     'name'         => ucwords($valid_data['name']),
                     'email'        => $valid_data['email'],
@@ -63,13 +64,18 @@ class AgentController extends Controller
     
                 $user->assignRole('Agent');
     
-                Agent::create([
+                $agent = Agent::create([
                     'student_reg_id' => $valid_data['student_reg_id'],
                     'user_id'        => $user->id,
-                    'college_id'     => $valid_data['college_id'],
                     'image'          => $path,
                     'uuid'           => (string) Str::orderedUuid(),
                 ]);
+    
+                // Assign colleges
+                College::whereIn('id', $valid_data['college_ids'])
+                    ->update(['agent_id' => $agent->id]);
+    
+                return $agent;
             });
     
             return response()->json([
@@ -95,32 +101,67 @@ class AgentController extends Controller
         }
     }
 
-    public function agentUpdate(Request $request){
-        $valid_data =$this->validate($request,[
-            'name'           =>['required','min:3','max:50'],
-            'id'             =>['required'],
-            'student_reg_id' =>['required'],
-            'phone_number'   =>['required','min:12','max:12'],
-            'college_id'     =>['required'],
-            'email'           =>['required']
+    public function agentUpdate(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'name'           => ['required', 'min:3', 'max:50'],
+            'id'             => ['required', 'exists:agents,uuid'],
+            'student_reg_id' => ['required', 'unique:agents,student_reg_id,' . $this->agentIdFromUuid($request->id)],
+            'phone_number'   => ['required', 'min:10', 'max:12'],
+            'college_ids'    => ['required', 'array', 'min:1'],
+            'college_ids.*'  => ['integer', 'exists:colleges,id'],
+            'email'          => ['required', 'email'],
         ]);
-
-        $agent =Agent::where('uuid',$valid_data['id'])->first();
-        $agent->student_reg_id =$valid_data['student_reg_id'];
-        $agent->college_id =$valid_data['college_id'];
-        $agent->save();
-
-        $user =User::where('id',$agent->user_id)->update([
-            'name' =>ucwords($valid_data['name']),
-            'phone_number' =>$valid_data['phone_number']
-        ]);
-
-        return response()->json([
-            'success' =>true,
-            'message' =>"Request Done Successfully"
-        ],200);
-
-
+    
+        try {
+            DB::transaction(function () use ($valid_data) {
+                $agent = Agent::where('uuid', $valid_data['id'])->firstOrFail();
+    
+                // 1. Update agent
+                $agent->student_reg_id = $valid_data['student_reg_id'];
+                $agent->save();
+    
+                // 2. Update user
+                User::where('id', $agent->user_id)->update([
+                    'name'         => ucwords($valid_data['name']),
+                    'phone_number' => $valid_data['phone_number'],
+                    'email'        => $valid_data['email'],
+                ]);
+    
+                // 3. Reset colleges agent
+                College::where('agent_id', $agent->id)->update(['agent_id' => null]);
+    
+                College::whereIn('id', $valid_data['college_ids'])
+                    ->update(['agent_id' => $agent->id]);
+            });
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Request Done Successfully',
+            ], 200);
+    
+        } catch (\Throwable $e) {
+            \Log::error('Agent update failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'data'  => $valid_data,
+            ]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update agent.',
+                'debug'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+    
+    // Helper get aggent ID from Uuid
+    private function agentIdFromUuid(?string $uuid): ?int
+    {
+        if (! $uuid) {
+            return null;
+        }
+    
+        return Agent::where('uuid', $uuid)->value('id');
     }
 
     /**
