@@ -45,4 +45,16 @@ class Device extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function getImageSlidersAttribute()
+    {
+        $image_array = [];
+        $images = explode(',', $this->images);
+        foreach ($images as $image) {
+            if (!empty($image)) {
+                $image_array[] = asset('storage/attachments').'/'.$image;
+            }
+        }
+        return $image_array;
+    }
 }

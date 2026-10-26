@@ -68,7 +68,7 @@ class DeviceController extends Controller
                             . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                             . '.' . $file->getClientOriginalExtension();
     
-                $path = Storage::disk('public')->putFileAs('devices', $file, $filename);
+                $path = Storage::disk('local')->putFileAs('', $file, $filename);
                 if ($path) {
                     $imagePaths[] = $path;
                 }
