@@ -22,7 +22,7 @@ class DeviceResource extends JsonResource
             'plan' =>$this->plan,
             'initial_deposit' =>$this->initial_deposit,
             'device_category' =>$this->device_category?->name,
-            'image'         =>$this->image_sliders,
+            'images'         =>$this->image_sliders,
         ];
     }
 }
