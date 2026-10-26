@@ -10,10 +10,16 @@ class College extends Model
 {
     use HasFactory , SoftDeletes;
 
-    protected $fillable=['name','location','logo','created_by','uuid'];
+    protected $fillable=['name','location','logo', 'created_by','uuid'];
 
     public function representative(){
         return $this->hasOne(CollegeRepresentative::class);
+    }
+
+    public function agents()
+    {
+        return $this->belongsToMany(Agent::class, 'agent_college')
+            ->withTimestamps();
     }
 
     public function getStatusFormattedAttribute(){
