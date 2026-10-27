@@ -431,7 +431,7 @@
                             </tr>
                             <tr>
                                 <th>Loan Type</th>
-                                <td>{{ $loan->loan_type_format }}</td>
+                                <td>{!! $loan->loan_type_format !!}</td>
                                 <th>Eco Water Reg Code</th>
                                 <td>{{ $loan->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
                             </tr>
