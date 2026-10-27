@@ -49,7 +49,7 @@ class Device extends Model
     public function getImageSlidersAttribute()
     {
         $image_array = [];
-        $images = explode(',', $this->images);
+        $images =$this->images;
         foreach ($images as $image) {
             if (!empty($image)) {
                 $image_array[] = asset('storage/attachments').'/'.$image;
