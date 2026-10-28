@@ -11,15 +11,21 @@ class Agent extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable=['student_reg_id','user_id','college_id','image','uuid'];
+    protected $fillable=['student_reg_id','user_id','image','uuid'];
 
     public function user(){
         return $this->hasOne(User::class,'id','user_id');
     }
 
-    public function college(){
-        return $this->belongsTo(College::class);
+    public function colleges()
+    {
+        return $this->belongsToMany(College::class, 'agent_college')
+            ->withTimestamps();
     }
+
+    // public function college(){
+    //     return $this->belongsTo(College::class);
+    // }
 
     public function getStatusFormattedAttribute(){
         switch ($this->status) {

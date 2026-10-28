@@ -21,7 +21,7 @@ class Student extends Model
     }
 
     public function agents (){
-        return $this->hasMany(Agent::class,'college_id','college_id');
+        return $this->hasMany(AgentCollege::class,'college_id','college_id');
     }
 
     public function scopeWithFilters($query,$request){

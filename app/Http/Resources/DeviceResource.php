@@ -17,11 +17,12 @@ class DeviceResource extends JsonResource
         return [
             'id' =>$this->id,
             'name' =>$this->name,
+            'description' =>$this->description,
             'price' =>$this->price,
             'plan' =>$this->plan,
             'initial_deposit' =>$this->initial_deposit,
             'device_category' =>$this->device_category?->name,
-            'image'         =>asset('storage/attachments').'/'.$this->image,
+            'images'         =>$this->image_sliders,
         ];
     }
 }

@@ -487,7 +487,7 @@
                                     <tbody>
                                         <tr>
                                             <th>Loan Type</th>
-                                            <td>{{ $contract->loan_application?->loan_type_format }}</td>
+                                            <td>{!! $contract->loan_application?->loan_type_format !!}</td>
                                             <th>Eco Water Reg Code</th>
                                             <td>{{ $contract->loan_application?->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
                                         </tr>

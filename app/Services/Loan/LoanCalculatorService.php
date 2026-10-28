@@ -16,8 +16,22 @@ class LoanCalculatorService
         $amount =$data['amount'];
         $plan   =$data['plan'];
 
-        $details['total_amount']       =$loan_type == 3 ? 15000 : $amount*$rate;
-        $details['installment_amount'] =$details['total_amount']/$plan;
+        switch($loan_type) {
+            case 1:
+                $total_amount = $amount * $rate;
+                break;
+            case 2:
+                $total_amount = $amount;
+                break;
+            case 3:
+                $total_amount = 15000;
+                break;
+        }
+        
+        $installment_amount =$loan_type == 2 ? ($amount-$data['initial_deposit'])/$plan : $amount/$plan;
+
+        $details['total_amount']       =$total_amount;
+        $details['installment_amount'] =$installment_amount;
         $details['start_date']          =date('Y-m-d');
         $details['end_date']           =date('Y-m-d', strtotime("+".$plan." months", strtotime($details['start_date'])));
         $details['interest_amount']    =$details['total_amount'] - $amount;
@@ -25,7 +39,7 @@ class LoanCalculatorService
         $details['plan']               =$plan;
         $details['device_name']        =$data['device_name'] ?? null;
         $details['device_id']          =$data['device_id'] ?? null;
-        $details['initial_deposit']    =($data['loan_type'] == 2)? $details['total_amount'] * 0.40 : 0;
+        $details['initial_deposit']    =$data['initial_deposit'] ?? 0;
         $details['interest_charge']    ="3.5%";
         $details['fees_and_charges']   ="9.5%";
         $details['late_payment']       ="5%";
