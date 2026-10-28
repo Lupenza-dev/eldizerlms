@@ -204,9 +204,30 @@ class DeviceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Device $device)
     {
-        //
+        try {
+            if (is_array($device->images)) {
+                foreach ($device->images as $path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+                }
+            }
+    
+            $device->delete();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Device deleted successfully',
+            ], 200);
+    
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Device destroy failed: ' . $e->getMessage());
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete device: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroyDevice(Request $request){
