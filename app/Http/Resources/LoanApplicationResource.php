@@ -41,8 +41,9 @@ class LoanApplicationResource extends JsonResource
             'fee_charges' =>$this->fee_charges,
             'late_charges' =>$this->late_charges,
             'loan_type'    =>$this->loan_type,
-
-
+            'bank_name'    =>$this->customer_bank_detail?->bank_name,
+            'mandate_reference'    =>$this->customer_mandate?->mandate_reference,
+            'mandate_status'    =>$this->customer_mandate?->status,
         ];
     }
 }
