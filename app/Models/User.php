@@ -31,7 +31,8 @@ class User extends Authenticatable
         'customer_id',
         'device_token',
         'is_password_changed',
-        'password_change_date'
+        'password_change_date',
+        'status'
     ];
 
     /**
@@ -51,6 +52,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'status' =>'integer',
     ];
 
     public function loan_contracts(){
@@ -66,7 +68,7 @@ class User extends Authenticatable
     }
 
     public function getStatusFormattedAttribute(){
-        switch ($this->active) {
+        switch ($this->status) {
           case 1:
             $label ="<span class='badge bg-success text-white'>Active</span>";
             break;

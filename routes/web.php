@@ -136,6 +136,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('hospitals', HospitalController::class)->middleware('permission:manage hospitals');
     Route::resource('agents', AgentController::class)->middleware('permission:manage agents');
     Route::resource('customers', CustomerController::class)->middleware('permission:view customers');
+Route::post('customers/get-districts', [CustomerController::class, 'getDistricts'])->name('customers.districts');
+Route::post('customers/get-wards', [CustomerController::class, 'getWards'])->name('customers.wards');
     Route::resource('devices', DeviceController::class)->middleware('permission:manage devices');
     Route::resource('beneficaries', BenefeciariesController::class)->middleware('permission:manage beneficiaries');
     Route::resources([

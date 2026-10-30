@@ -9,7 +9,7 @@
         margin-bottom: 2rem;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    
+
     .info-card {
         background: white;
         border-radius: 12px;
@@ -19,12 +19,12 @@
         border: 1px solid #e8e8e8;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    
+
     .info-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     }
-    
+
     .section-title {
         color: #2c3e50;
         font-weight: 600;
@@ -36,17 +36,17 @@
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .section-title i {
         color: #17a2b8;
     }
-    
+
     .info-table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
     }
-    
+
     .info-table th {
         background: #f8f9fa;
         color: #495057;
@@ -57,7 +57,7 @@
         text-align: left;
         width: 25%;
     }
-    
+
     .info-table td {
         padding: 0.75rem 1rem;
         border: 1px solid #dee2e6;
@@ -65,11 +65,11 @@
         font-weight: 500;
         background: #ffffff;
     }
-    
+
     .info-table tr:hover td {
         background: #f8f9ff;
     }
-    
+
     .status-badge {
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -77,19 +77,19 @@
         font-weight: 600;
         display: inline-block;
     }
-    
+
     .status-active {
         background: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
     }
-    
+
     .status-student {
         background: #cce5ff;
         color: #004085;
         border: 1px solid #b3d7ff;
     }
-    
+
     .customer-avatar {
         width: 120px;
         height: 120px;
@@ -98,7 +98,7 @@
         object-fit: cover;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    
+
     .avatar-placeholder {
         width: 120px;
         height: 120px;
@@ -113,7 +113,7 @@
         justify-content: center;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    
+
     .customer-id {
         background: #17a2b8;
         color: white;
@@ -122,18 +122,18 @@
         font-family: monospace;
         font-size: 0.9rem;
     }
-    
+
     .contact-info {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         color: #6c757d;
     }
-    
+
     .contact-info i {
         color: #17a2b8;
     }
-    
+
     .college-details {
         background: #f8f9fa;
         border-radius: 8px;
@@ -141,20 +141,20 @@
         margin: 1rem 0;
         border-left: 4px solid #17a2b8;
     }
-    
+
     .college-details h6 {
         color: #17a2b8;
         font-weight: 600;
         margin-bottom: 1rem;
     }
-    
+
     .empty-state {
         text-align: center;
         padding: 2rem;
         color: #6c757d;
         font-style: italic;
     }
-    
+
     @media (max-width: 768px) {
         .info-table th,
         .info-table td {
@@ -163,17 +163,17 @@
             border: none;
             border-bottom: 1px solid #dee2e6;
         }
-        
+
         .info-table th {
             background: #17a2b8;
             color: white;
             font-weight: 600;
         }
-        
+
         .customer-profile-header {
             padding: 1.5rem;
         }
-        
+
         .customer-avatar,
         .avatar-placeholder {
             width: 80px;
@@ -190,19 +190,17 @@
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-                        </li>
+                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
                         <li class="breadcrumb-item active" aria-current="page">Profile</li>
                     </ol>
                 </nav>
             </div>
             <div class="ms-auto">
-                <div class="btn-group">
-                </div>
+                <div class="btn-group"></div>
             </div>
         </div>
         <!--end breadcrumb-->
-       
+
         <div class="card border-0 shadow-sm">
             <div class="card-body p-0">
                 <!-- Header Section -->
@@ -210,13 +208,13 @@
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <div class="d-flex align-items-center gap-4">
-                                {{-- @if($customer->image)
-                                    <img src="{{ asset('storage').'/'.$customer->image}}" alt="Customer" class="customer-avatar">
-                                @else --}}
+                                @if($customer->image)
+                                    <img src="{{ asset('storage/' . $customer->image) }}" alt="Customer" class="customer-avatar">
+                                @else
                                     <div class="avatar-placeholder">
                                         {{ substr($customer->customer_name, 0, 1) }}
                                     </div>
-                                {{-- @endif --}}
+                                @endif
                                 <div>
                                     <h3 class="mb-2">{{ $customer->customer_name }}</h3>
                                     <div class="contact-info mb-2">
@@ -244,6 +242,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Personal Information Section -->
                 <div class="info-card">
                     <h6 class="section-title">
@@ -256,13 +255,13 @@
                                 <th>Full Name</th>
                                 <td>{{ $customer->customer_name }}</td>
                                 <th>Gender</th>
-                                <td>{{ $customer->gender?->name }}</td>
+                                <td>{{ $customer->gender?->name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>ID Number</th>
                                 <td><span class="customer-id">{{ $customer->id_number }}</span></td>
                                 <th>Date of Birth</th>
-                                <td>{{ date('d M Y', strtotime($customer->dob)) }}</td>
+                                <td>{{ $customer->dob ? date('d M Y', strtotime($customer->dob)) : 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>Phone Number</th>
@@ -271,21 +270,21 @@
                                 <td>{{ $customer->email }}</td>
                             </tr>
                             <tr>
-                                <th>Marital Status</th>
-                                <td>{{ $customer->marital_status?->name }}</td>
                                 <th>Location</th>
-                                <td>{{ $customer->address_location }}</td>
+                                <td colspan="3">{{ $customer->address_location }}</td>
                             </tr>
                             <tr>
                                 <th>Resident Since</th>
-                                <td>{{ $customer->resident_since }}</td>
+                                <td>{{ $customer->resident_since ?? 'N/A' }}</td>
                                 <th>Registration Date</th>
                                 <td>{{ date('d M Y', strtotime($customer->created_at)) }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Academic Information Section -->
+
+                <!-- Academic Information Section (for Student) -->
+                @if($customer->customer_type == 1)
                 <div class="info-card">
                     <h6 class="section-title">
                         <i class="bx bx-book"></i>
@@ -296,25 +295,25 @@
                             <tbody>
                                 <tr>
                                     <th>College Name</th>
-                                    <td>{{ $customer->student?->college?->name }}</td>
+                                    <td>{{ $customer->student?->college?->name ?? 'N/A' }}</td>
                                     <th>Study Year</th>
-                                    <td>{{ $customer->student?->study_year }}</td>
+                                    <td>{{ $customer->student?->study_year ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Student Reg ID</th>
-                                    <td>{{ $customer->student?->student_reg_id }}</td>
+                                    <td>{{ $customer->student?->student_reg_id ?? 'N/A' }}</td>
                                     <th>Course</th>
-                                    <td>{{ $customer->student?->course }}</td>
+                                    <td>{{ $customer->student?->course ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Form Four Index No</th>
-                                    <td>{{ $customer->student?->form_four_index_no }}</td>
+                                    <td>{{ $customer->student?->form_four_index_no ?? 'N/A' }}</td>
                                     <th>Position</th>
-                                    <td><span class="status-badge status-student">{{ $customer->student?->position }}</span></td>
+                                    <td><span class="status-badge status-student">{{ $customer->student?->position ?? 'N/A' }}</span></td>
                                 </tr>
                                 <tr>
                                     <th>HESLB Status</th>
-                                    <td colspan="3">{!! $customer->student?->heslb_status_formatted !!}</td>
+                                    <td colspan="3">{!! $customer->student?->heslb_status_formatted ?? 'N/A' !!}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -326,7 +325,10 @@
                         </div>
                     @endif
                 </div>
+                @endif
 
+                <!-- Hospital / Intern Information Section (for Intern) -->
+                @if($customer->customer_type == 2)
                 <div class="info-card">
                     <h6 class="section-title">
                         <i class="bx bx-plus-medical"></i>
@@ -337,21 +339,21 @@
                             <tbody>
                                 <tr>
                                     <th>Hospital Name</th>
-                                    <td>{{ $customer->intern?->hospital?->name }}</td>
+                                    <td>{{ $customer->intern?->hospital?->name ?? 'N/A' }}</td>
                                     <th>Professional Title</th>
-                                    <td>{{ $customer->intern?->professional }}</td>
+                                    <td>{{ $customer->intern?->professional ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Start Date</th>
-                                    <td>{{ $customer->intern?->start_date }}</td>
+                                    <td>{{ $customer->intern?->start_date ?? 'N/A' }}</td>
                                     <th>End Date</th>
-                                    <td>{{ $customer->intern?->end_date }}</td>
+                                    <td>{{ $customer->intern?->end_date ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Letter</th>
                                     <td colspan="3">
                                         @if($customer->intern?->letter)
-                                            <a href="{{ asset('storage/' . $customer->intern?->letter) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                                            <a href="{{ asset('storage/' . $customer->intern->letter) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
                                                 <i class='bx bx-file'></i>
                                                 View Letter
                                             </a>
@@ -370,11 +372,9 @@
                         </div>
                     @endif
                 </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-
-
 @endsection
-
