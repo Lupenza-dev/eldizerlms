@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Mobile\V2\NmbController;
 use App\Http\Controllers\Api\Mobile\V2\ProfessionalController;
 use App\Http\Controllers\Api\Mobile\V2\RegistrationController;
 use App\Http\Controllers\HomeController as TestController;
+use App\Http\Controllers\Payment\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,5 +95,7 @@ Route::group(['prefix' => 'V2'], function () {
         Route::get('get-assignments', [HomeController::class, 'getAssignments']);
         Route::post('complete-intern-registration', [RegistrationController::class, 'completeInternRegistration']);
         Route::get('get-eco-water-campuses', [HomeController::class, 'getEcoWaterCampuses']);
+        Route::post('verify-mandate-otp', [PaymentController::class, 'verifyMandateOtp']);
+        Route::post('resend-mandate-otp', [PaymentController::class, 'resendMandateOtp']);
     });
 });
