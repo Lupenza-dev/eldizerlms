@@ -568,6 +568,35 @@ class CustomerController extends Controller
         }
     }
 
+
+    public function searchCustomers(Request $request)
+{
+    $q = $request->input('q', '');
+
+    $customers = Customer::query()
+        ->when($q, function ($query) use ($q) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('first_name', 'like', "%{$q}%")
+                    ->orWhere('middle_name', 'like', "%{$q}%")
+                    ->orWhere('last_name', 'like', "%{$q}%")
+                    ->orWhere('phone_number', 'like', "%{$q}%")
+                    ->orWhere('id_number', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%");
+            });
+        })
+        ->limit(20)
+        ->get(['uuid', 'first_name', 'middle_name', 'last_name', 'phone_number', 'id_number']);
+
+    return $customers->map(function ($c) {
+        return [
+            'id'   => $c->uuid,
+            'text' => trim($c->first_name . ' ' . ($c->middle_name ?? '') . ' ' . $c->last_name)
+                     . ' | ' . $c->phone_number
+                     . ' | ' . $c->id_number,
+        ];
+    });
+}
+
     /**
      * Remove the specified resource from storage.
      */
@@ -575,4 +604,7 @@ class CustomerController extends Controller
     {
         //
     }
+
+
+
 }

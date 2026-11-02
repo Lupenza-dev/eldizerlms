@@ -5,15 +5,21 @@ namespace App\Http\Controllers\Loan;
 use App\Event\LoanApplied;
 use App\Http\Controllers\Controller;
 use App\Models\Entities\Region;
+use App\Models\Loan\EcoWaterApplicants;
 use Illuminate\Http\Request;
 use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanContract;
 use App\Models\Loan\Installment;
 use App\Models\Loan\LoanApproval;
+use App\Models\Management\Agent;
 use App\Models\Management\College;
+use App\Models\Management\Customer;
 use App\Models\Management\CustomerBankDetail;
 use App\Models\Management\CustomerMandate;
+use App\Models\Management\Device;
+use App\Models\Management\EcoWaterCampus;
 use App\Models\Payment\DisbursmentPayment;
+use App\Services\Loan\LoanCalculatorService;
 use Auth;
 use DB;
 use Str;
@@ -55,8 +61,17 @@ class LoanApplicationController extends Controller
             })
             ->latest()
             ->get();
-        return view('loans.loan_applications', compact('loans', 'requests', 'regions', 'colleges'));
+
+
+        $devices  = Device::orderBy('name')->get(['id', 'name', 'price', 'initial_deposit']);
+        $agents   = Agent::with('user')->get();
+        $campuses = EcoWaterCampus::orderBy('campus_name')->get(['id', 'campus_name']);
+        return view('loans.loan_applications', compact('loans', 'requests', 'regions', 'colleges', 'devices', 'agents', 'campuses'));
     }
+
+
+
+
 
     public function confirmMandate(Request $request)
     {
@@ -88,7 +103,7 @@ class LoanApplicationController extends Controller
                 'phone'             => '0' . substr($loanApplication->customer?->phone_number ?? '', -9),
                 'NIN'               => $loanApplication->customer?->id_number,
                 'address'           => $loanApplication->customer?->region?->name,
-                'total_amount'       =>$loanApplication->loan_type === 3 ? $loanApplication->loan_amount : $loanApplication->loan_amount * 2,
+                'total_amount'       => $loanApplication->loan_type === 3 ? $loanApplication->loan_amount : $loanApplication->loan_amount * 2,
                 'debit_type'        => 'FIXED',
                 'min_installment_amount' => $loanApplication->installment_amount,
                 'installment_amount'    => $loanApplication->installment_amount,
@@ -188,9 +203,165 @@ class LoanApplicationController extends Controller
             })
             ->latest()
             ->get();
+
+        $devices  = Device::orderBy('name')->get(['id', 'name', 'price', 'initial_deposit']);
+        $agents   = Agent::with('user')->get();
+        $campuses = EcoWaterCampus::orderBy('campus_name')->get(['id', 'campus_name']);
+
+
+        // \Log::debug([
+        //     'loans_count'    => $loans->count(),
+        //     'devices_count'  => $devices->count(),
+        //     'agents_count'   => $agents->count(),
+        //     'campuses_count' => $campuses->count(),
+        //     'campuses_sample' => $campuses->take(3)->toArray(),
+        //     'devices_sample'  => $devices->take(3)->toArray(),
+        //     'agents_sample'   => $agents->take(3)->map(fn($a) => ['id' => $a->id, 'user_name' => $a->user?->name])->toArray(),
+        // ]);        
+
         $page_title = 'Loan Application Waiting Mandate Confirmation';
         $search_route = route('loan.applications.waiting.mandate');
-        return view('loans.loan_applications', compact('loans', 'requests', 'regions', 'colleges', 'page_title', 'search_route'));
+        return view('loans.loan_applications', compact('loans', 'requests', 'regions', 'colleges', 'page_title', 'search_route', 'agents', 'devices', 'campuses'));
+    }
+
+
+    /**
+     * Create loan application from portal (officer on behalf of customer)
+     */
+    public function storeWebLoan(Request $request)
+    {
+
+        // \Log::debug('=== storeWebLoan REQUEST ===');
+        // \Log::debug($request->all());
+        $valid = $request->validate([
+            'customer_uuid'       => 'required|exists:customers,uuid',
+            'amount'              => 'required|numeric|min:1000',
+            'loan_type'           => 'required|in:1,2,3',
+            'device_id'           => 'required_if:loan_type,2|nullable|exists:devices,id',
+            'agent_id'            => 'required_if:loan_type,1,2|nullable|exists:agents,id',
+            'eco_water_campus_id' => 'required_if:loan_type,3|nullable|exists:eco_water_campuses,id',
+            'initial_deposit'     => 'nullable|numeric|min:0',
+            'bank_name'           => 'nullable|string|max:255',
+            'account_number'      => 'nullable|string|max:255',
+        ]);
+
+        $customer = Customer::where('uuid', $valid['customer_uuid'])->firstOrFail();
+
+        // Cancel any active applications
+        if ($customer->initiated_loan_application()->exists()) {
+            foreach ($customer->initiated_loan_application as $app) {
+                $app->update(['level' => 'Canceled']);
+                if ($app->loan_approval) {
+                    $app->loan_approval->update(['status' => 'Canceled']);
+                }
+            }
+        }
+
+        if ($customer->loan_contracts()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Customer has an active loan. Please close it first.',
+            ], 422);
+        }
+
+        $device_name = null;
+        if ($request->device_id) {
+            $device_name = Device::find($request->device_id)?->name;
+        }
+
+        $calculator = LoanCalculatorService::calculator([
+            'amount'      => $valid['amount'],
+            'plan'        => 3,
+            'loan_type'   => $valid['loan_type'],
+            'device_name' => $device_name,
+            'device_id'   => $request->device_id,
+            'initial_deposit' => $request->input('initial_deposit', 0),
+        ]);
+
+        $code_generator = new LoanCalculatorService;
+
+        $customerBankDetail = null;
+        if ($request->bank_name && $request->account_number) {
+            $customerBankDetail = CustomerBankDetail::updateOrCreate(
+                [
+                    'customer_id'    => $customer->id,
+                    'account_number' => $request->account_number,
+                ],
+                [
+                    'bank_name' => $request->bank_name,
+                    'uuid'      => (string) Str::orderedUuid(),
+                ]
+            );
+        }
+
+        $loan_application = LoanApplication::create([
+            'customer_id'             => $customer->id,
+            'amount'                  => $calculator['amount'],
+            'loan_amount'             => $calculator['total_amount'],
+            'plan'                    => $valid['loan_type'] == 3 ? 1 : 3,
+            'installment_amount'      => $calculator['installment_amount'],
+            'interest_rate'           => 0.035,
+            'interest_amount'         => $calculator['interest_amount'],
+            'loan_code'               => $code_generator->loanCode(),
+            'uuid'                    => (string) Str::orderedUuid(),
+            'level'                   => 'Application',
+            'college_id'              => $customer->student?->college_id,
+            'loan_type'               => $valid['loan_type'],
+            'device_id'               => $request->device_id ?? null,
+            'initial_deposit'         => $request->initial_deposit ?? 0,
+            'other_fees'              => json_encode(['fees_and_charges' => 0.095, 'late_payment' => 0.05]),
+            'customer_bank_detail_id' => $customerBankDetail?->id,
+            'is_mandate_sent'         => false,
+        ]);
+
+        if (in_array((int) $valid['loan_type'], [1, 2])) {
+            LoanApproval::create([
+                'loan_application_id' => $loan_application->id,
+                'agent_id'            => $valid['agent_id'],
+                'uuid'                => (string) Str::orderedUuid(),
+            ]);
+        }
+
+        if ((int) $valid['loan_type'] === 3) {
+            EcoWaterApplicants::create([
+                'loan_application_id' => $loan_application->id,
+                'eco_water_campus_id' => $valid['eco_water_campus_id'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Loan application created successfully',
+        ], 201);
+    }
+
+    /**
+     * Calculator preview for web modal
+     */
+    public function webLoanCalculator(Request $request)
+    {
+        $valid = $request->validate([
+            'amount'    => 'required|numeric|min:1000',
+            'loan_type' => 'required|in:1,2,3',
+            'device_id' => 'nullable|exists:devices,id',
+        ]);
+
+        $device_name = $request->device_id
+            ? Device::find($request->device_id)?->name
+            : null;
+
+        $calculator = LoanCalculatorService::calculator([
+            'amount'      => $valid['amount'],
+            'plan'        => 3,
+            'loan_type'   => $valid['loan_type'],
+            'device_name' => $device_name,
+            'device_id'   => $request->device_id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $calculator,
+        ]);
     }
 
     public function generateExcelReport(Request $request)
@@ -415,8 +586,10 @@ class LoanApplicationController extends Controller
         $data = $response->json();
 
         $loanApplication->ecoWaterApplicant->update(
-            ['registration_code' => $data['data']['registration_code'],
-                'remarks' => $data['data']['remarks'] ?? null]
+            [
+                'registration_code' => $data['data']['registration_code'],
+                'remarks' => $data['data']['remarks'] ?? null
+            ]
         );
 
         $loanApplication->customer->update([
