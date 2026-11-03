@@ -531,7 +531,7 @@ class CustomerController extends Controller
                     $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                               . '.' . $file->getClientOriginalExtension();
                     $intern->letter = \Storage::disk('public')
-                        ->putFileAs('interns/letters', $file, $filename);
+                        ->putFileAs('letters', $file, $filename);
                 }
     
                 $intern->customer_id  = $customer->id;
