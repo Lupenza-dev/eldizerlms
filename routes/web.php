@@ -56,6 +56,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('bar/charts', [DashboardController::class, 'barCharts'])->name('admin.bar.charts');
     Route::get('loan/management', [LoanApplicationController::class, 'loanManagement'])->middleware('permission:view loans')->name('loan.management');
     Route::get('loan/applications', [LoanApplicationController::class, 'index'])->middleware('permission:view loans')->name('loan.applications');
+
+    //// DIRECT LOAN APPLICATION ROUTES
+    Route::post('loan/applications/store-web',     [LoanApplicationController::class, 'storeWebLoan'])->name('loan.applications.store.web');
+    Route::post('loan/applications/calculate-web', [LoanApplicationController::class, 'webLoanCalculator'])->name('loan.applications.calculate.web');
+    Route::get('customers/search',                 [CustomerController::class, 'searchCustomers'])->name('customers.search');
+    ////END OF DIRECT LOAN APPLICATION  ROUTES
     Route::get('loan/applications/waiting/mandate', [LoanApplicationController::class, 'waitingMandateConfirmation'])->name('loan.applications.waiting.mandate');
     Route::post('loan/application/confirm/mandate', [LoanApplicationController::class, 'confirmMandate'])->name('confirm.mandate.loan.application');
     Route::get('loan/application/profile/{uuid}', [LoanApplicationController::class, 'profile'])->name('loan.profile');
@@ -136,8 +142,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('hospitals', HospitalController::class)->middleware('permission:manage hospitals');
     Route::resource('agents', AgentController::class)->middleware('permission:manage agents');
     Route::resource('customers', CustomerController::class)->middleware('permission:view customers');
-Route::post('customers/get-districts', [CustomerController::class, 'getDistricts'])->name('customers.districts');
-Route::post('customers/get-wards', [CustomerController::class, 'getWards'])->name('customers.wards');
+    Route::post('customers/get-districts', [CustomerController::class, 'getDistricts'])->name('customers.districts');
+    Route::post('customers/get-wards', [CustomerController::class, 'getWards'])->name('customers.wards');
     Route::resource('devices', DeviceController::class)->middleware('permission:manage devices');
     Route::resource('beneficaries', BenefeciariesController::class)->middleware('permission:manage beneficiaries');
     Route::resources([
