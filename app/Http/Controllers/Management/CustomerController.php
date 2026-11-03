@@ -319,7 +319,7 @@ class CustomerController extends Controller
                     $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                         . '.' . $file->getClientOriginalExtension();
                     $letterPath = \Illuminate\Support\Facades\Storage::disk('public')
-                        ->putFileAs('interns/letters', $file, $filename);
+                        ->putFileAs('letters', $file, $filename);
                 }
 
                 Intern::create([
