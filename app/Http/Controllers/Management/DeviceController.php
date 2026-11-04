@@ -68,7 +68,7 @@ class DeviceController extends Controller
                             . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                             . '.' . $file->getClientOriginalExtension();
     
-                $path = Storage::disk('local')->putFileAs('', $file, $filename);
+                $path = Storage::disk('public')->putFileAs('devices', $file, $filename);
                 if ($path) {
                     $imagePaths[] = $path;
                 }
@@ -100,7 +100,6 @@ class DeviceController extends Controller
             ], 500);
         }
     }
-    
     public function update(Request $request, Device $device)
     {
         $valid_data = $request->validate([
@@ -116,8 +115,6 @@ class DeviceController extends Controller
             'remove_images.*' => 'string',
         ]);
     
-        // $device tayari imepatikana — hakuna haja ya 'id' validation
-    
         $existingImages = $device->images ?? [];
         $newPaths       = [];
     
@@ -127,6 +124,7 @@ class DeviceController extends Controller
             $toRemove = $valid_data['remove_images'] ?? [];
             foreach ($toRemove as $path) {
                 if (in_array($path, $existingImages)) {
+                    // ✅ public disk
                     Storage::disk('public')->delete($path);
                 }
             }
@@ -170,6 +168,7 @@ class DeviceController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             foreach ($newPaths as $p) {
+                // ✅ public disk cleanup
                 if (Storage::disk('public')->exists($p)) {
                     Storage::disk('public')->delete($p);
                 }
@@ -209,7 +208,8 @@ class DeviceController extends Controller
         try {
             if (is_array($device->images)) {
                 foreach ($device->images as $path) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+                   
+                    Storage::disk('public')->delete($path);
                 }
             }
     
@@ -221,7 +221,7 @@ class DeviceController extends Controller
             ], 200);
     
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Device destroy failed: ' . $e->getMessage());
+            Log::error('Device destroy failed: ' . $e->getMessage());
     
             return response()->json([
                 'success' => false,
