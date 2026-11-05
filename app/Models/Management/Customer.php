@@ -113,6 +113,7 @@ class Customer extends Model
         $id_number       =$request['id_number'] ?? null;
         $region_id       =$request['region_id'] ?? null;
         $gender_id       =$request['gender_id'] ?? null;
+        $customer_type   =$request['customer_type'] ?? null;
         
         return $query->when($phone_number,function($query) use ($phone_number){
                 $query->where('phone_number','like','%'.$phone_number.'%');
@@ -137,6 +138,9 @@ class Customer extends Model
                 })
                 ->when($gender_id,function($query) use ($gender_id){
                     $query->where('gender_id',$gender_id);
+                })
+                ->when($customer_type,function($query) use ($customer_type){
+                    $query->where('customer_type',$customer_type);
                 });
     }
 

@@ -40,75 +40,90 @@
             </div>
 
             {{-- Filter Panel --}}
-            <form action="" id="submit-form" class="border-b border-slate-200 bg-slate-50 px-6 py-5" style="display:none">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Start Date</label>
-                        <input type="date" name="start_date" class="form-control rounded-lg text-sm" value="{{ $requests['start_date'] ?? null}}">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">End Date</label>
-                        <input type="date" name="end_date" class="form-control rounded-lg text-sm" value="{{ $requests['end_date'] ?? null}}">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
-                        <input type="number" name="phone_number" class="form-control rounded-lg text-sm" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">ID Number</label>
-                        <input type="number" name="id_number" class="form-control rounded-lg text-sm" value="{{ $requests['id_number'] ?? null}}">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
-                        <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Gender</label>
-                        <select name="gender_id" class="form-control rounded-lg text-sm">
-                            <option value="">Please choose Gender</option>
-                            @if ($requests['gender_id'] ?? null)
-                            <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
-                            <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
-                            @else
-                            <option value="1">Male</option>
-                            <option value="2">Female</option>
-                            @endif
-                        </select>
-                    </div>
-                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
-                        <select name="college_id" class="form-control rounded-lg text-sm">
-                            <option value="">Please choose College</option>
-                            @foreach ($colleges as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
-                        <select name="region_id" class="form-control rounded-lg text-sm">
-                            <option value="">Please choose Region</option>
-                            @foreach ($regions as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @endif
-                </div>
-                <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
-                    <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="search-btn" type="submit">
-                        <i class="bx bx-search"></i> Search
-                    </button>
-                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
-                    <button class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" formaction="{{ route('genderate.customer.report')}}">
-                        <i class="bx bx-file"></i> Generate
-                    </button>
-                    @endif
-                </div>
-            </form>
+<form action="" id="submit-form" class="border-b border-slate-200 bg-slate-50 px-6 py-5" style="display:none">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Start Date</label>
+            <input type="date" name="start_date" class="form-control rounded-lg text-sm" value="{{ $requests['start_date'] ?? null}}">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">End Date</label>
+            <input type="date" name="end_date" class="form-control rounded-lg text-sm" value="{{ $requests['end_date'] ?? null}}">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
+            <input type="number" name="phone_number" class="form-control rounded-lg text-sm" value="{{ $requests['phone_number'] ?? null}}" placeholder="255*******">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">ID Number</label>
+            <input type="number" name="id_number" class="form-control rounded-lg text-sm" value="{{ $requests['id_number'] ?? null}}">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Customer Type</label>
+            <select name="customer_type" class="form-control rounded-lg text-sm">
+                <option value="">All Types</option>
+                <option value="1" {{ ($requests['customer_type'] ?? null) == 1 ? 'selected' : '' }}>Student</option>
+                <option value="2" {{ ($requests['customer_type'] ?? null) == 2 ? 'selected' : '' }}>Intern</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
+            <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Gender</label>
+            <select name="gender_id" class="form-control rounded-lg text-sm">
+                <option value="">Please choose Gender</option>
+                @if ($requests['gender_id'] ?? null)
+                <option value="1" {{ ($requests['gender_id'] == 1) ? "selected": null}}>Male</option>
+                <option value="2" {{ ($requests['gender_id'] == 2) ? "selected": null}}>Female</option>
+                @else
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                @endif
+            </select>
+        </div>
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+            <select name="college_id" class="form-control rounded-lg text-sm">
+                <option value="">Please choose College</option>
+                @foreach ($colleges as $item)
+                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        @endif
+    </div>
+
+    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
+            <select name="region_id" class="form-control rounded-lg text-sm">
+                <option value="">Please choose Region</option>
+                @foreach ($regions as $item)
+                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    @endif
+
+    <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
+        <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="search-btn" type="submit">
+            <i class="bx bx-search"></i> Search
+        </button>
+        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        <button class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" formaction="{{ route('genderate.customer.report')}}">
+            <i class="bx bx-file"></i> Generate
+        </button>
+        @endif
+    </div>
+</form>
 
             {{-- Table --}}
             <div class="p-6">
@@ -495,7 +510,9 @@
                     d.student_reg_id = $('#submit-form [name=student_reg_id]').val();
                     d.gender_id      = $('#submit-form [name=gender_id]').val();
                     d.college_id     = $('#submit-form [name=college_id]').val();
-                    d.region_id      = $('#submit-form [name=region_id]').val();
+                    d.region_id      = $('#submit-form [name=region_id]').val();   
+                    d.customer_type  = $('#submit-form [name=reg_type]').val();
+
                 }
             },
             columns: [
