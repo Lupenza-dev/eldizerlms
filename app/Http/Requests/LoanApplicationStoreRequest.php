@@ -48,6 +48,7 @@ class LoanApplicationStoreRequest extends FormRequest
             'agent_id'    =>['required'],
             'loan_type'    =>['required'],
             'eco_water_campus_id' =>'nullable',
+            'initial_deposit'     =>'nullable'
         ];
     }
 }
