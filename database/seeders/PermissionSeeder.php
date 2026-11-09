@@ -22,7 +22,7 @@ class PermissionSeeder extends Seeder
             'view dashboard', 'view customers', 'view loans', 'view payments',
             'manage mobile app', 'manage devices', 'manage universities',
             'manage hospitals', 'manage beneficiaries', 'manage agents',
-            'manage users', 'manage roles',
+            'manage users', 'manage roles', 'manage loan products',
         ];
 
         foreach ($permissions as $permission) {

@@ -36,7 +36,10 @@ class LoanContractResource extends JsonResource
             'admin_remark'         =>$this->remark,
             'fee_charges' =>$this->fee_charges,
             'late_charges' =>$this->late_charges,
+            'penalty_charges' =>$this->penalty_charges,
             'loan_type' =>$this->loan_application?->loan_type,
+            'loan_product_id' =>$this->loan_application?->loan_product_id,
+            'loan_product' =>$this->loan_application?->loanProduct ? ['name' =>$this->loan_application->loanProduct->name, 'code' =>$this->loan_application->loanProduct->code] : null,
         ];
     }
 }

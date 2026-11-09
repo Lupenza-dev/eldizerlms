@@ -15,6 +15,7 @@ use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanContractController;
+use App\Http\Controllers\Loan\LoanProductController;
 use App\Http\Controllers\Management\AppController;
 use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
@@ -107,8 +108,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('settings', function () {
         return view('settings.index');
     })
-        ->middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries')
+        ->middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries|manage loan products')
         ->name('settings.index');
+
+    ######loan product routes
+    Route::middleware('permission:manage loan products')
+        ->prefix('settings/loan-products')
+        ->name('loan-products.')
+        ->group(function () {
+            Route::get('/',                     [LoanProductController::class, 'index'])->name('index');
+            Route::post('/',                    [LoanProductController::class, 'store'])->name('store');
+            Route::put('/{loanProduct}',        [LoanProductController::class, 'update'])->name('update');
+            Route::post('/{loanProduct}/status', [LoanProductController::class, 'toggleStatus'])->name('status');
+            Route::delete('/{loanProduct}',     [LoanProductController::class, 'destroy'])->name('destroy');
+        });
 
 
     ######professional routes

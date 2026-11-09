@@ -128,6 +128,22 @@
                     </a>
                     @endif
 
+                    {{-- Loan Products --}}
+                    @can('manage loan products')
+                    <a href="{{ route('loan-products.index') }}" class="group block">
+                        <div class="flex items-center gap-4 p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md hover:bg-indigo-50/40 transition-all duration-200">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors shrink-0">
+                                <i class="bx bx-package text-indigo-600 text-2xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h5 class="font-semibold text-slate-800 mb-0.5 text-base leading-tight">Loan Products</h5>
+                                <p class="text-xs text-slate-500 mb-0">Configure loan types, pricing, fees &amp; penalty</p>
+                            </div>
+                            <i class="bx bx-chevron-right text-slate-300 text-2xl group-hover:text-indigo-500 group-hover:translate-x-1 transition-all shrink-0"></i>
+                        </div>
+                    </a>
+                    @endcan
+
                 </div>
             </div>
         </div>

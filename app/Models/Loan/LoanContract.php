@@ -9,10 +9,11 @@ use App\Models\Management\Student;
 use App\Models\Management\College;
 use App\Models\Management\CustomerMandate;
 use App\Models\Payment\Payment;
+use App\Traits\HasLoanCharges;
 
 class LoanContract extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLoanCharges;
 
     protected $fillable=['loan_application_id','college_id','customer_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
     'status','current_balance','contract_code','created_by','uuid','outstanding_amount','start_date','expected_end_date','other_fees'];
@@ -117,16 +118,6 @@ class LoanContract extends Model
     }
 
     return $label;
-  }
-
-  public function getFeeChargesAttribute(){
-    $fees =json_decode($this->other_fees,true);
-    return ($fees['fees_and_charges'] * 100).'%';
-  }
-
-  public function getLateChargesAttribute(){
-    $fees =json_decode($this->other_fees,true);
-    return ($fees['late_payment'] * 100).'%';
   }
 
 }

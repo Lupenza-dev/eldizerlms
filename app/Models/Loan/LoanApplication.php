@@ -10,13 +10,18 @@ use App\Models\Management\CustomerBankDetail;
 use App\Models\Management\CustomerMandate;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use  App\Models\Management\Device;
+use App\Traits\HasLoanCharges;
 
 class LoanApplication extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,HasLoanCharges;
 
     protected $fillable=['customer_id','college_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'level','loan_code','uuid','start_date','loan_type','device_id','initial_deposit','other_fees','customer_bank_detail_id','is_mandate_sent'];
+    'level','loan_code','uuid','start_date','loan_type','device_id','initial_deposit','other_fees','customer_bank_detail_id','is_mandate_sent','loan_product_id'];
+
+    public function loanProduct(){
+        return $this->belongsTo(LoanProduct::class)->withTrashed();
+    }
 
     public function customer(){
         return $this->belongsTo(Customer::class);
@@ -104,6 +109,10 @@ class LoanApplication extends Model
       }
 
       public function getLoanTypeFormatAttribute(){
+        if ($this->loanProduct) {
+          return $this->loanProduct->badge();
+        }
+
         if ($this->loan_type == 1) {
           return "<span class='badge bg-success text-white'>Cash</span>";
         }else if ($this->loan_type == 2){
@@ -120,16 +129,6 @@ class LoanApplication extends Model
 
       public function get_device(){
         return $this->hasOne(Device::class,'id','device_id');
-      }
-
-      public function getFeeChargesAttribute(){
-        $fees =json_decode($this->other_fees,true);
-        return ($fees['fees_and_charges'] * 100).'%';
-      }
-
-      public function getLateChargesAttribute(){
-        $fees =json_decode($this->other_fees,true);
-        return ($fees['late_payment'] * 100).'%';
       }
 
       public function ecoWaterApplicant(){

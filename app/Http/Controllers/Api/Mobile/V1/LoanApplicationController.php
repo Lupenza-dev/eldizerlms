@@ -6,6 +6,10 @@ use App\Event\LoanApplied;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Loan\LoanCalculatorService;
+use App\Services\Loan\LoanApplicationService;
+use App\Models\Loan\LoanProduct;
+use DomainException;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\LoanApplicationStoreRequest;
 use App\Models\Loan\LoanApplication;
 use App\Models\Loan\LoanApproval;
@@ -23,22 +27,53 @@ use Illuminate\Support\Facades\Log;
 
 class LoanApplicationController extends Controller
 {
-    public function loanCalculator(Request $request){
-       
-        $amount =$request->amount;
-        $plan =$request->plan;
-        $loan_type =$request->loan_type;
-        $device_name =$request->device_name;
-        $device_id =$request->device_id;
-        $data =[
-            'amount' =>$amount,
-            'plan'   =>3,
-            'loan_type' =>$loan_type,
-            'device_name' =>$device_name,
-            'device_id' =>$device_id
-        ];
+    /**
+     * Active loan products for the app to render dynamically.
+     */
+    public function loanProducts(){
+        $products =LoanProduct::active()->get()->map(fn (LoanProduct $p) => [
+            'id'                        =>$p->id,
+            'uuid'                      =>$p->uuid,
+            'name'                      =>$p->name,
+            'code'                      =>$p->code,
+            'description'               =>$p->description,
+            'icon'                      =>$p->icon,
+            'color'                     =>$p->color,
+            'plan_months'               =>$p->plan_months,
+            'min_amount'                =>$p->min_amount,
+            'max_amount'                =>$p->max_amount,
+            'interest_charge'           =>$p->interest_label,
+            'fees_and_charges'          =>$p->fees_label,
+            'penalty'                   =>$p->penalty_label,
+            'requires_agent'            =>$p->requires_agent,
+            'requires_device'           =>$p->requires_device,
+            'allows_initial_deposit'    =>$p->allows_initial_deposit,
+            'requires_eco_water_campus' =>$p->requires_eco_water_campus,
+        ]);
 
-        $calculator =LoanCalculatorService::calculator($data);
+        return response()->json([
+            'success' =>true,
+            'data'    =>$products,
+        ],200);
+    }
+
+    public function loanCalculator(Request $request){
+        $product =LoanProduct::resolve($request->loan_product_id, $request->loan_type);
+
+        if (!$product) {
+            return response()->json([
+                'success' =>false,
+                'errors'  =>"Invalid loan product",
+            ],422);
+        }
+
+        $calculator =LoanCalculatorService::calculator([
+            'product'         =>$product,
+            'amount'          =>$request->amount,
+            'device_name'     =>$request->device_name,
+            'device_id'       =>$request->device_id,
+            'initial_deposit' =>$request->initial_deposit ?? 0,
+        ]);
 
         return response()->json([
             'success' =>true,
@@ -46,9 +81,7 @@ class LoanApplicationController extends Controller
         ],200);
     }
 
-    public function loanApplication(LoanApplicationStoreRequest $request){
-        $valid_data =$request->validated();
-
+    public function loanApplication(LoanApplicationStoreRequest $request, LoanApplicationService $service){
         $customer =Customer::where('id',Auth::user()->customer_id ?? 3)->first();
 
         if (!$customer) {
@@ -58,85 +91,31 @@ class LoanApplicationController extends Controller
             ],500);
         }
 
-        if ($customer->initiated_loan_application()) {
-            $applications =$customer->initiated_loan_application;
-            
-            foreach ($applications as $key) {
-               
-                $key->update(['level'=>"Canceled"]);
+        $product =LoanProduct::resolve($request->loan_product_id, $request->loan_type);
 
-                #### cancel loan approval ####
-
-                $approval =$key->loan_approval;
-
-                if ($approval) {
-                    $approval->status ="Canceled";
-                    $approval->save();
-                }
-
-            }            
+        if (!$product) {
+            return response()->json([
+                'success' =>false,
+                'errors'  =>"Invalid or inactive loan product",
+            ],500);
         }
 
-        if ($customer->loan_contracts->count() > 0) {
+        $validator =Validator::make($request->all(), LoanApplicationService::rulesFor($product));
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' =>'Validation error',
+                'errors'  =>$validator->errors(),
+            ],500);
+        }
+
+        try {
+            $loan_application =$service->create($customer, $product, $validator->validated());
+        } catch (DomainException $e) {
             return response()->json([
                 'success' =>false,
                 'errors'  =>"You have an active Loan , Please close that in order to apply another Loan !!!!!",
             ],500);
-        }
-
-        $calculator =LoanCalculatorService::calculator($valid_data);
-
-        $code_generator =new LoanCalculatorService;
-
-        // save bank details
-        $customerBankDetail = null;
-        if($request->bank_name && $request->account_number){
-           $customerBankDetail = CustomerBankDetail::updateOrCreate(
-                [
-                    'customer_id' =>Auth::user()->customer_id,
-                    'account_number' =>$request->account_number,
-                ],
-                [
-                    'bank_name'   =>$request->bank_name,
-                    'uuid'        =>(string)Str::orderedUuid(),
-                ]);
-        }
-        
-        
-        $loan_application =LoanApplication::create([
-            'customer_id' =>Auth::user()->customer_id ?? 3,
-            'amount'      =>$calculator['amount'],
-            'loan_amount' =>$calculator['total_amount'],
-            'plan'        =>$valid_data['loan_type']  == 3 ? 1: 3,
-            // 'plan'        =>$calculator['plan'],
-            'installment_amount'  =>$calculator['installment_amount'],
-            'interest_rate'       =>0.035,
-            'interest_amount'     =>$calculator['interest_amount'],
-            'loan_code'           =>$code_generator->loanCode(),
-            'uuid'                =>(string)Str::orderedUuid(),
-            'level'               =>"Application",
-            'college_id'          =>$customer->student?->college_id,
-            'loan_type'           =>$valid_data['loan_type'],
-            'device_id'           =>$request->device_id ?? null,
-            'initial_deposit'     =>$request->initial_deposit ?? 0,
-            'other_fees'          =>json_encode(['fees_and_charges' => 0.095,'late_payment'=>0.05]),
-            'customer_bank_detail_id' => $customerBankDetail?->id,
-            'is_mandate_sent'      =>false,
-        ]);
-      
-        if($valid_data['loan_type'] == 1 || $valid_data['loan_type'] == 2){
-            $approval =LoanApproval::create([
-                'loan_application_id' =>$loan_application->id,
-                'agent_id'            =>$valid_data['agent_id'],
-                'uuid'                =>(string)Str::orderedUuid(),
-            ]);
-        }
-
-        if($valid_data['loan_type'] == 3){
-            EcoWaterApplicants::create([
-                'loan_application_id' =>$loan_application->id,
-                'eco_water_campus_id' =>$valid_data['eco_water_campus_id'],
-            ]);
         }
 
         // $guarantor1 =Guarantor::create([

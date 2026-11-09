@@ -141,7 +141,7 @@
                                 <td class="px-4 py-3 text-sm text-slate-500">
                                     <div class="flex flex-col gap-0.5">
                                         <span>{!! $loan->loan_type_format !!}</span>
-                                        @if ($loan->loan_type == 2)
+                                        @if ($loan->loanProduct?->requires_device ?? $loan->loan_type == 2)
                                         <span class="text-slate-400 text-xs">{{ $loan->get_device?->name }}</span>
                                         <span class="text-xs font-semibold text-slate-600">Deposit: {{ number_format($loan->initial_deposit) }}</span>
                                         @endif
@@ -263,53 +263,35 @@
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                             Select Loan Type <span class="text-red-500">*</span>
                         </label>
-                        <input type="hidden" name="loan_type" id="loan_type" value="" required>
+                        <input type="hidden" name="loan_product_id" id="loan_product_id" value="" required>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {{-- Borrow Money --}}
-                            <div class="loan-type-card cursor-pointer rounded-xl border-2 border-slate-200 p-4 transition-all hover:border-blue-400 hover:shadow-md bg-white"
-                                 data-loan-type="1">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-11 h-11 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                                        <i class="bx bx-money text-blue-600 text-2xl"></i>
+                            @forelse ($products ?? [] as $product)
+                                @php $c = $product->color ?: 'slate'; @endphp
+                                <div class="loan-type-card cursor-pointer rounded-xl border-2 border-slate-200 p-4 transition-all hover:border-{{ $c }}-400 hover:shadow-md bg-white"
+                                     data-product-id="{{ $product->id }}"
+                                     data-requires-agent="{{ $product->requires_agent ? 1 : 0 }}"
+                                     data-requires-device="{{ $product->requires_device ? 1 : 0 }}"
+                                     data-allows-deposit="{{ $product->allows_initial_deposit ? 1 : 0 }}"
+                                     data-requires-campus="{{ $product->requires_eco_water_campus ? 1 : 0 }}"
+                                     data-min="{{ (float) $product->min_amount }}"
+                                     data-max="{{ $product->max_amount ? (float) $product->max_amount : '' }}">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-11 h-11 rounded-lg bg-{{ $c }}-100 flex items-center justify-center shrink-0">
+                                            <i class="bx {{ $product->icon ?: 'bx-package' }} text-{{ $c }}-600 text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h6 class="font-semibold text-slate-800 text-sm mb-1">{{ $product->name }}</h6>
+                                            <p class="text-xs text-slate-500 leading-tight">{{ $product->description }}</p>
+                                        </div>
+                                        <i class="bx bx-check-circle text-{{ $c }}-600 text-xl hidden card-check"></i>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h6 class="font-semibold text-slate-800 text-sm mb-1">Borrow Money</h6>
-                                        <p class="text-xs text-slate-500 leading-tight">Cash loan via agent</p>
-                                    </div>
-                                    <i class="bx bx-check-circle text-blue-600 text-xl hidden card-check"></i>
                                 </div>
-                            </div>
-
-                            {{-- Device --}}
-                            <div class="loan-type-card cursor-pointer rounded-xl border-2 border-slate-200 p-4 transition-all hover:border-emerald-400 hover:shadow-md bg-white"
-                                 data-loan-type="2">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-11 h-11 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                                        <i class="bx bx-mobile-alt text-emerald-600 text-2xl"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h6 class="font-semibold text-slate-800 text-sm mb-1">Device</h6>
-                                        <p class="text-xs text-slate-500 leading-tight">Buy device on installment</p>
-                                    </div>
-                                    <i class="bx bx-check-circle text-emerald-600 text-xl hidden card-check"></i>
+                            @empty
+                                <div class="sm:col-span-3 text-sm text-slate-500 rounded-xl border border-dashed border-slate-300 p-4 text-center">
+                                    No active loan products. Configure them under Settings &rarr; Loan Products.
                                 </div>
-                            </div>
-
-                            {{-- Eco Water --}}
-                            <div class="loan-type-card cursor-pointer rounded-xl border-2 border-slate-200 p-4 transition-all hover:border-cyan-400 hover:shadow-md bg-white"
-                                 data-loan-type="3">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-11 h-11 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0">
-                                        <i class="bx bx-water text-cyan-600 text-2xl"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h6 class="font-semibold text-slate-800 text-sm mb-1">Eco Water</h6>
-                                        <p class="text-xs text-slate-500 leading-tight">Water project loan</p>
-                                    </div>
-                                    <i class="bx bx-check-circle text-cyan-600 text-xl hidden card-check"></i>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
 
@@ -323,7 +305,7 @@
                                min="1000" step="1000" placeholder="e.g. 500000" required>
                     </div>
 
-                    {{-- Agent (loan_type 1, 2) --}}
+                    {{-- Agent (product.requires_agent) --}}
                     <div class="mb-3" id="agent_field" style="display:none;">
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                             Agent <span class="text-red-500">*</span>
@@ -337,7 +319,7 @@
                         </select>
                     </div>
 
-                    {{-- Device (loan_type 2) --}}
+                    {{-- Device (product.requires_device) --}}
                     <div class="mb-3" id="device_field" style="display:none;">
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                             Device <span class="text-red-500">*</span>
@@ -364,7 +346,7 @@
                                min="0" step="1000" value="0">
                     </div>
 
-                    {{-- Eco Water Campus (loan_type 3) --}}
+                    {{-- Eco Water Campus (product.requires_eco_water_campus) --}}
                     <div class="mb-3" id="campus_field" style="display:none;">
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                             Eco Water Campus <span class="text-red-500">*</span>
@@ -556,29 +538,28 @@ $(document).ready(function () {
     // 2. Loan type cards — click handler
     // ═══════════════════════════════════════════════════════════════
     $(document).on('click', '.loan-type-card', function () {
-        const type = $(this).data('loan-type');
+        const card = $(this);
 
         // Reset all cards
         $('.loan-type-card').removeClass('is-selected');
         $('.loan-type-card .card-check').addClass('hidden');
 
         // Highlight selected
-        $(this).addClass('is-selected');
-        $(this).find('.card-check').removeClass('hidden');
+        card.addClass('is-selected');
+        card.find('.card-check').removeClass('hidden');
 
         // Set hidden input
-        $('#loan_type').val(type);
+        $('#loan_product_id').val(card.data('product-id'));
 
-        // Toggle fields
-        $('#agent_field, #device_field, #initial_deposit_field, #campus_field').hide();
+        // Amount limits from product
+        $('#loan_amount').attr('min', card.data('min') || 0);
+        if (card.data('max')) { $('#loan_amount').attr('max', card.data('max')); } else { $('#loan_amount').removeAttr('max'); }
 
-        if (type == '1') {
-            $('#agent_field').show();
-        } else if (type == '2') {
-            $('#agent_field, #device_field, #initial_deposit_field').show();
-        } else if (type == '3') {
-            $('#campus_field').show();
-        }
+        // Toggle fields from product flags
+        $('#agent_field').toggle(card.data('requires-agent') == 1);
+        $('#device_field').toggle(card.data('requires-device') == 1);
+        $('#initial_deposit_field').toggle(card.data('allows-deposit') == 1);
+        $('#campus_field').toggle(card.data('requires-campus') == 1);
 
         calculatePreview();
     });
@@ -605,10 +586,11 @@ $(document).ready(function () {
         clearTimeout(calcTimer);
         calcTimer = setTimeout(function () {
             const amount   = $('#loan_amount').val();
-            const loanType = $('#loan_type').val();
-            const deviceId = $('#device_id').val();
+            const productId = $('#loan_product_id').val();
+            const deviceId  = $('#device_field').is(':visible') ? $('#device_id').val() : '';
+            const deposit   = $('#initial_deposit_field').is(':visible') ? $('#initial_deposit').val() : 0;
 
-            if (!amount || !loanType || amount < 1000) {
+            if (!amount || !productId) {
                 $('#calculator_preview').hide();
                 return;
             }
@@ -616,8 +598,9 @@ $(document).ready(function () {
             $.post("{{ route('loan.applications.calculate.web') }}", {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 amount: amount,
-                loan_type: loanType,
-                device_id: deviceId
+                loan_product_id: productId,
+                device_id: deviceId,
+                initial_deposit: deposit
             }, function (response) {
                 if (response.success) {
                     const d = response.data;
@@ -633,7 +616,7 @@ $(document).ready(function () {
         }, 500);
     }
 
-    $('#loan_amount').on('input', calculatePreview);
+    $('#loan_amount, #initial_deposit').on('input', calculatePreview);
 
     // ═══════════════════════════════════════════════════════════════
     // 5. Submit new loan
@@ -648,12 +631,16 @@ $(document).ready(function () {
             alertDiv.html('<div class="alert alert-danger"><i class="bx bx-error-circle me-2"></i>Please select a customer.</div>');
             return;
         }
-        if (!$('#loan_type').val()) {
+        if (!$('#loan_product_id').val()) {
             alertDiv.html('<div class="alert alert-danger"><i class="bx bx-error-circle me-2"></i>Please select a loan type.</div>');
             return;
         }
-        if (!$('#loan_amount').val() || $('#loan_amount').val() < 1000) {
-            alertDiv.html('<div class="alert alert-danger"><i class="bx bx-error-circle me-2"></i>Please enter a valid loan amount (min TZS 1,000).</div>');
+        const minAmount = Number($('#loan_amount').attr('min') || 0);
+        const maxAmount = Number($('#loan_amount').attr('max') || 0);
+        const amountVal = Number($('#loan_amount').val());
+        if (!amountVal || amountVal < minAmount || (maxAmount && amountVal > maxAmount)) {
+            const range = 'min TZS ' + minAmount.toLocaleString() + (maxAmount ? ', max TZS ' + maxAmount.toLocaleString() : '');
+            alertDiv.html('<div class="alert alert-danger"><i class="bx bx-error-circle me-2"></i>Please enter a valid loan amount (' + range + ').</div>');
             return;
         }
 
@@ -679,9 +666,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 let msgs = '';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                if (xhr.responseJSON && typeof xhr.responseJSON.errors === 'string') {
+                    msgs = xhr.responseJSON.errors;
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
                     Object.values(xhr.responseJSON.errors).forEach(arr => {
-                        arr.forEach(m => { msgs += `<div>${m}</div>`; });
+                        [].concat(arr).forEach(m => { msgs += `<div>${m}</div>`; });
                     });
                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                     msgs = xhr.responseJSON.message;
@@ -709,7 +698,7 @@ $(document).ready(function () {
         // Reset cards
         $('.loan-type-card').removeClass('is-selected');
         $('.loan-type-card .card-check').addClass('hidden');
-        $('#loan_type').val('');
+        $('#loan_product_id').val('');
 
         // Reset fields
         $('#agent_field, #device_field, #initial_deposit_field, #campus_field').hide();
@@ -768,9 +757,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 let msgs = '';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                if (xhr.responseJSON && typeof xhr.responseJSON.errors === 'string') {
+                    msgs = xhr.responseJSON.errors;
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
                     Object.values(xhr.responseJSON.errors).forEach(arr => {
-                        arr.forEach(m => { msgs += `<div>${m}</div>`; });
+                        [].concat(arr).forEach(m => { msgs += `<div>${m}</div>`; });
                     });
                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                     msgs = xhr.responseJSON.message;
