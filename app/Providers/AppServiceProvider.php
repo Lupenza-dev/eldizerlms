@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Management\Menu;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Inverse of Menu::roles() without subclassing Spatie's Role model.
+        Role::resolveRelationUsing('menus', function (Role $role) {
+            return $role->belongsToMany(Menu::class, 'menu_role')->withTimestamps();
+        });
     }
 }

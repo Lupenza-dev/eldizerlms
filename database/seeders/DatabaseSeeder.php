@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DeviceCategory::class,
             RoleSeeder::class,
-            PermissionSeeder::class
+            PermissionSeeder::class,
+            MenuSeeder::class,
         ]);
     }
 }
