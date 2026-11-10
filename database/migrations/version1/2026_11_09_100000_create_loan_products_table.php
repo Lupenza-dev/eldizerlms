@@ -2,9 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -58,85 +56,6 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-
-        // Seed the three products that were previously hardcoded (ids match legacy loan_type values).
-        $now = now();
-        $common = [
-            'interest_rate'         => 0.035,
-            'has_fees_and_charges'  => true,
-            'fees_is_percentage'    => true,
-            'fees_value'            => 0.095,
-            'has_penalty'           => true,
-            'penalty_is_percentage' => true,
-            'penalty_value'         => 0.05,
-            'min_amount'            => 1000,
-            'is_active'             => true,
-            'created_at'            => $now,
-            'updated_at'            => $now,
-        ];
-
-        DB::table('loan_products')->insert([
-            array_merge($common, [
-                'id'                        => 1,
-                'uuid'                      => (string) Str::orderedUuid(),
-                'name'                      => 'Cash',
-                'code'                      => 'CASH',
-                'description'               => 'Borrow money - cash loan via agent',
-                'icon'                      => 'bx-money',
-                'color'                     => 'blue',
-                'calculation_method'        => 'interest',
-                'markup_rate'               => 0.20,
-                'fixed_total_amount'        => null,
-                'plan_months'               => 3,
-                'mandate_multiplier'        => 2,
-                'requires_agent'            => true,
-                'requires_device'           => false,
-                'allows_initial_deposit'    => false,
-                'requires_eco_water_campus' => false,
-                'register_with_eco_water'   => false,
-                'sort_order'                => 1,
-            ]),
-            array_merge($common, [
-                'id'                        => 2,
-                'uuid'                      => (string) Str::orderedUuid(),
-                'name'                      => 'Pay Later',
-                'code'                      => 'PAY_LATER',
-                'description'               => 'Buy a device on installment',
-                'icon'                      => 'bx-mobile-alt',
-                'color'                     => 'emerald',
-                'calculation_method'        => 'principal_only',
-                'markup_rate'               => 0,
-                'fixed_total_amount'        => null,
-                'plan_months'               => 3,
-                'mandate_multiplier'        => 2,
-                'requires_agent'            => true,
-                'requires_device'           => true,
-                'allows_initial_deposit'    => true,
-                'requires_eco_water_campus' => false,
-                'register_with_eco_water'   => false,
-                'sort_order'                => 2,
-            ]),
-            array_merge($common, [
-                'id'                        => 3,
-                'uuid'                      => (string) Str::orderedUuid(),
-                'name'                      => 'Eco Water',
-                'code'                      => 'ECO_WATER',
-                'description'               => 'Water project loan',
-                'icon'                      => 'bx-water',
-                'color'                     => 'cyan',
-                'calculation_method'        => 'fixed_amount',
-                'markup_rate'               => 0,
-                'fixed_total_amount'        => 15000,
-                'plan_months'               => 1,
-                'mandate_multiplier'        => 1,
-                'requires_agent'            => false,
-                'requires_device'           => false,
-                'allows_initial_deposit'    => false,
-                'requires_eco_water_campus' => true,
-                'register_with_eco_water'   => true,
-                'sort_order'                => 3,
-            ]),
-        ]);
     }
 
     /**
