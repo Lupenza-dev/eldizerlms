@@ -28,7 +28,7 @@ class LoanCalculatorService
                 break;
         }
         
-        $installment_amount =$loan_type == 2 ? ($amount-$data['initial_deposit'])/$plan : $amount/$plan;
+        $installment_amount =$loan_type == 2 ? ($amount-$data['initial_deposit'])/$plan : $total_amount;
 
         $details['total_amount']       =$total_amount;
         $details['installment_amount'] =$installment_amount;

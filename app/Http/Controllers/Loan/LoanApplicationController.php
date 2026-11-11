@@ -92,6 +92,9 @@ class LoanApplicationController extends Controller
             $token_request = getApiToken();
             Log::info('-----result---data needed now');
             Log::info($token_request['data']);
+
+            
+
             $payload = [
                 // 'corporate_reference' =>$token_request['data']['corporate_reference'],
                 'channel'             => 'BANK',
@@ -103,7 +106,7 @@ class LoanApplicationController extends Controller
                 'phone'             => '0' . substr($loanApplication->customer?->phone_number ?? '', -9),
                 'NIN'               => $loanApplication->customer?->id_number,
                 'address'           => $loanApplication->customer?->region?->name,
-                'total_amount'       => $loanApplication->loan_type === 3 ? $loanApplication->loan_amount : $loanApplication->loan_amount * 2,
+                'total_amount'       => ($loanApplication->loan_type === 3 || $loanApplication->loan_type === 2) ? $loanApplication->loan_amount : $loanApplication->loan_amount * 2,
                 'debit_type'        => 'FIXED',
                 'min_installment_amount' => $loanApplication->installment_amount,
                 'installment_amount'    => $loanApplication->installment_amount,
