@@ -41,7 +41,7 @@ class CustomerController extends Controller
         $gender          = Gender::get();
         $maritial_status = MaritalStatus::get();
         $hospitals       = Hospital::orderBy('name')->get(['id', 'name']);
-        $professionals  =Professional::orderBy('name')->get(['id', 'name']);
+        $professionals  = Professional::orderBy('name')->get(['id', 'name']);
 
 
         return view('managements.customers.customers', compact(
@@ -165,9 +165,14 @@ class CustomerController extends Controller
     public function generateExcelReport(Request $request)
     {
         $requests  = $request->all();
-        $customers = Customer::with('region', 'district', 'ward', 'student', 'student.college')
-            ->whereHas('student', function ($query) use ($requests) {
-                $query->withfilters($requests);
+        $customer_type = $requests['customer_type'] ?? null;
+
+        $customers = Customer::with('region', 'district', 'ward', 'student', 'student.college', 'intern')
+            ->where(function ($query) use ($requests) {
+                $query->whereDoesntHave('student')
+                    ->orWhereHas('student', function ($subQuery) use ($requests) {
+                        $subQuery->withfilters($requests);
+                    });
             })
             ->when($requests, function ($query) use ($requests) {
                 $query->withfilters($requests);
@@ -175,7 +180,7 @@ class CustomerController extends Controller
             ->latest()
             ->cursor();
 
-        return self::exportCustomerReport($customers);
+        return self::exportCustomerReport($customers, $customer_type);
     }
 
     /**
@@ -291,7 +296,7 @@ class CustomerController extends Controller
                 'phone_number' => '255' . $valid['phone_number'],
                 'password'     => Hash::make('123456'),
                 'uuid'         => (string) Str::orderedUuid(),
-                'status'       =>'active',
+                'status'       => 'active',
                 'customer_id'  => $customer->id,
             ]);
             $user->assignRole('Customer');
@@ -319,7 +324,7 @@ class CustomerController extends Controller
                     $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                         . '.' . $file->getClientOriginalExtension();
                     $letterPath = \Illuminate\Support\Facades\Storage::disk('public')
-                        ->putFileAs('interns/letters', $file, $filename);
+                        ->putFileAs('letters', $file, $filename);
                 }
 
                 Intern::create([
@@ -397,9 +402,9 @@ class CustomerController extends Controller
             'intern',
             'intern.hospital'
         )
-        ->where('uuid', $uuid)
-        ->firstOrFail();
-    
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
         return view('managements.customers.profile', compact('customer'));
     }
 
@@ -409,20 +414,25 @@ class CustomerController extends Controller
     public function edit(string $uuid)
     {
         $customer = Customer::with(
-            'region', 'district', 'ward', 'marital_status',
-            'student', 'student.college',
-            'intern', 'intern.hospital'
+            'region',
+            'district',
+            'ward',
+            'marital_status',
+            'student',
+            'student.college',
+            'intern',
+            'intern.hospital'
         )
-        ->where('uuid', $uuid)
-        ->firstOrFail();
-    
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
         $regions         = Region::get();
         $colleges        = College::get();
         $gender          = Gender::get();
         $maritial_status = MaritalStatus::get();
         $hospitals       = Hospital::orderBy('name')->get(['id', 'name']);
         $professionals   = Professional::orderBy('name')->get(['id', 'name']);
-    
+
         return view('managements.customers.edit', compact(
             'customer',
             'gender',
@@ -445,7 +455,7 @@ class CustomerController extends Controller
             'middle_name'        => 'required|string|max:50',
             'last_name'          => 'required|string|max:50',
             'other_name'         => 'nullable|string|max:50',
-    
+
             'gender'             => 'required|exists:genders,id',
             // 'maritial_status'    => 'nullable|exists:marital_statuses,id',
             'dob'                => 'required|date|before:today',
@@ -458,7 +468,7 @@ class CustomerController extends Controller
             'street'             => 'required|string|max:255',
             'resident_since'     => 'nullable|string|max:20',
             'reg_type'           => 'required|in:1,2',
-    
+
             // Student-only (reg_type = 1)
             'college_id'         => 'required_if:reg_type,1|nullable|exists:colleges,id',
             'course'             => 'required_if:reg_type,1|nullable|string|max:255',
@@ -467,7 +477,7 @@ class CustomerController extends Controller
             'study_year'         => 'required_if:reg_type,1|nullable|string|max:20',
             'position'           => 'required_if:reg_type,1|nullable|string|max:255',
             'heslb_status'       => 'required_if:reg_type,1|nullable|in:0,1',
-    
+
             // Intern-only (reg_type = 2)
             'hospital_id'        => 'required_if:reg_type,2|nullable|exists:hospitals,id',
             'professional'       => 'required_if:reg_type,2|nullable|string|max:255',
@@ -475,10 +485,10 @@ class CustomerController extends Controller
             'end_date'           => 'required_if:reg_type,2|nullable|date|after_or_equal:start_date',
             'letter'             => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
-    
+
         try {
             DB::beginTransaction();
-    
+
             $customer                    = Customer::where('uuid', $valid['customer_id'])->firstOrFail();
             $customer->first_name        = $valid['first_name'];
             $customer->middle_name       = $valid['middle_name'];
@@ -497,7 +507,7 @@ class CustomerController extends Controller
             $customer->resident_since    = $valid['resident_since'] ?? null;
             $customer->customer_type     = $valid['reg_type'];
             $customer->save();
-    
+
             // Student — reg_type = 1
             if ((int) $valid['reg_type'] === 1) {
                 Student::updateOrCreate(
@@ -512,28 +522,28 @@ class CustomerController extends Controller
                         'heslb_status'       => $valid['heslb_status'],
                     ]
                 );
-    
+
                 // Delete customer if already was intern
                 Intern::where('customer_id', $customer->id)->delete();
             }
-    
+
             // Intern — reg_type = 2
             if ((int) $valid['reg_type'] === 2) {
                 $intern = Intern::firstOrNew(['customer_id' => $customer->id]);
-    
+
                 if ($request->hasFile('letter')) {
                     // Futa letter ya zamani kama ipo
                     if ($intern->letter && \Storage::disk('public')->exists($intern->letter)) {
                         \Storage::disk('public')->delete($intern->letter);
                     }
-    
+
                     $file     = $request->file('letter');
                     $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
-                              . '.' . $file->getClientOriginalExtension();
+                        . '.' . $file->getClientOriginalExtension();
                     $intern->letter = \Storage::disk('public')
                         ->putFileAs('letters', $file, $filename);
                 }
-    
+
                 $intern->customer_id  = $customer->id;
                 $intern->hospital_id  = $valid['hospital_id'];
                 $intern->professional = $valid['professional'];
@@ -543,24 +553,23 @@ class CustomerController extends Controller
                     $intern->uuid = (string) Str::orderedUuid();
                 }
                 $intern->save();
-    
+
                 // Delete student kama alikuwa student
                 Student::where('customer_id', $customer->id)->delete();
             }
-    
+
             DB::commit();
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Customer updated successfully',
             ], 200);
-    
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Customer update failed: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update customer: ' . $e->getMessage(),
@@ -570,32 +579,32 @@ class CustomerController extends Controller
 
 
     public function searchCustomers(Request $request)
-{
-    $q = $request->input('q', '');
+    {
+        $q = $request->input('q', '');
 
-    $customers = Customer::query()
-        ->when($q, function ($query) use ($q) {
-            $query->where(function ($sub) use ($q) {
-                $sub->where('first_name', 'like', "%{$q}%")
-                    ->orWhere('middle_name', 'like', "%{$q}%")
-                    ->orWhere('last_name', 'like', "%{$q}%")
-                    ->orWhere('phone_number', 'like', "%{$q}%")
-                    ->orWhere('id_number', 'like', "%{$q}%")
-                    ->orWhere('email', 'like', "%{$q}%");
-            });
-        })
-        ->limit(20)
-        ->get(['uuid', 'first_name', 'middle_name', 'last_name', 'phone_number', 'id_number']);
+        $customers = Customer::query()
+            ->when($q, function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('first_name', 'like', "%{$q}%")
+                        ->orWhere('middle_name', 'like', "%{$q}%")
+                        ->orWhere('last_name', 'like', "%{$q}%")
+                        ->orWhere('phone_number', 'like', "%{$q}%")
+                        ->orWhere('id_number', 'like', "%{$q}%")
+                        ->orWhere('email', 'like', "%{$q}%");
+                });
+            })
+            ->limit(20)
+            ->get(['uuid', 'first_name', 'middle_name', 'last_name', 'phone_number', 'id_number']);
 
-    return $customers->map(function ($c) {
-        return [
-            'id'   => $c->uuid,
-            'text' => trim($c->first_name . ' ' . ($c->middle_name ?? '') . ' ' . $c->last_name)
-                     . ' | ' . $c->phone_number
-                     . ' | ' . $c->id_number,
-        ];
-    });
-}
+        return $customers->map(function ($c) {
+            return [
+                'id'   => $c->uuid,
+                'text' => trim($c->first_name . ' ' . ($c->middle_name ?? '') . ' ' . $c->last_name)
+                    . ' | ' . $c->phone_number
+                    . ' | ' . $c->id_number,
+            ];
+        });
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -604,7 +613,4 @@ class CustomerController extends Controller
     {
         //
     }
-
-
-
 }
