@@ -171,10 +171,10 @@
                                 <label for="">Study Year <span class="danger">*</span></label>
                                 <input type="text" class="form-control" name="study_year" value="{{ $customer->student?->study_year }}">
                             </div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <label for="">Position <span class="danger">*</span></label>
                                 <input type="text" class="form-control" name="position" value="{{ $customer->student?->position }}">
-                            </div>
+                            </div> -->
                             <div class="col-md-6">
                                 <label for="">HESLB Status <span class="danger">*</span></label>
                                 <select name="heslb_status" class="form-control">

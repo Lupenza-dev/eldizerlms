@@ -70,6 +70,15 @@
             </select>
         </div>
         <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Loan Product</label>
+            <select name="loan_type" class="form-control rounded-lg text-sm">
+                <option value="">All Products</option>
+                <option value="1" {{ ($requests['loan_type'] ?? null) == 1 ? 'selected' : '' }}>Cash</option>
+                <option value="2" {{ ($requests['loan_type'] ?? null) == 2 ? 'selected' : '' }}>Pay Later</option>
+                <option value="3" {{ ($requests['loan_type'] ?? null) == 3 ? 'selected' : '' }}>Eco Water</option>
+            </select>
+        </div>
+        <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
             <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
         </div>
@@ -86,7 +95,10 @@
                 @endif
             </select>
         </div>
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+    </div>
+
+    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
             <select name="college_id" class="form-control rounded-lg text-sm">
@@ -96,11 +108,6 @@
                 @endforeach
             </select>
         </div>
-        @endif
-    </div>
-
-    @if (Auth::user()->hasRole(['Admin','Super Admin']))
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
             <select name="region_id" class="form-control rounded-lg text-sm">
@@ -510,8 +517,9 @@
                     d.student_reg_id = $('#submit-form [name=student_reg_id]').val();
                     d.gender_id      = $('#submit-form [name=gender_id]').val();
                     d.college_id     = $('#submit-form [name=college_id]').val();
-                    d.region_id      = $('#submit-form [name=region_id]').val();   
-                    d.customer_type  = $('#submit-form [name=reg_type]').val();
+                    d.region_id      = $('#submit-form [name=region_id]').val();
+                    d.customer_type  = $('#submit-form [name=customer_type]').val();
+                    d.loan_type      = $('#submit-form [name=loan_type]').val();
 
                 }
             },
