@@ -99,6 +99,6 @@ class LoanContractController extends Controller
             })
             ->cursor();
 
-        return self::exportLoanReport($contracts);
+        return self::exportLoanReport($contracts, $requests['customer_type'] ?? null);
     }
 }

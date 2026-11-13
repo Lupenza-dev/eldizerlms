@@ -66,6 +66,7 @@ class LoanContract extends Model
     $past_due_days     =$request['past_due_days'] ?? null;
     $contract_code     =$request['contract_code'] ?? null;
     $past_due           =$request['past_due'] ?? null;
+    $loan_type         =$request['loan_type'] ?? null;
 
     return $query->when($start_date,function($query) use ($start_date,$end_date){
         if ($start_date != null || $end_date != null) {
@@ -81,6 +82,11 @@ class LoanContract extends Model
         })
         ->when($contract_status,function($query) use ($contract_status){
             $query->where('status',$contract_status);
+        })
+        ->when($loan_type,function($query) use ($loan_type){
+            $query->whereHas('loan_application',function($q) use ($loan_type){
+                $q->where('loan_type',$loan_type);
+            });
         })
         ->when($contract_code,function($query) use ($contract_code){
             $query->where('contract_code',$contract_code);

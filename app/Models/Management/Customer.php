@@ -97,10 +97,6 @@ class Customer extends Model
         return $this->hasOne(Student::class,'customer_id','id');
     }
 
-    public function loan_applications(){
-        return $this->hasMany(LoanApplication::class,'customer_id','id');
-    }
-
     public function loan_contracts(){
         return $this->hasMany(LoanContract::class,'customer_id','id')->where('status','GRANTED')->latest();
     }
@@ -118,7 +114,6 @@ class Customer extends Model
         $region_id       =$request['region_id'] ?? null;
         $gender_id       =$request['gender_id'] ?? null;
         $customer_type   =$request['customer_type'] ?? null;
-        $loan_type       =$request['loan_type'] ?? null;
 
         return $query->when($phone_number,function($query) use ($phone_number){
                 $query->where('phone_number','like','%'.$phone_number.'%');
@@ -146,11 +141,6 @@ class Customer extends Model
                 })
                 ->when($customer_type,function($query) use ($customer_type){
                     $query->where('customer_type',$customer_type);
-                })
-                ->when($loan_type,function($query) use ($loan_type){
-                    $query->whereHas('loan_applications',function($q) use ($loan_type){
-                        $q->where('loan_type',$loan_type);
-                    });
                 });
     }
 

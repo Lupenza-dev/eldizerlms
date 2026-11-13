@@ -70,15 +70,6 @@
             </select>
         </div>
         <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Loan Product</label>
-            <select name="loan_type" class="form-control rounded-lg text-sm">
-                <option value="">All Products</option>
-                <option value="1" {{ ($requests['loan_type'] ?? null) == 1 ? 'selected' : '' }}>Cash</option>
-                <option value="2" {{ ($requests['loan_type'] ?? null) == 2 ? 'selected' : '' }}>Pay Later</option>
-                <option value="3" {{ ($requests['loan_type'] ?? null) == 3 ? 'selected' : '' }}>Eco Water</option>
-            </select>
-        </div>
-        <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Student Reg ID</label>
             <input type="text" name="student_reg_id" class="form-control rounded-lg text-sm" value="{{ $requests['student_reg_id'] ?? null}}">
         </div>
@@ -519,7 +510,6 @@
                     d.college_id     = $('#submit-form [name=college_id]').val();
                     d.region_id      = $('#submit-form [name=region_id]').val();
                     d.customer_type  = $('#submit-form [name=customer_type]').val();
-                    d.loan_type      = $('#submit-form [name=loan_type]').val();
 
                 }
             },

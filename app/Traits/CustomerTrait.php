@@ -26,7 +26,6 @@ trait CustomerTrait
                     'DOB'            => $customer->dob,
                     'Email'          => $customer->email,
                     'Customer Type'  => $customer->customer_reg_type,
-                    'Loan Products'  => $this->loanProductNames($customer),
                     'Region'         => $customer->region?->name,
                     'District'       => $customer->district?->name,
                     'Ward'           => $customer->ward?->name,
@@ -62,19 +61,6 @@ trait CustomerTrait
 
                 return array_merge($row, $studentColumns, $internColumns);
             });
-    }
-
-    private function loanProductNames($customer)
-    {
-        $names = [1 => 'Cash', 2 => 'Pay Later', 3 => 'Eco Water'];
-
-        return $customer->loan_applications
-            ->pluck('loan_type')
-            ->unique()
-            ->sort()
-            ->map(fn ($type) => $names[$type] ?? null)
-            ->filter()
-            ->implode(', ');
     }
 
     private function dataGenerator($customers)

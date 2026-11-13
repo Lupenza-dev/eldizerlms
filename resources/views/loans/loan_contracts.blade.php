@@ -107,6 +107,25 @@
                         <input type="text" class="form-control rounded-lg text-sm" name="student_reg_id" value="{{ $requests['student_reg_id'] ?? null}}" placeholder="Student Reg ID">
                     </div> --}}
                 </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Customer Type</label>
+                        <select name="customer_type" class="form-control rounded-lg text-sm">
+                            <option value="">All Types</option>
+                            <option value="1" {{ ($requests['customer_type'] ?? null) == 1 ? 'selected' : '' }}>Student</option>
+                            <option value="2" {{ ($requests['customer_type'] ?? null) == 2 ? 'selected' : '' }}>Intern</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Loan Product</label>
+                        <select name="loan_type" class="form-control rounded-lg text-sm">
+                            <option value="">All Products</option>
+                            <option value="1" {{ ($requests['loan_type'] ?? null) == 1 ? 'selected' : '' }}>Cash</option>
+                            <option value="2" {{ ($requests['loan_type'] ?? null) == 2 ? 'selected' : '' }}>Pay Later</option>
+                            <option value="3" {{ ($requests['loan_type'] ?? null) == 3 ? 'selected' : '' }}>Eco Water</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-200">
                     <button formaction="{{ route('loan.contracts') }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
                         <i class="bx bx-search"></i> Search
