@@ -487,10 +487,18 @@
                                     <tbody>
                                         <tr>
                                             <th>Loan Type</th>
-                                            <td>{!! $contract->loan_application?->loan_type_format !!}</td>
+                                            <td>{!! $contract->loan_type_format !!}</td>
                                             <th>Eco Water Reg Code</th>
                                             <td>{{ $contract->loan_application?->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
                                         </tr>
+                                        @if ($contract->loan_type == 2)
+                                        <tr>
+                                            <th>Device</th>
+                                            <td>{{ $contract->get_device?->name ?? 'N/A' }}</td>
+                                            <th>Device Price</th>
+                                            <td>{{ $contract->get_device ? number_format($contract->get_device->price) : 'N/A' }}</td>
+                                        </tr>
+                                        @endif
                                         <tr>
                                             <th>Contract Code</th>
                                             <td><span class="contract-code">{{ $contract->contract_code}}</span></td>

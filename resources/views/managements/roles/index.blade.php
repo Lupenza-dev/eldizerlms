@@ -21,18 +21,23 @@
             <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4"><h6 class="text-sm font-semibold uppercase tracking-wider text-white mb-0">Role access</h6></div>
             <div class="p-4 table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead><tr><th>Role</th><th>Assigned permissions</th><th class="text-end">Action</th></tr></thead>
+                    <thead><tr>
+                        <th>#</th>
+                        <th>Role</th>
+                        {{-- <th>Assigned permissions</th> --}}
+                        <th class="text-end">Action</th></tr></thead>
                     <tbody>
                     @foreach($roles as $role)
                         <tr>
+                            <td>{{ $loop->iteration}}</td>
                             <td class="fw-semibold">{{ $role->name }}</td>
-                            <td>
+                            {{-- <td>
                                 @forelse($role->permissions as $permission)
                                     <span class="badge bg-light text-dark border me-1 mb-1">{{ $permission->name }}</span>
                                 @empty
                                     <span class="text-muted">No permissions assigned</span>
                                 @endforelse
-                            </td>
+                            </td> --}}
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#roleModal{{ $role->id }}"><i class="bx bx-shield-quarter"></i> Permissions</button>
                                 @if(!in_array($role->name, ['Admin', 'Super Admin', 'Agent', 'Customer', 'Internal User']))

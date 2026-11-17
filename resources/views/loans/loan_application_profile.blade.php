@@ -435,6 +435,14 @@
                                 <th>Eco Water Reg Code</th>
                                 <td>{{ $loan->ecoWaterApplicant?->registration_code ?? 'N/A' }}</td>
                             </tr>
+                            @if ($loan->loan_type == 2)
+                            <tr>
+                                <th>Device</th>
+                                <td>{{ $loan->get_device?->name ?? 'N/A' }}</td>
+                                <th>Device Price</th>
+                                <td>{{ $loan->get_device ? number_format($loan->get_device->price) : 'N/A' }}</td>
+                            </tr>
+                            @endif
                             <tr>
                                 <th>Loan Code</th>
                                 <td><span class="loan-code">{{ $loan->loan_code }}</span></td>

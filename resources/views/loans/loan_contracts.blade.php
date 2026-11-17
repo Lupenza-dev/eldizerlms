@@ -153,6 +153,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Total Loan</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Paid</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Outstanding</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Loan Type</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Status</th>
                                 @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Action</th>
@@ -176,6 +177,14 @@
                                 <td class="px-4 py-3 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ number_format($contract->loan_amount) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-emerald-600 whitespace-nowrap">{{ number_format($contract->current_balance) }}</td>
                                 <td class="px-4 py-3 text-sm font-medium text-orange-500 whitespace-nowrap">{{ number_format($contract->outstanding_amount) }}</td>
+                                <td class="px-4 py-3 text-sm text-slate-500">
+                                    <div class="flex flex-col gap-0.5">
+                                        <span>{!! $contract->loan_type_format !!}</span>
+                                        @if ($contract->loan_type == 2)
+                                        <span class="text-slate-400 text-xs">{{ $contract->get_device?->name }}</span>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $contract->status_formatted !!}</td>
                                 @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
                                 <td class="px-4 py-3 whitespace-nowrap">

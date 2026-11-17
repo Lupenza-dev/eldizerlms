@@ -8,6 +8,7 @@ use App\Models\Management\Customer;
 use App\Models\Management\Student;
 use App\Models\Management\College;
 use App\Models\Management\CustomerMandate;
+use App\Models\Management\Device;
 use App\Models\Payment\Payment;
 
 class LoanContract extends Model
@@ -15,7 +16,7 @@ class LoanContract extends Model
     use HasFactory;
 
     protected $fillable=['loan_application_id','college_id','customer_id','amount','loan_amount','plan','installment_amount','interest_rate','interest_amount','fees_amount',
-    'status','current_balance','contract_code','created_by','uuid','outstanding_amount','start_date','expected_end_date','other_fees','initial_deposit'];
+    'status','current_balance','contract_code','created_by','uuid','outstanding_amount','start_date','expected_end_date','other_fees','initial_deposit','loan_type','device_id'];
 
   public function customer(){
     return $this->belongsTo(Customer::class);
@@ -55,6 +56,22 @@ class LoanContract extends Model
 
   public function customer_mandate(){
     return $this->hasOne(CustomerMandate::class,'loan_application_id','loan_application_id');
+  }
+
+  public function get_device(){
+    return $this->hasOne(Device::class,'id','device_id');
+  }
+
+  public function getLoanTypeFormatAttribute(){
+    if ($this->loan_type == 1) {
+      return "<span class='badge bg-success text-white'>Cash</span>";
+    }else if ($this->loan_type == 2){
+      return "<span class='badge bg-success text-white'>Pay Later</span>";
+    }else if ($this->loan_type == 3){
+      return "<span class='badge bg-success text-white'>Eco Water</span>";
+    } else {
+      return "<span class='badge bg-success text-white'>Cash</span>";
+    }
   }
 
   public function scopeWithFilters($query,$request){
