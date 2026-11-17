@@ -44,6 +44,7 @@ Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('due-days', [HomeController::class, 'dueDays'])->name('due.days');
 Route::get('test-api', [HomeController::class, 'testApi'])->name('test.api');
 Route::post('user/authentication', [LoginController::class, 'authentication'])->name('authentication');
+Route::get('fixPlan',[HomeController::class,'fixEndDate']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');

@@ -2,6 +2,7 @@
 
 namespace App\Services\Loan;
 use App\Models\Loan\LoanApplication;
+use Illuminate\Support\Facades\Log;
 
 class LoanCalculatorService
 {
@@ -12,26 +13,34 @@ class LoanCalculatorService
 
     public static function calculator($data){
         $loan_type = $data['loan_type'];
-        $rate =($loan_type == 2)? 1.15 : 1.20;
+        $rate =1.20;
         $amount =$data['amount'];
-        $plan   =$data['plan'];
+        // $plan   =$data['plan'];
 
         switch($loan_type) {
             case 1:
                 $total_amount = $amount * $rate;
+                $plan = 1;
+                $installment_amount =$amount *$rate;
                 break;
             case 2:
+                $initial_deposit =$data['initial_deposit'];
                 $total_amount = $amount;
+                $plan =$data['plan'];
+                $installment_amount =($amount-$data['initial_deposit'])/$plan;
+              
                 break;
             case 3:
                 $total_amount = 15000;
+                $plan = 1;
+                $installment_amount =$total_amount;
                 break;
         }
         
-        $installment_amount =$loan_type == 2 ? ($amount-$data['initial_deposit'])/$plan : $total_amount;
+        // $installment_amount =$loan_type == 2 ? ($amount-$data['initial_deposit'])/$plan : $total_amount;
 
         $details['total_amount']       =$total_amount;
-        $details['installment_amount'] =$installment_amount;
+        $details['installment_amount']  =$installment_amount;
         $details['start_date']          =date('Y-m-d');
         $details['end_date']           =date('Y-m-d', strtotime("+".$plan." months", strtotime($details['start_date'])));
         $details['interest_amount']    =$details['total_amount'] - $amount;

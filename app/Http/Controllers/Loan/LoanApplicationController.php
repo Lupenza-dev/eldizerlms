@@ -91,7 +91,7 @@ class LoanApplicationController extends Controller
         if ($customer_bank) {
             $token_request = getApiToken();
             Log::info('-----result---data needed now');
-            Log::info($token_request['data']);
+            Log::info($token_request);
 
             
 
@@ -503,7 +503,7 @@ class LoanApplicationController extends Controller
                     'plan'       => $loan->plan,
                     'status'       => "GRANTED",
                     'current_balance'           => 0,
-                    'outstanding_amount'        => $loan->loan_amount,
+                    'outstanding_amount'        => $loan->loan_amount - $loan->initial_deposit,
                     'contract_code'             => $loan->loan_code,
                     'interest_rate'             => $loan->interest_rate,
                     'interest_amount'           => $loan->interest_amount,
@@ -512,11 +512,13 @@ class LoanApplicationController extends Controller
                     'expected_end_date'         => date('Y-m-d', strtotime("+" . $loan->plan . " months", strtotime($valid['payment_date']))),
                     'created_by'                => Auth::user()->id,
                     'uuid'                      => (string)Str::orderedUuid(),
-                    'other_fees'                 => $loan->other_fees
+                    'other_fees'                 => $loan->other_fees,
+                    'initial_deposit'            =>$loan->initial_deposit
                 ]);
 
-                // for ($i=1; $i < $loan->plan; $i++) {
-                $i = 1;
+                $plan =(int) $loan->plan;
+                for ($i=1; $i <= $plan; $i++) {
+                // $i = 1;
                 $installment = Installment::create([
                     'loan_contract_id' => $loan_contract->id,
                     'installment_order' => $i,
@@ -529,7 +531,8 @@ class LoanApplicationController extends Controller
                     'status'             => "OPEN",
                     'uuid'               => (string)Str::orderedUuid(),
                 ]);
-                // }
+                
+                }
 
                 $payment = DisbursmentPayment::create([
                     'loan_contract_id'    => $loan_contract->id,

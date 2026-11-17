@@ -47,33 +47,35 @@ class HomeController extends Controller
         return view('auth.login');
     }
 
-    public function dueDays(){
+    public function dueDays()
+    {
         LoanPenaltCalculation::dispatch()->onQueue('emails');
         return true;
     }
 
-    public function uploadLoans(Request $request){
-        $file =$request->file;
+    public function uploadLoans(Request $request)
+    {
+        $file = $request->file;
         return (new FastExcel)->import($file, function ($row) {
-            $first_name     =$row['First Name'];
-            $middle_name    =$row['Middle Name'];
-            $last_name      =$row['Last Name'];
-            $phone_number   =$row['Phone Number'];
-            $dob            =$row['DOB'];
-            $id_type        =$row['ID Type'];
-            $id_number      =$row['ID Number'];
-            $gender         =$row['Gender'];
-            $region         =$row['Region'];
-            $district       =$row['Disrict'];
-            $street         =$row['Street'];
-            $college_name   =$row['College'];
-            $study_year     =$row['Study Year'];
-            $reg_number     =$row['Reg ID'];
-            $heslb_status   =$row['Heslb Status'];
-            $course         =$row['Course'];
-            $amount         =$row['Request Amount'];
-            $start_date     =$row['start date'];
-            $end_date       =$row['end date'];
+            $first_name     = $row['First Name'];
+            $middle_name    = $row['Middle Name'];
+            $last_name      = $row['Last Name'];
+            $phone_number   = $row['Phone Number'];
+            $dob            = $row['DOB'];
+            $id_type        = $row['ID Type'];
+            $id_number      = $row['ID Number'];
+            $gender         = $row['Gender'];
+            $region         = $row['Region'];
+            $district       = $row['Disrict'];
+            $street         = $row['Street'];
+            $college_name   = $row['College'];
+            $study_year     = $row['Study Year'];
+            $reg_number     = $row['Reg ID'];
+            $heslb_status   = $row['Heslb Status'];
+            $course         = $row['Course'];
+            $amount         = $row['Request Amount'];
+            $start_date     = $row['start date'];
+            $end_date       = $row['end date'];
             $date = Carbon::parse($start_date);
             $endd_date = Carbon::parse($end_date);
             $dob_date = Carbon::parse($dob);
@@ -84,186 +86,236 @@ class HomeController extends Controller
             $dob = $dob_date->toDateString();
 
             ### create customer
-            $code =255;
-            $phone_number =$code.''.$phone_number;
-            $customer =Customer::where('phone_number',$phone_number)->first();
+            $code = 255;
+            $phone_number = $code . '' . $phone_number;
+            $customer = Customer::where('phone_number', $phone_number)->first();
 
             if (!$customer) {
-                $code =255;
-                $customer =Customer::create([
-                    'first_name'   =>$first_name,
-                    'middle_name'  =>$middle_name,
-                    'last_name'    =>$last_name,
-                    'other_name'   =>null,
-                    'phone_number' =>$code.''.$phone_number,
-                    'email'        =>null,
-                    'id_number'    =>$id_number ?? null,
-                    'dob'          =>$dob ?? "2000-01-01",
-                    'gender_id'    =>$gender == "ME" ? 1:2,
-                    'marital_status_id'    =>null,
-                    'region_id'            =>7,
-                    'district_id'          =>58,
-                    'ward_id'                  =>null,
-                    'street'                   =>null,
-                    'resident_since'           =>null,
-                    'other_name'               =>null,
-                    'uuid'                     =>(string)Str::orderedUuid()
+                $code = 255;
+                $customer = Customer::create([
+                    'first_name'   => $first_name,
+                    'middle_name'  => $middle_name,
+                    'last_name'    => $last_name,
+                    'other_name'   => null,
+                    'phone_number' => $code . '' . $phone_number,
+                    'email'        => null,
+                    'id_number'    => $id_number ?? null,
+                    'dob'          => $dob ?? "2000-01-01",
+                    'gender_id'    => $gender == "ME" ? 1 : 2,
+                    'marital_status_id'    => null,
+                    'region_id'            => 7,
+                    'district_id'          => 58,
+                    'ward_id'                  => null,
+                    'street'                   => null,
+                    'resident_since'           => null,
+                    'other_name'               => null,
+                    'uuid'                     => (string)Str::orderedUuid()
                 ]);
             }
 
             ### create student details
             ### create college first before student details
 
-            $college =College::where('name','like','%'.$college_name.'%')->first();
+            $college = College::where('name', 'like', '%' . $college_name . '%')->first();
 
             if (!$college) {
-                $college =College::create([
-                    'name'       =>ucwords($college_name),
-                    'location'   =>$customer->region_id,
-                    'uuid'       =>(string)Str::orderedUuid(),
-                    'logo'       =>null,
-                    'created_by' =>1
+                $college = College::create([
+                    'name'       => ucwords($college_name),
+                    'location'   => $customer->region_id,
+                    'uuid'       => (string)Str::orderedUuid(),
+                    'logo'       => null,
+                    'created_by' => 1
                 ]);
             }
 
-            $student =Student::where('customer_id',$customer->id)->first();
+            $student = Student::where('customer_id', $customer->id)->first();
 
             if (!$student) {
-                $student =Student::create([
-                    'customer_id'     =>$customer->id,
-                    'college_id'      =>$college->id,
-                   // 'position'     =>$valid_data['position'] ??,
-                    'study_year'      =>$study_year ?? 1,
-                    'student_reg_id'  =>$reg_number,
-                    'heslb_status'    =>$heslb_status,
-                    'course'          =>$course,
-                    'uuid'            =>(string)Str::orderedUuid(),
+                $student = Student::create([
+                    'customer_id'     => $customer->id,
+                    'college_id'      => $college->id,
+                    // 'position'     =>$valid_data['position'] ??,
+                    'study_year'      => $study_year ?? 1,
+                    'student_reg_id'  => $reg_number,
+                    'heslb_status'    => $heslb_status,
+                    'course'          => $course,
+                    'uuid'            => (string)Str::orderedUuid(),
                 ]);
             }
 
             ### create loan application
-            $code_generator =new LoanCalculatorService;
+            $code_generator = new LoanCalculatorService;
 
             // check if loan contract exist 
 
-            $check_loan =LoanContract::where('customer_id',$customer->id)
-                         ->where('start_date',$start_date)
-                         ->where('amount',$amount)
-                         ->first();
+            $check_loan = LoanContract::where('customer_id', $customer->id)
+                ->where('start_date', $start_date)
+                ->where('amount', $amount)
+                ->first();
 
             if (!$check_loan) {
-                $loan_application =LoanApplication::create([
-                    'customer_id' =>$customer->id,
-                    'amount'      =>$amount,
-                    'loan_amount' =>$amount*1.25,
-                    'plan'        =>1,
-                    'installment_amount'  =>$amount*1.25,
-                    'interest_rate'       =>0.25,
-                    'interest_amount'     =>0.25 * $amount,
-                    'loan_code'           =>$code_generator->loanCode(),
-                    'uuid'                =>(string)Str::orderedUuid(),
-                    'start_date'          =>$start_date,
-                    'level'               =>"CLOSED",
-                    'college_id'          =>$college->id,
-                    
+                $loan_application = LoanApplication::create([
+                    'customer_id' => $customer->id,
+                    'amount'      => $amount,
+                    'loan_amount' => $amount * 1.25,
+                    'plan'        => 1,
+                    'installment_amount'  => $amount * 1.25,
+                    'interest_rate'       => 0.25,
+                    'interest_amount'     => 0.25 * $amount,
+                    'loan_code'           => $code_generator->loanCode(),
+                    'uuid'                => (string)Str::orderedUuid(),
+                    'start_date'          => $start_date,
+                    'level'               => "CLOSED",
+                    'college_id'          => $college->id,
+
                 ]);
 
-                 ### create loan contract
+                ### create loan contract
 
-            $loan_contract =LoanContract::create([
-                'customer_id' =>$customer->id,
-                'loan_application_id'      =>$loan_application->id,
-                'college_id'               =>$loan_application->college_id,
-                'amount'                   =>$loan_application->amount,
-                'loan_amount'              =>$loan_application->loan_amount,
-                'installment_amount'       =>$loan_application->installment_amount,
-                'plan'                     =>$loan_application->plan,
-                'status'                    =>"CLOSED",
-                'current_balance'           =>$loan_application->loan_amount,
-                'outstanding_amount'        =>0,
-                'contract_code'             =>$loan_application->loan_code,
-                'interest_rate'             =>$loan_application->interest_rate,
-                'interest_amount'           =>$loan_application->interest_amount,
-                'fees_amount'               =>$loan_application->fees_amount,
-                'start_date'                =>$start_date,
-               // 'expected_end_date'         =>date('Y-m-d', strtotime("+".$loan_application->plan." months", strtotime($loan_application->start_date))),
-                'expected_end_date'         =>$end_date,
-                'created_by'                =>1,
-                'uuid'                      =>(string)Str::orderedUuid(),
-               ]);
+                $loan_contract = LoanContract::create([
+                    'customer_id' => $customer->id,
+                    'loan_application_id'      => $loan_application->id,
+                    'college_id'               => $loan_application->college_id,
+                    'amount'                   => $loan_application->amount,
+                    'loan_amount'              => $loan_application->loan_amount,
+                    'installment_amount'       => $loan_application->installment_amount,
+                    'plan'                     => $loan_application->plan,
+                    'status'                    => "CLOSED",
+                    'current_balance'           => $loan_application->loan_amount,
+                    'outstanding_amount'        => 0,
+                    'contract_code'             => $loan_application->loan_code,
+                    'interest_rate'             => $loan_application->interest_rate,
+                    'interest_amount'           => $loan_application->interest_amount,
+                    'fees_amount'               => $loan_application->fees_amount,
+                    'start_date'                => $start_date,
+                    // 'expected_end_date'         =>date('Y-m-d', strtotime("+".$loan_application->plan." months", strtotime($loan_application->start_date))),
+                    'expected_end_date'         => $end_date,
+                    'created_by'                => 1,
+                    'uuid'                      => (string)Str::orderedUuid(),
+                ]);
 
-               $i =1;
-               $installment =Installment::create([
-                   'loan_contract_id' =>$loan_contract->id,
-                   'installment_order' =>$i,
-                   'total_amount'      =>$loan_contract->installment_amount,
-                   'current_balance'   =>$loan_contract->current_balance,
-                   'outstanding_amount' =>0,
-                   'payment_type'       =>"Installment Amount",
-                  // 'payment_date'       =>date('Y-m-d', strtotime("+".$i." months", strtotime($loan_contract->start_date))),
-                   'payment_date'       =>$loan_contract->expected_end_date,
-                   'last_paid_amount'   =>$loan_contract->current_balance,
-                   'status'             =>"CLOSED",
-                   'uuid'               =>(string)Str::orderedUuid(),
-               ]);
-            // }
+                $i = 1;
+                $installment = Installment::create([
+                    'loan_contract_id' => $loan_contract->id,
+                    'installment_order' => $i,
+                    'total_amount'      => $loan_contract->installment_amount,
+                    'current_balance'   => $loan_contract->current_balance,
+                    'outstanding_amount' => 0,
+                    'payment_type'       => "Installment Amount",
+                    // 'payment_date'       =>date('Y-m-d', strtotime("+".$i." months", strtotime($loan_contract->start_date))),
+                    'payment_date'       => $loan_contract->expected_end_date,
+                    'last_paid_amount'   => $loan_contract->current_balance,
+                    'status'             => "CLOSED",
+                    'uuid'               => (string)Str::orderedUuid(),
+                ]);
+                // }
 
-              $payment =DisbursmentPayment::create([
-               'loan_contract_id'    =>$loan_contract->id,
-               'loan_application_id' =>$loan_contract->loan_application_id,
-               'payment_reference'   =>$loan_contract->contract_code,
-               'paid_amount'         =>$loan_contract->amount,
-               'payment_date'        =>$loan_contract->start_date,
-               'payment_channel'     =>"NMB",
-               'payment_method'      =>"BANK",
-               'created_by'          =>1,
-               'uuid'                =>(string)Str::orderedUuid(),
-              ]);
+                $payment = DisbursmentPayment::create([
+                    'loan_contract_id'    => $loan_contract->id,
+                    'loan_application_id' => $loan_contract->loan_application_id,
+                    'payment_reference'   => $loan_contract->contract_code,
+                    'paid_amount'         => $loan_contract->amount,
+                    'payment_date'        => $loan_contract->start_date,
+                    'payment_channel'     => "NMB",
+                    'payment_method'      => "BANK",
+                    'created_by'          => 1,
+                    'uuid'                => (string)Str::orderedUuid(),
+                ]);
 
-              $payment =Payment::where('payment_reference',$loan_contract->contract_code)->first();
+                $payment = Payment::where('payment_reference', $loan_contract->contract_code)->first();
 
-              if (!$payment) {
-                  $payment =Payment::create([
-                      'phone_number' =>$loan_contract->customer->phone_number,
-                      'amount'       =>$loan_contract->loan_amount,
-                      'payment_reference'     =>$loan_contract->contract_code,
-                      'payment_channel'       =>"NMB",
-                      'payment_method'        =>"BANK",
-                      'payment_date'          =>$loan_contract->expected_end_date,
-                      'added_by'              =>1,
-                      'uuid'                  =>(string)Str::orderedUuid(),
-                      'status'                 =>"Successfully",
-                      'remarks'               =>'Loan Repayment',
-                      'loan_contract_id'      =>$loan_contract->id,
-                      'customer_id'           =>$loan_contract->customer_id,
-                  ]);
-              }
+                if (!$payment) {
+                    $payment = Payment::create([
+                        'phone_number' => $loan_contract->customer->phone_number,
+                        'amount'       => $loan_contract->loan_amount,
+                        'payment_reference'     => $loan_contract->contract_code,
+                        'payment_channel'       => "NMB",
+                        'payment_method'        => "BANK",
+                        'payment_date'          => $loan_contract->expected_end_date,
+                        'added_by'              => 1,
+                        'uuid'                  => (string)Str::orderedUuid(),
+                        'status'                 => "Successfully",
+                        'remarks'               => 'Loan Repayment',
+                        'loan_contract_id'      => $loan_contract->id,
+                        'customer_id'           => $loan_contract->customer_id,
+                    ]);
+                }
 
-            $details['message'] ='Action done successfuly';
-            
-            return $details;
+                $details['message'] = 'Action done successfuly';
+
+                return $details;
             }
+        });
 
-           
+        $details['success'] = 1;
+        $details['message'] = 'Action done successfuly';
 
-
-           
-         });
- 
-         $details['success'] =1;
-         $details['message'] ='Action done successfuly';
-         
-         return $details;
+        return $details;
     }
 
-    public function testPdf(){
-        $loan = LoanContract::with('customer','college','student','guarantors','loan_approval')->latest()->first();
+    public function testPdf()
+    {
+        $loan = LoanContract::with('customer', 'college', 'student', 'guarantors', 'loan_approval')->latest()->first();
         $pdf = Pdf::loadView('pdf.loan_contract', ['loan' => $loan])->setPaper('a4', 'portrait');
         return $pdf->stream('loan_contract.pdf');
     }
 
-    public function testApi(){
+    public function testApi()
+    {
         return getApiToken()['corporate_reference'];
     }
 
+    public function fixPlan()
+    {
+        $updated = 0;
+
+        LoanApplication::where('loan_type', 1)
+            ->chunkById(500, function ($applications) use (&$updated) {
+                foreach ($applications as $application) {
+                    $plan = 1;
+
+                    if ($plan === null) {
+                        continue; // no device or no plan, so skip
+                    }
+
+                    $application->update(['plan' => $plan]);
+
+                    LoanContract::where('loan_application_id', $application->id)
+                        ->update(['plan' => $plan]);
+
+                    $updated++;
+                }
+            });
+
+        return "success: {$updated} records updated";
+    }
+
+    public function fixEndDate()
+    {
+        $updated = 0;
+        $skipped = 0;
+
+        LoanContract::whereNotNull('start_date')
+            ->whereNotNull('plan')
+            ->chunkById(500, function ($contracts) use (&$updated, &$skipped) {
+                foreach ($contracts as $contract) {
+                    $months = (int) $contract->plan;
+
+                    if ($months <= 0) {
+                        $skipped++;
+                        continue; // plan is empty or not a valid number
+                    }
+
+                    $endDate = Carbon::parse($contract->start_date)
+                        ->addMonthsNoOverflow($months)
+                        ->toDateString();
+
+                    $contract->update(['expected_end_date' => $endDate]);
+
+                    $updated++;
+                }
+            });
+
+        return "success: {$updated} updated, {$skipped} skipped";
+    }
 }

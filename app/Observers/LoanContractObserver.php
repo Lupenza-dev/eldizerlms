@@ -55,20 +55,20 @@ class LoanContractObserver
             $mandate = CustomerMandate::where('loan_application_id', $loanContract->loan_application_id)
                 ->where('status', 'active')->first();
 
-            if ($mandate) {
-                $token_request = getApiToken();
-                $response = Http::withToken($token_request['data']['token'])
-                    ->post(
-                        env('SOLOCODE_BASE_URL') . '' . 'mandate/cancellation',
-                        [
-                            'reference' => $mandate->mandate_reference,
-                            'reasons' => "Completed Loan Repayment",
-                        ]
-                    );
-                    Log::info('loan observe cancelation');
-                    Log::info($response);
-                //  $result =json_decode($response,true);
-            }
+            // if ($mandate) {
+            //     $token_request = getApiToken();
+            //     $response = Http::withToken($token_request['data']['token'])
+            //         ->post(
+            //             env('SOLOCODE_BASE_URL') . '' . 'mandate/cancellation',
+            //             [
+            //                 'reference' => $mandate->mandate_reference,
+            //                 'reasons' => "Completed Loan Repayment",
+            //             ]
+            //         );
+            //         Log::info('loan observe cancelation');
+            //         Log::info($response);
+            //     //  $result =json_decode($response,true);
+            // }
         }
     }
 
