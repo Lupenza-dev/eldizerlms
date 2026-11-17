@@ -513,7 +513,9 @@ class LoanApplicationController extends Controller
                     'created_by'                => Auth::user()->id,
                     'uuid'                      => (string)Str::orderedUuid(),
                     'other_fees'                 => $loan->other_fees,
-                    'initial_deposit'            =>$loan->initial_deposit
+                    'initial_deposit'            =>$loan->initial_deposit,
+                    'loan_type'               => $loan->loan_type,
+                    'device_id'               => $loan->device_id ?? null,
                 ]);
 
                 $plan =(int) $loan->plan;
