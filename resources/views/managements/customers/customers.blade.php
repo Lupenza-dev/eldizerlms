@@ -86,7 +86,10 @@
                 @endif
             </select>
         </div>
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+    </div>
+
+    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
             <select name="college_id" class="form-control rounded-lg text-sm">
@@ -96,11 +99,6 @@
                 @endforeach
             </select>
         </div>
-        @endif
-    </div>
-
-    @if (Auth::user()->hasRole(['Admin','Super Admin']))
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
             <select name="region_id" class="form-control rounded-lg text-sm">
@@ -510,8 +508,8 @@
                     d.student_reg_id = $('#submit-form [name=student_reg_id]').val();
                     d.gender_id      = $('#submit-form [name=gender_id]').val();
                     d.college_id     = $('#submit-form [name=college_id]').val();
-                    d.region_id      = $('#submit-form [name=region_id]').val();   
-                    d.customer_type  = $('#submit-form [name=reg_type]').val();
+                    d.region_id      = $('#submit-form [name=region_id]').val();
+                    d.customer_type  = $('#submit-form [name=customer_type]').val();
 
                 }
             },
