@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Mobile\V2\ProfessionalController;
 use App\Http\Controllers\Api\Mobile\V2\RegistrationController;
 use App\Http\Controllers\HomeController as TestController;
 use App\Http\Controllers\Payment\PaymentController;
+use App\Http\Controllers\Loan\LoanApplicationController as WebLoanApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ use App\Http\Controllers\Payment\PaymentController;
 // });
 
 Route::post('call-back', [LoanApplicationController::class, 'eMakatocallBack']);
+Route::post('confirm-mandate', [WebLoanApplicationController::class, 'confirmMandate']);
 Route::post('upload-loans', [TestController::class, 'uploadLoans']);
 Route::get('verify-vrp', [NmbController::class, 'verifyVrp']);
 Route::get('get-assignments', [HomeController::class, 'getAssignments']);
