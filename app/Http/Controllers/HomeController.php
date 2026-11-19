@@ -22,8 +22,8 @@ use Str;
 use DateTimeImmutable;
 use DateTimeZone;
 use Carbon\Carbon;
-
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -317,5 +317,138 @@ class HomeController extends Controller
             });
 
         return "success: {$updated} updated, {$skipped} skipped";
+    }
+
+    public function fixInitialDeposit()
+    {
+        $updated = 0;
+
+        LoanApplication::where('loan_type', 2)
+            // ->whereNotNull('initial_deposit')
+            ->select('id', 'initial_deposit')
+            ->chunkById(500, function ($applications) use (&$updated) {
+                foreach ($applications as $application) {
+                    $affected = LoanContract::where('loan_application_id', $application->id)
+                        ->where(function ($q) use ($application) {
+                            $q->whereNull('initial_deposit')
+                                ->orWhere('initial_deposit', '!=', $application->initial_deposit);
+                        })
+                        ->update(['initial_deposit' => $application->initial_deposit]);
+
+                    $updated += $affected;
+                }
+            });
+
+        return "success: {$updated} contract records updated";
+    }
+
+    public function contractsWithSingleInstallment()
+    {
+        // $contracts = LoanContract::where('plan', '>', 1)
+        //     ->has('installments', '=', 1)
+        //     ->withCount('installments')
+        //     ->get();
+
+        // return response()->json([
+        //     'total' => $contracts->count(),
+        //     'data'  => $contracts,
+        // ]);
+
+        $contracts = LoanContract::where('plan', '>', 1)
+            ->where('status', 'CLOSED')
+            ->has('installments', '=', 1)
+            ->whereRaw('
+            (SELECT COALESCE(SUM(p.amount), 0)
+             FROM payments p
+             WHERE p.loan_contract_id = loan_contracts.id) < loan_contracts.loan_amount
+        ')
+            ->withCount('installments')
+            ->withSum('payments', 'amount')
+            ->get();
+
+        return response()->json([
+            'total' => $contracts->count(),
+            'data'  => $contracts,
+        ]);
+    }
+
+    public function rectifyMissingInstallments(Request $request)
+    {
+        $dryRun  = $request->boolean('dry_run'); // ?dry_run=1 to preview without saving
+        $created = 0;
+        $fixed   = [];
+        $errors  = [];
+
+        LoanContract::where('plan', '>', 1)
+            ->where('status', 'GRANTED')
+            // ->where('uuid','a332ae31-c229-4f12-ba29-c22641e044e8')
+            ->has('installments', '=', 1)
+            ->whereRaw('
+            (SELECT COALESCE(SUM(p.amount), 0)
+             FROM payments p
+             WHERE p.loan_contract_id = loan_contracts.id) < loan_contracts.loan_amount
+        ')
+            ->with('installments:id,loan_contract_id,installment_order')
+            ->chunkById(200, function ($contracts) use ($dryRun, &$created, &$fixed, &$errors) {
+                foreach ($contracts as $contract) {
+                    $plan = (int) $contract->plan;
+
+                    // Orders that already exist, e.g. [1]
+                    $existingOrders = $contract->installments
+                        ->pluck('installment_order')
+                        ->map(fn($o) => (int) $o)
+                        ->all();
+
+                    // Orders that should exist but don't, e.g. [2, 3]
+                    $missingOrders = array_values(array_diff(range(1, $plan), $existingOrders));
+
+                    if (empty($missingOrders)) {
+                        continue;
+                    }
+
+                    $fixed[] = [
+                        'loan_contract_id' => $contract->id,
+                        'plan'             => $plan,
+                        'existing_orders'  => $existingOrders,
+                        'missing_orders'   => $missingOrders,
+                    ];
+
+                    if ($dryRun) {
+                        $created += count($missingOrders);
+                        continue;
+                    }
+
+                    try {
+                        DB::transaction(function () use ($contract, $missingOrders, &$created) {
+                            foreach ($missingOrders as $i) {
+                                Installment::create([
+                                    'loan_contract_id'   => $contract->id,
+                                    'installment_order'  => $i,
+                                    'total_amount'       => $contract->installment_amount,
+                                    'current_balance'    => 0,
+                                    'outstanding_amount' => $contract->installment_amount,
+                                    'payment_type'       => 'Installment Amount',
+                                    'payment_date'       => date('Y-m-d', strtotime("+{$i} months", strtotime($contract->start_date))),
+                                    'last_paid_amount'   => 0,
+                                    'status'             => 'OPEN',
+                                    'uuid'               => (string) Str::orderedUuid(),
+                                ]);
+                                $created++;
+                            }
+                        });
+                    } catch (\Throwable $e) {
+                        $errors[] = ['loan_contract_id' => $contract->id, 'error' => $e->getMessage()];
+                        Log::error("Installment rectification failed for contract {$contract->id}", ['error' => $e->getMessage()]);
+                    }
+                }
+            });
+
+        return response()->json([
+            'dry_run'             => $dryRun,
+            'contracts_affected'  => count($fixed),
+            'installments_created' => $created,
+            'errors'              => $errors,
+            'details'             => $fixed,
+        ]);
     }
 }
