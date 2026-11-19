@@ -475,7 +475,6 @@ class CustomerController extends Controller
             'student_reg_id'     => 'required_if:reg_type,1|nullable|string',
             'form_four_index_no' => 'required_if:reg_type,1|nullable|string|max:255',
             'study_year'         => 'required_if:reg_type,1|nullable|string|max:20',
-            'position'           => 'nullable|string|max:255',
             'heslb_status'       => 'required_if:reg_type,1|nullable|in:0,1',
 
             // Intern-only (reg_type = 2)
@@ -518,7 +517,6 @@ class CustomerController extends Controller
                         'student_reg_id'     => $valid['student_reg_id'],
                         'form_four_index_no' => $valid['form_four_index_no'],
                         'study_year'         => $valid['study_year'],
-                        'position'           => $valid['position'],
                         'heslb_status'       => $valid['heslb_status'],
                     ]
                 );
