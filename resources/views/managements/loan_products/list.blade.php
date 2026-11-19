@@ -53,9 +53,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full">
                     {{ $products->count() }} {{ Str::plural('Product', $products->count()) }}
                 </span>
+                @can('create loan products')
                 <button type="button" id="add_product_btn" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                     <i class="bx bx-plus"></i> Add Loan Product
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -133,21 +135,27 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
+                                        @can('edit loan products')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
                                                 data-uuid="{{ $product->uuid }}" title="Edit">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
+                                        @endcan
+                                        @can('change loan products status')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 {{ $product->is_active ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white rounded-lg transition-colors status-btn"
                                                 data-uuid="{{ $product->uuid }}" data-name="{{ $product->name }}" data-active="{{ $product->is_active ? 1 : 0 }}"
                                                 title="{{ $product->is_active ? 'Deactivate' : 'Activate' }}">
                                             <i class="bx {{ $product->is_active ? 'bx-pause' : 'bx-play' }} text-sm"></i>
                                         </button>
+                                        @endcan
+                                        @can('delete loan products')
                                         @if ($product->loan_applications_count == 0)
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors delete-btn"
                                                 data-uuid="{{ $product->uuid }}" data-name="{{ $product->name }}" title="Delete">
                                             <i class="bx bx-trash text-sm"></i>
                                         </button>
                                         @endif
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
@@ -389,7 +397,7 @@
 
         form.addEventListener('change', refreshVisibility);
 
-        document.getElementById('add_product_btn').addEventListener('click', function () {
+        document.getElementById('add_product_btn')?.addEventListener('click', function () {
             form.action = form.dataset.storeUrl;
             document.getElementById('form_method').value = 'POST';
             document.getElementById('product_modal_title').textContent = 'Add Loan Product';

@@ -240,9 +240,11 @@
                             <a href="{{ route('customers.index') }}">
                                 <button class="btn btn-warning btn-sm" type="button"><i class="bx bx-arrow-back"></i> Back</button>
                             </a>
+                            @can('edit customers')
                             <button class="btn btn-primary btn-sm" type="submit" id="update_btn">
                                 <i class="bx bx-save"></i> Submit
                             </button>
+                            @endcan
                         </div>
                     </div>
                 </form>

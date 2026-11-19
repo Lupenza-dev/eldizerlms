@@ -49,9 +49,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full">
                     {{ count($rows) }} {{ Str::plural('Menu', count($rows)) }}
                 </span>
+                @can('create menus')
                 <button type="button" id="add_menu_btn" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                     <i class="bx bx-plus"></i> Add Menu
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -121,11 +123,19 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
+                                        @can('reorder menus')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg move-btn" data-uuid="{{ $menu->uuid }}" data-direction="up" title="Move up"><i class="bx bx-up-arrow-alt"></i></button>
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg move-btn" data-uuid="{{ $menu->uuid }}" data-direction="down" title="Move down"><i class="bx bx-down-arrow-alt"></i></button>
+                                        @endcan
+                                        @can('edit menus')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg edit-btn" data-uuid="{{ $menu->uuid }}" title="Edit"><i class="bx bx-edit text-sm"></i></button>
+                                        @endcan
+                                        @can('change menus status')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 {{ $menu->is_active ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white rounded-lg status-btn" data-uuid="{{ $menu->uuid }}" title="{{ $menu->is_active ? 'Hide' : 'Show' }}"><i class="bx {{ $menu->is_active ? 'bx-hide' : 'bx-show' }} text-sm"></i></button>
+                                        @endcan
+                                        @can('delete menus')
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg delete-btn" data-uuid="{{ $menu->uuid }}" data-name="{{ $menu->title }}" title="Delete"><i class="bx bx-trash text-sm"></i></button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
@@ -311,7 +321,7 @@
             refresh();
         }
 
-        document.getElementById('add_menu_btn').addEventListener('click', () => {
+        document.getElementById('add_menu_btn')?.addEventListener('click', () => {
             form.action = form.dataset.storeUrl;
             document.getElementById('form_method').value = 'POST';
             document.getElementById('menu_modal_title').textContent = 'Add Menu';

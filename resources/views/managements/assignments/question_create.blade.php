@@ -25,9 +25,11 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
+                    @can('manage assignment questions')
                     <a href="{{ route('question.create',$assignment)}}">
                      <button type="button" class="btn btn-primary"> <span class="bx bx-plus"></span> Add</button>
                     </a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -73,7 +75,9 @@
 
                     <div class="row mt-3">
                         <div class="col-md-12">
+                            @can('manage assignment questions')
                             <button type="submit" id="reg_btn" class="btn btn-success"><i class="fa fa-save"></i> Save Questions</button>
+                            @endcan
                         </div>
                     </div>
                 </form>

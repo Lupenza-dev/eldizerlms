@@ -48,7 +48,7 @@
         </div>
 
         {{-- Row 2: Admin-only stat cards --}}
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @if (auth()->user()->can('view dashboard statistics'))
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
             {{-- Portfolio Size --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
@@ -111,7 +111,7 @@
         </div>
 
         {{-- Pie Charts (Admin only) --}}
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @if (auth()->user()->can('view dashboard statistics'))
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100">

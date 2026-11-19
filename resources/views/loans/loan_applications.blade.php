@@ -33,7 +33,7 @@
                     <button class="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" id="filter-btn">
                         <i class="bx bx-filter text-lg"></i> Custom Filter
                     </button>
-                    <!-- @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User','Agent']))
+                    <!-- @if (auth()->user()->can('create loan applications'))
                     <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#newLoanModal">
                         <i class="bx bx-plus text-lg"></i> New Loan Application
                     </button>
@@ -65,7 +65,7 @@
                             @endif
                         </select>
                     </div>
-                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                    @if (auth()->user()->can('filter by college'))
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
                         <select name="college_id" class="form-control rounded-lg text-sm">
@@ -94,11 +94,11 @@
                         <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" formaction="{{ $search_route ?? route('loan.applications')}}" type="submit">
                             <i class="bx bx-search"></i> Search
                         </button>
-                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                        @can('export loan applications')
                         <button class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" formaction="{{ route('genderate.loan.application.report')}}">
                             <i class="bx bx-file"></i> Generate
                         </button>
-                        @endif
+                        @endcan
                     </div>
                 </div>
             </form>
@@ -159,7 +159,7 @@
                                                     <i class='bx bx-user me-2'></i> View
                                                 </a>
                                             </li>
-                                            @if (!$loan->is_mandate_sent)
+                                            @if (!$loan->is_mandate_sent && auth()->user()->can('confirm loan mandate'))
                                             <li>
                                                 <button type="button" class="dropdown-item confirm-mandate-btn" data-bs-toggle="modal" data-bs-target="#confirmMandateModal"
                                                     data-loan-uuid="{{ $loan->uuid }}"

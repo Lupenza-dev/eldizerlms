@@ -62,7 +62,8 @@ class CustomerController extends Controller
     public function getCustomersData(Request $request)
     {
         $requests = $request->all();
-        $is_admin = Auth::user()->hasRole(['Admin', 'Super Admin']);
+        $can_manage_roles = Auth::user()->can('edit users');
+        $show_actions     = Auth::user()->canAny(['edit users', 'edit customers']);
 
         $customers = Customer::with('region', 'district', 'ward', 'student', 'student.college', 'gender', 'user.roles')
             ->where(function ($query) use ($requests) {
@@ -105,8 +106,8 @@ class CustomerController extends Controller
             ->addColumn('customer_type', function ($customer) {
                 return $customer->customer_reg_type;
             })
-            ->addColumn('roles', function ($customer) use ($is_admin) {
-                if (!$is_admin) {
+            ->addColumn('roles', function ($customer) use ($can_manage_roles) {
+                if (!$can_manage_roles) {
                     return '';
                 }
                 $html = '';
@@ -116,31 +117,34 @@ class CustomerController extends Controller
                 }
                 return $html;
             })
-            ->addColumn('actions', function ($customer) use ($is_admin) {
-                if (!$is_admin) {
+            ->addColumn('actions', function ($customer) use ($show_actions) {
+                if (!$show_actions) {
                     return '';
                 }
+                $user = Auth::user();
+                $manageRoles = $user->can('edit users') ? '<li>
+                                    <a class="dropdown-item flex items-center gap-2 py-2 text-sm role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="' . $customer->id . '" data-name="' . e($customer->customer_name) . '" data-email="' . e($customer->email) . '">
+                                        <i class="bx bx-user-voice text-cyan-500"></i> Manage Roles
+                                    </a>
+                                </li>' : '';
+                $editCustomer = $user->can('edit customers') ? '<li>
+                                    <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="' . route('customers.edit', $customer->uuid) . '">
+                                        <i class="bx bx-edit text-emerald-500"></i> Edit Customer
+                                    </a>
+                                </li>' : '';
                 return '<div class="btn-group">
                             <button type="button" class="inline-flex items-center gap-1 bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-l-lg transition-colors">Actions</button>
                             <button type="button" class="bg-slate-700 hover:bg-slate-800 text-white px-2 py-1.5 rounded-r-lg border-l border-slate-600 dropdown-toggle dropdown-toggle-split transition-colors" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="visually-hidden">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
-                                <li>
-                                    <a class="dropdown-item flex items-center gap-2 py-2 text-sm role-btn" data-bs-toggle="modal" data-bs-target="#roleModel" data-id="' . $customer->id . '" data-name="' . e($customer->customer_name) . '" data-email="' . e($customer->email) . '">
-                                        <i class="bx bx-user-voice text-cyan-500"></i> Manage Roles
-                                    </a>
-                                </li>
+                                ' . $manageRoles . '
                                 <li>
                                     <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="' . route('customers.show', $customer->uuid) . '">
                                         <i class="bx bx-user text-blue-500"></i> View Profile
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item flex items-center gap-2 py-2 text-sm" href="' . route('customers.edit', $customer->uuid) . '">
-                                        <i class="bx bx-edit text-emerald-500"></i> Edit Customer
-                                    </a>
-                                </li>
+                                ' . $editCustomer . '
                             </ul>
                         </div>';
             })
@@ -475,7 +479,7 @@ class CustomerController extends Controller
             'student_reg_id'     => 'required_if:reg_type,1|nullable|string',
             'form_four_index_no' => 'required_if:reg_type,1|nullable|string|max:255',
             'study_year'         => 'required_if:reg_type,1|nullable|string|max:20',
-            'position'           => 'required_if:reg_type,1|nullable|string|max:255',
+            'position'           => 'nullable|string|max:255',
             'heslb_status'       => 'required_if:reg_type,1|nullable|in:0,1',
 
             // Intern-only (reg_type = 2)

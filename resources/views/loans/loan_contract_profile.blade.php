@@ -280,6 +280,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 text-end">
+                            @can('add loan repayment')
                             <div class="action-buttons">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-light">Actions</button>
@@ -295,6 +296,7 @@
                                     </ul>
                                 </div>
                             </div>
+                            @endcan
                         </div>
                     </div>
                 </div>

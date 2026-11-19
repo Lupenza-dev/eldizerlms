@@ -19,9 +19,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
                     {{ $campuses->count() }} Campuses
                 </span>
+                @can('sync campuses')
                 <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" id="sync_btn">
                     <i class="bx bx-sync"></i> Sync
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -66,7 +68,7 @@
 
 @push('scripts')
 <script>
-    document.getElementById('sync_btn').addEventListener('click', async function () {
+    document.getElementById('sync_btn')?.addEventListener('click', async function () {
         const button = this;
         const alertDiv = document.getElementById('sync_alert');
         button.disabled = true;

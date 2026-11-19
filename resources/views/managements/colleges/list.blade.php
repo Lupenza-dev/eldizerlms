@@ -19,9 +19,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
                     {{ $colleges->count() }} Universities
                 </span>
+                @can('create universities')
                 <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
                     <i class="bx bx-plus"></i> Add University
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -73,6 +75,7 @@
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $college->status_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
+                                        @can('edit universities')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
                                                 data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
                                                 data-id="{{ $college->uuid}}"
@@ -84,6 +87,8 @@
                                                 title="Edit University">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
+                                        @endcan
+                                        @can('change universities status')
                                         @if ($college->status == "Inactive")
                                             <button class="inline-flex items-center justify-center w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors" id="{{ $college->uuid }}" onclick="enable_college(id)" title="Activate">
                                                 <i class="bx bx-check text-sm"></i>
@@ -93,9 +98,12 @@
                                                 <i class="bx bx-x text-sm"></i>
                                             </button>
                                         @endif
+                                        @endcan
+                                        @can('delete universities')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors" id="{{ $college->uuid }}" onclick="delete_college(id)" title="Delete">
                                             <i class="bx bx-trash text-sm"></i>
                                         </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

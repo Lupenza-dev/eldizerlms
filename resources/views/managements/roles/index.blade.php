@@ -6,7 +6,9 @@
         <div class="page-breadcrumb d-flex align-items-center mb-4">
             <div class="breadcrumb-title pe-3"><span class="text-lg font-bold text-slate-700">Roles & Permissions</span></div>
             <div class="ms-auto">
+                @can('create roles')
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoleModal"><i class="bx bx-plus"></i> Add Role</button>
+                @endcan
             </div>
         </div>
 
@@ -34,11 +36,13 @@
                                 @endforelse
                             </td>
                             <td class="text-end">
+                                @can('edit roles')
                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#roleModal{{ $role->id }}"><i class="bx bx-shield-quarter"></i> Permissions</button>
-                                @if (Route::has('roles.menus'))
+                                @endcan
+                                @if (Route::has('roles.menus') && auth()->user()->can('assign role menus'))
                                 <button class="btn btn-sm btn-outline-secondary role-menus-btn" data-role-id="{{ $role->id }}"><i class="bx bx-menu"></i> Menus</button>
                                 @endif
-                                @if(!in_array($role->name, ['Admin', 'Super Admin', 'Agent', 'Customer', 'Internal User']))
+                                @if(!in_array($role->name, ['Admin', 'Super Admin', 'Agent', 'Customer', 'Internal User']) && auth()->user()->can('delete roles'))
                                     <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this role?')">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i></button>

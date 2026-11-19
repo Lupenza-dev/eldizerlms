@@ -87,7 +87,7 @@
                                                 </span>
                                                 @endif
                                             </li>
-                                            @if ($payment->customer_bank_name == "NMB")
+                                            @if ($payment->customer_bank_name == "NMB" && auth()->user()->can('verify mandate otp'))
                                             <li>
                                                 <a class="dropdown-item flex items-center gap-2 py-2 text-sm resend-otp-btn" href="javascript:;" data-reference="{{ $payment->mandate_reference }}">
                                                     <i class="bx bx-refresh text-emerald-500"></i> Resend OTP
