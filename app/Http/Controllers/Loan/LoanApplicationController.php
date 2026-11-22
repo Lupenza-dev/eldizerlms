@@ -490,6 +490,17 @@ class LoanApplicationController extends Controller
             ], 500);
         }
 
+        //check mandate
+
+        $mandate =CustomerMandate::where('loan_application_id', $loan->id)->where('status', 'SUCCESS')->first();
+
+        if (!$mandate) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Customer Mandate is Not Confirmed, You cant proceed with Disbursement',
+            ], 500);
+        }
+
         try {
             DB::transaction(function () use ($valid) {
                 $loan = LoanApplication::where('uuid', $valid['loan_uuid'])->first();
