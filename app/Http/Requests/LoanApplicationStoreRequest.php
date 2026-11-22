@@ -43,10 +43,11 @@ class LoanApplicationStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount'      =>['required'],
-            'plan'        =>['required'],
-            'agent_id'    =>['required'],
-            'loan_type'    =>['required'],
+            'amount'          =>['required'],
+            'plan'            =>['nullable'],
+            'agent_id'        =>['nullable'],
+            'loan_type'       =>['required_without:loan_product_id'],
+            'loan_product_id' =>['nullable','integer'],
             'eco_water_campus_id' =>'nullable',
             'initial_deposit'     =>'nullable'
         ];

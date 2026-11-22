@@ -21,9 +21,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
                     {{ $agents->count() }} Agents
                 </span>
+                @can('create agents')
                 <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
                     <i class="bx bx-user-plus"></i> Add Agent
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -90,6 +92,7 @@
 
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $agent->user?->status_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
+                                    @can('edit agents')
                                     <div class="flex gap-1">
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
                                                 data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
@@ -103,7 +106,9 @@
                                                 title="Edit Agent">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
+                                    @endcan
 
+                                        @can('change agents status')
                                         @if ($agent->user?->active == 2)
                                             <button class="inline-flex items-center justify-center w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors" id="{{ $agent->user?->uuid }}" onclick="enable_user(id)" title="Activate">
                                                 <i class="bx bx-check text-sm"></i>
@@ -113,10 +118,13 @@
                                                 <i class="bx bx-x text-sm"></i>
                                             </button>
                                         @endif
+                                        @endcan
 
+                                        @can('delete agents')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors" id="{{ $agent->user?->uuid }}" onclick="delete_user(id)" title="Delete">
                                             <i class="bx bx-trash text-sm"></i>
                                         </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

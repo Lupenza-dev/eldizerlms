@@ -2,18 +2,19 @@
 
 namespace App\View\Components\Layouts;
 
+use App\Services\MenuService;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Component;
 
 class Sidebar extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public array $menus;
+
+    public function __construct(MenuService $menuService)
     {
-        //
+        $this->menus = $menuService->tree(Auth::user());
     }
 
     /**

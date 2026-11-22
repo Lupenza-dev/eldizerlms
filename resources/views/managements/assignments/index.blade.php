@@ -16,9 +16,11 @@
                 </nav>
             </div>
             <div class="ms-auto">
+                @can('create assignments')
                 <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
                     <i class="bx bx-plus"></i> Add Assignment
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -66,6 +68,7 @@
                                 <td class="px-4 py-3 whitespace-nowrap">{!! $assignment->status_formatted !!}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
+                                        @can('edit assignments')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
                                                 data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
                                                 data-id="{{ $assignment->uuid }}"
@@ -77,9 +80,12 @@
                                                 title="Edit">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
+                                        @endcan
+                                        @can('delete assignments')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors" id="{{ $assignment->uuid }}" onclick="delete_college(id)" title="Delete">
                                             <i class="bx bx-trash text-sm"></i>
                                         </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

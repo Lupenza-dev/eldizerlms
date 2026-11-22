@@ -25,9 +25,11 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
+                    @can('manage assignment questions')
                     <a href="{{ route('question.create',$assignment)}}">
                      <button type="button" class="btn btn-primary"> <span class="bx bx-plus"></span> Add</button>
                     </a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -60,10 +62,12 @@
                                 <td>{!! $question->correct_answer !!}</td>
                                 <td>{!! $question->status_formatted !!}</td>
                                 <td>
+                                    @can('manage assignment questions')
                                     <button class="btn btn-primary btn-sm edit-btn"  data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
                                      data-id="{{ $question->uuid}}" 
                                         data-name ="{{ $question->name}}"
                                         title="Edit"> <i class="bx bx-edit"></i> </button>
+                                    @endcan
 
                                         {{-- @if ($college->status == "Inactive")
                                         <button class="btn btn-success btn-sm" id="{{ $college->uuid}}" onclick="enable_college(id)"><i class="bx bx-check text-white"></i></button>

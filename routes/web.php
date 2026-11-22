@@ -15,11 +15,13 @@ use App\Http\Controllers\Management\AgentController;
 use App\Http\Controllers\Management\CustomerController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanContractController;
+use App\Http\Controllers\Loan\LoanProductController;
 use App\Http\Controllers\Management\AppController;
 use App\Http\Controllers\Management\AssignmentController;
 use App\Http\Controllers\Management\BenefeciariesController;
 use App\Http\Controllers\Management\DeviceController;
 use App\Http\Controllers\Management\HospitalController;
+use App\Http\Controllers\Management\MenuController;
 use App\Http\Controllers\Management\ProfessionalController;
 use App\Http\Controllers\Payment\PaymentController;
 
@@ -109,8 +111,37 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('settings', function () {
         return view('settings.index');
     })
-        ->middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries')
+        ->middleware('permission:manage devices|manage universities|manage hospitals|manage beneficiaries|manage loan products|manage menus')
         ->name('settings.index');
+
+    ######menu management routes
+    Route::middleware('permission:manage menus')
+        ->prefix('settings/menus')
+        ->name('menus.')
+        ->group(function () {
+            Route::get('/',               [MenuController::class, 'index'])->name('index');
+            Route::post('/',              [MenuController::class, 'store'])->name('store');
+            Route::put('/{menu}',         [MenuController::class, 'update'])->name('update');
+            Route::post('/{menu}/status', [MenuController::class, 'toggleStatus'])->name('status');
+            Route::post('/{menu}/move',   [MenuController::class, 'move'])->name('move');
+            Route::delete('/{menu}',      [MenuController::class, 'destroy'])->name('destroy');
+        });
+
+    ######role menu assignment
+    Route::get('roles/{role}/menus', [RoleController::class, 'menus'])->middleware('permission:manage roles')->name('roles.menus');
+    Route::put('roles/{role}/menus', [RoleController::class, 'syncMenus'])->middleware('permission:manage roles')->name('roles.menus.sync');
+
+    ######loan product routes
+    Route::middleware('permission:manage loan products')
+        ->prefix('settings/loan-products')
+        ->name('loan-products.')
+        ->group(function () {
+            Route::get('/',                     [LoanProductController::class, 'index'])->name('index');
+            Route::post('/',                    [LoanProductController::class, 'store'])->name('store');
+            Route::put('/{loanProduct}',        [LoanProductController::class, 'update'])->name('update');
+            Route::post('/{loanProduct}/status', [LoanProductController::class, 'toggleStatus'])->name('status');
+            Route::delete('/{loanProduct}',     [LoanProductController::class, 'destroy'])->name('destroy');
+        });
 
 
     ######professional routes

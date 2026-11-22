@@ -31,11 +31,11 @@
                     <button class="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" id="filter-btn">
                         <i class="bx bx-filter text-lg"></i> Customer Filter
                     </button>
-                    @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                    @can('create customers')
                     <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#registerCustomerModal">
                         <i class="bx bx-user-plus text-lg"></i> Register Customer
                     </button>
-                    @endif
+                    @endcan
                 </div>
             </div>
 
@@ -86,10 +86,7 @@
                 @endif
             </select>
         </div>
-    </div>
-
-    @if (Auth::user()->hasRole(['Admin','Super Admin']))
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        @if (auth()->user()->can('filter by college'))
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
             <select name="college_id" class="form-control rounded-lg text-sm">
@@ -99,6 +96,11 @@
                 @endforeach
             </select>
         </div>
+        @endif
+    </div>
+
+    @if (auth()->user()->can('filter by region'))
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region</label>
             <select name="region_id" class="form-control rounded-lg text-sm">
@@ -115,11 +117,11 @@
         <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" id="search-btn" type="submit">
             <i class="bx bx-search"></i> Search
         </button>
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @can('export customers')
         <button class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors" formaction="{{ route('genderate.customer.report')}}">
             <i class="bx bx-file"></i> Generate
         </button>
-        @endif
+        @endcan
     </div>
 </form>
 
@@ -136,7 +138,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">ID Number</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Address</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Customer Type</th>
-                                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                @if (auth()->user()->canAny(['edit users', 'edit customers']))
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Roles</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Actions</th>
                                 @endif
@@ -521,7 +523,7 @@
                 {data: 'id_number',     name: 'id_number',     searchable: true,  orderable: false},
                 {data: 'address',       name: 'address',       searchable: false, orderable: false},
                 {data: 'customer_type', name: 'customer_type', searchable: false, orderable: false},
-                @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                @if (auth()->user()->canAny(['edit users', 'edit customers']))
                 {data: 'roles',         name: 'roles',         searchable: false, orderable: false},
                 {data: 'actions',       name: 'actions',       searchable: false, orderable: false},
                 @endif

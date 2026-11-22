@@ -66,12 +66,14 @@
                                     @endswitch
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
+                                    @can('nmb transact')
                                     <button class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors edit-btn"
                                             data-bs-toggle="modal" data-bs-target="#exampleLargeModalEdit"
                                             data-id="{{ $subcriber->consent_request?->uuid }}"
                                             title="Create Transaction">
                                         <i class="bx bx-edit text-sm"></i> Transact
                                     </button>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

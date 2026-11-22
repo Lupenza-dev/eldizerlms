@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+        @if (auth()->user()->can('view dashboard statistics'))
         <!-- Second Row of Stats Cards (Admin Only) -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
             <!-- Approved Loan Applications Card -->
