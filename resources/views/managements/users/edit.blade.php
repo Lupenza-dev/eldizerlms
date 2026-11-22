@@ -83,11 +83,13 @@
                         </div>
                     </div>
 
+                    @can('edit users')
                     <div class="mt-4 flex gap-2">
                         <button type="button" id="update_btn" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                             <i class="bx bx-save me-1"></i> Update User
                         </button>
                     </div>
+                    @endcan
 
                     <div id="alert" class="mt-3"></div>
                 </form>
@@ -99,7 +101,7 @@
 
 @push('scripts')
 <script>
-    document.getElementById('update_btn').addEventListener('click', function(e) {
+    document.getElementById('update_btn')?.addEventListener('click', function(e) {
         e.preventDefault();
 
         const btn = document.getElementById('update_btn');

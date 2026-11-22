@@ -123,11 +123,13 @@
                 <div class="tab-content" id="mandateTabsContent">
                     <!-- Mandate Details Tab -->
                     <div class="tab-pane fade show active" id="details" role="tabpanel">
+                        @can('cancel mandates')
                         <div class="d-flex justify-content-start mb-4">
                             <button type="button" class="inline-flex items-center gap-2 bg-red-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#updateMandateDescriptionModal">
                                 <i class="bx bx-edit"></i> Cancel Mndate
                             </button>
                         </div>
+                        @endcan
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card border-0 bg-light">
@@ -267,9 +269,11 @@
                                 <div class="badge bg-info" id="collection-count">
                                     {{ $collections->count() }} Collections
                                 </div>
+                                @can('sync mandate collections')
                                 <a href="{{ route('sync.mandate.payment.collection', $payment->reference) }}" class="btn btn-primary btn-sm">
                                     <i class="bx bx-refresh me-1"></i>Sync Collections
                                 </a>
+                                @endcan
                             </div>
                         </div>
                         

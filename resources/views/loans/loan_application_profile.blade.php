@@ -244,6 +244,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 text-end">
+                            @canany(['reject loans', 'approve loans', 'agent approve loans'])
                             <div class="action-buttons">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-light">Actions</button>
@@ -251,27 +252,30 @@
                                         <span class="visually-hidden">Toggle Dropdown</span>
                                     </button>
                                     <ul class="dropdown-menu">
+                                        @can('reject loans')
                                         <li>
                                             <button class="dropdown-item btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
                                                 <i class="bx bx-x me-2"></i> Reject Application
                                             </button>
                                         </li>
-                                        @if (Auth::user()->hasRole(['Admin','Super Admin']))
+                                        @endcan
+                                        @can('approve loans')
                                         <li>
                                             <button class="dropdown-item btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal">
                                                 <i class="bx bx-check me-2"></i> Approve Application
                                             </button>
                                         </li>  
-                                        @else
+                                        @elsecan('agent approve loans')
                                         <li>
                                             <button class="dropdown-item btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleLargeModalApprove">
                                                 <i class="bx bx-check me-2"></i> Approve Application
                                             </button>
                                         </li> 
-                                        @endif
+                                        @endcan
                                     </ul>
                                 </div>
                             </div>
+                            @endcanany
                         </div>
                     </div>
                 </div>

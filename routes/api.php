@@ -52,6 +52,7 @@ Route::group(['prefix' => 'V1', 'middleware' => 'auth:api'], function () {
     Route::post('student-registration', [CustomerController::class, 'storeStudent']);
     Route::post('loan-application', [LoanApplicationController::class, 'loanApplication']);
     Route::post('loan-calculator', [LoanApplicationController::class, 'loanCalculator']);
+    Route::get('loan-products', [LoanApplicationController::class, 'loanProducts']);
     Route::post('get-loans', [HomeController::class, 'getLoans']);
     Route::post('get-payments', [HomeController::class, 'getPayments']);
     Route::get('get-agents', [HomeController::class, 'getAgents']);
@@ -88,6 +89,7 @@ Route::group(['prefix' => 'V2'], function () {
         Route::post('student-registration', [CustomerController::class, 'storeStudent']);
         Route::post('loan-application', [LoanApplicationController::class, 'loanApplication']);
         Route::post('loan-calculator', [LoanApplicationController::class, 'loanCalculator']);
+        Route::get('loan-products', [LoanApplicationController::class, 'loanProducts']);
         Route::post('get-loans', [HomeController::class, 'getLoans']);
         Route::post('get-payments', [HomeController::class, 'getPayments']);
         Route::get('get-agents', [HomeController::class, 'getAgents']);

@@ -20,9 +20,11 @@
                 <span class="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full" id="record-count">
                     {{ $devices->count() }} Devices
                 </span>
+                @can('create devices')
                 <button type="button" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" data-bs-toggle="modal" data-bs-target="#exampleLargeModal">
                     <i class="bx bx-plus"></i> Add Device
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -94,6 +96,7 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex gap-1">
+                                        @can('edit devices')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors edit-btn"
                                                 data-bs-toggle="modal" data-bs-target="#editDeviceModal"
                                                 data-uuid="{{ $device->uuid }}"
@@ -111,12 +114,15 @@
                                                 title="Edit Device">
                                             <i class="bx bx-edit text-sm"></i>
                                         </button>
+                                        @endcan
+                                        @can('delete devices')
                                         <button class="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                                                 data-uuid="{{ $device->uuid }}"
                                                 onclick="delete_device(this.dataset.uuid)"
                                                 title="Delete Device">
                                             <i class="bx bx-trash text-sm"></i>
                                         </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

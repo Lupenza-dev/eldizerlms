@@ -175,6 +175,33 @@
         background: rgba(231,76,60,0.3);
     }
 
+    /* Dropdown submenus (DB-driven menus) */
+    .metismenu .sidebar-submenu {
+        padding: 0.25rem 0 0.5rem 2.75rem;
+        list-style: none;
+    }
+
+    .metismenu .sidebar-submenu > li > a {
+        display: flex;
+        align-items: center;
+        color: #cfd8dc;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0 20px 20px 0;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .metismenu .sidebar-submenu > li > a:hover,
+    .metismenu .sidebar-submenu > li > a.li-active {
+        color: #ffffff;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .metismenu > li > a.has-arrow::after {
+        border-color: #ecf0f1;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
         .sidebar-wrapper {
@@ -206,120 +233,9 @@
 
     <!--navigation-->
     <ul class="metismenu" id="menu">
-
-        {{-- Dashboard --}}
-        @can('view dashboard')
-            @if (Auth::user()->hasRole(['Admin','Super Admin','Internal User']))
-            <li>
-                <a class="{{ Route::is('admin.dashboard') ? 'li-active' : '' }}" href="{{ route('admin.dashboard') }}" title="Dashboard">
-                    <div class="parent-icon"><i class='bx bx-home-alt'></i></div>
-                    <div class="menu-title">Dashboard</div>
-                </a>
-            </li>
-            @else
-            <li>
-                <a class="{{ Route::is('dashboard') ? 'li-active' : '' }}" href="{{ route('dashboard') }}" title="Dashboard">
-                    <div class="parent-icon"><i class='bx bx-home-alt'></i></div>
-                    <div class="menu-title">Dashboard</div>
-                </a>
-            </li>
-            @endif
-        @endcan
-
-        {{-- Loan Management label --}}
-        @canany(['view customers', 'view loans'])
-        <li class="menu-label">Loan Management</li>
-        @endcanany
-
-        @can('view customers')
-        <li>
-            <a class="{{ (Route::is('customers.index') or Route::is('customers.show') or Route::is('customers.edit')) ? 'li-active' : '' }}" href="{{ route('customers.index') }}" title="Customer Management">
-                <div class="parent-icon"><i class='bx bx-user'></i></div>
-                <div class="menu-title">Customers</div>
-            </a>
-        </li>
-        @endcan
-
-        @can('view loans')
-        <li>
-            <a class="{{ (Route::is('loan.management') or Route::is('loan.applications') or Route::is('loan.profile') or Route::is('loan.contracts') or Route::is('loan.contract.profile') or Route::is('loan.applications.waiting.mandate')) ? 'li-active' : '' }}" href="{{ route('loan.management') }}" title="Loan Management">
-                <div class="parent-icon"><i class='bx bx-file'></i></div>
-                <div class="menu-title">Loan Management</div>
-            </a>
-        </li>
-        @endcan
-
-        {{-- Payment Management --}}
-        @canany(['view payments', 'manage mobile app', 'manage devices', 'manage universities', 'manage hospitals', 'manage beneficiaries', 'manage agents', 'manage users', 'manage roles'])
-
-        @can('view payments')
-        <li class="menu-label">Payment Management</li>
-        <li>
-            <a class="{{ Route::is('payment.management') ? 'li-active' : '' }}" href="{{ route('payment.management') }}" title="Repayment Management">
-                <div class="parent-icon"><i class='bx bx-receipt'></i></div>
-                <div class="menu-title">Payments</div>
-            </a>
-        </li>
-        @endcan
-
-        {{-- System Management label --}}
-        @canany(['manage mobile app', 'manage devices', 'manage universities', 'manage hospitals', 'manage beneficiaries', 'manage agents', 'manage users', 'manage roles'])
-        <li class="menu-label">System Management</li>
-        @endcanany
-
-        {{-- ═══════ SETTINGS — single link ═══════ --}}
-        @canany(['manage devices', 'manage universities', 'manage hospitals', 'manage beneficiaries'])
-        <li>
-            <a class="{{ request()->is('settings') || request()->is('settings/*') ? 'li-active' : '' }}"
-               href="{{ route('settings.index') }}"
-               title="System Settings">
-                <div class="parent-icon"><i class='bx bx-cog'></i></div>
-                <div class="menu-title">Settings</div>
-            </a>
-        </li>
-        @endcanany
-
-        {{-- AGENTS --}}
-        @can('manage agents')
-        <li>
-            <a class="{{ Route::is('agents.*') ? 'li-active' : '' }}" href="{{ route('agents.index') }}" title="Agent Management">
-                <div class="parent-icon"><i class='bx bx-user-voice'></i></div>
-                <div class="menu-title">Agents</div>
-            </a>
-        </li>
-        @endcan
-
-        {{-- Mobile App --}}
-        @can('manage mobile app')
-        <li>
-            <a class="{{ Route::is('app.management') ? 'li-active' : '' }}" href="{{ route('app.management') }}" title="App Management">
-                <div class="parent-icon"><i class='bx bx-mobile-alt'></i></div>
-                <div class="menu-title">Mobile App</div>
-            </a>
-        </li>
-        @endcan
-
-        {{-- Users --}}
-        @can('manage users')
-        <li>
-            <a class="{{ Route::is('users.index') ? 'li-active' : '' }}" href="{{ route('users.index') }}" title="User Management">
-                <div class="parent-icon"><i class='bx bx-users'></i></div>
-                <div class="menu-title">Users</div>
-            </a>
-        </li>
-        @endcan
-
-        {{-- Roles --}}
-        @can('manage roles')
-        <li>
-            <a class="{{ Route::is('roles.*') ? 'li-active' : '' }}" href="{{ route('roles.index') }}" title="Role Management">
-                <div class="parent-icon"><i class='bx bx-shield-quarter'></i></div>
-                <div class="menu-title">Roles & Permissions</div>
-            </a>
-        </li>
-        @endcan
-
-        @endcanany
+        @foreach ($menus as $item)
+            @include('components.layouts.sidebar-item', ['item' => $item])
+        @endforeach
 
         {{-- Logout --}}
         <li>
