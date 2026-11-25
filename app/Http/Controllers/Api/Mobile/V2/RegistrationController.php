@@ -272,7 +272,7 @@ class RegistrationController extends Controller
            $customer_obj->district_id =$valid_data['district_id'];
            $customer_obj->ward_id  =$valid_data['ward_id'];
            $customer_obj->street   =$valid_data['street'];
-           $customer_obj->gender_id   =substr($valid_data['id_number'], -2, 1);
+           $customer_obj->gender_id   =$valid_data['gender_id'] ?? null;
            $customer_obj->dob   =date('Y-m-d',strtotime($formattedDate));
            $customer_obj->registration_stage   =4;
            $customer_obj->save();
@@ -315,6 +315,7 @@ class RegistrationController extends Controller
             'professional'      =>'required',
             'nida_number'         =>'required',
             'letter'      =>'required',
+            'gender_id'      =>'nullable',
         ]
     );
 
@@ -351,6 +352,7 @@ class RegistrationController extends Controller
     $customer_obj =Customer::where('id',Auth::user()->customer_id)->first();
     $customer_obj->registration_stage =4;
     $customer_obj->id_number =$valid_data['nida_number'];
+    $customer_obj->gender_id =$valid_data['gender_id'] ?? null;
     $customer_obj->save();
 
     return response()->json([
