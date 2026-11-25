@@ -63,6 +63,7 @@ class CompleteRegRequest extends FormRequest
             'heslb_status'   =>'required',
             'course'         =>'required',
             'index_no'       =>'required',
+            'gender_id'      =>'nullable',
         ];
     }
 }

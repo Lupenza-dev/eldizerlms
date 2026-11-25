@@ -492,7 +492,7 @@ class LoanApplicationController extends Controller
 
         //check mandate
 
-        $mandate =CustomerMandate::where('loan_application_id', $loan->id)->where('status', 'success')->first();
+        $mandate =CustomerMandate::where('loan_application_id', $loan->id)->where('status', 'active')->first();
 
         if (!$mandate) {
             return response()->json([
