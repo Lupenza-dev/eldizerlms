@@ -96,7 +96,6 @@ class PaymentController extends Controller
             'payment_method'    => 'required|string',
             'payment_channel'   => 'required|string',
             'contract_uuid'     => 'required',
-            'remarks'           => 'nullable|string',
         ]);
 
         $loan_contract = LoanContract::with('customer')->where('uuid', $valid_data['contract_uuid'])->first();
@@ -132,13 +131,85 @@ class PaymentController extends Controller
             'loan_contract_id'  => $loan_contract->id,
             'customer_id'       => $loan_contract->customer_id,
             'added_by'          => Auth::id(),
-            'remarks'           => $valid_data['remarks'] ?? null,
             'status'            => 'pending',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Repayment request submitted and pending approval',
+        ], 200);
+    }
+
+    public function allPayments()
+    {
+        return view('payments.all_payments');
+    }
+
+    public function paymentRequests()
+    {
+        $payment_requests = PaymentRequest::with('loan_contract.customer', 'addedBy')
+            ->whereIn('status', ['pending', 'rejected'])
+            ->orderByRaw("FIELD(status, 'pending', 'rejected')")
+            ->latest()
+            ->get();
+
+        return view('payments.payment_requests', compact('payment_requests'));
+    }
+
+    public function approvePaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'uuid' => 'required',
+        ]);
+
+        $payment_request = PaymentRequest::where('uuid', $valid_data['uuid'])->first();
+        if (!$payment_request) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment request not found',
+            ], 404);
+        }
+
+        // TODO: approval logic (create Payment, update installments, mark request as success).
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Approve action is not implemented yet',
+        ], 200);
+    }
+
+    public function rejectPaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'uuid'    => 'required',
+            'remarks' => 'required|string|min:3',
+        ], [
+            'remarks.required' => 'Please provide the reason for rejecting this payment request',
+        ]);
+
+        $payment_request = PaymentRequest::where('uuid', $valid_data['uuid'])->first();
+        if (!$payment_request) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment request not found',
+            ], 404);
+        }
+
+        if ($payment_request->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Only pending payment requests can be rejected',
+            ], 422);
+        }
+
+        $payment_request->update([
+            'status'  => 'rejected',
+            'remarks' => $valid_data['remarks'],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment request rejected',
         ], 200);
     }
 

@@ -646,51 +646,6 @@
                                         <p class="mt-2">No payments recorded yet</p>
                                     </div>
                                 @endif
-
-                                <h6 class="section-title mb-3 mt-4">
-                                    <i class="bx bx-time-five"></i>
-                                    Repayment Requests
-                                </h6>
-                                @if($contract->payment_requests->count() > 0)
-                                    <div class="table-responsive payment-table">
-                                        <table class="table mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Payment Date</th>
-                                                    <th>Amount</th>
-                                                    <th>Reference</th>
-                                                    <th>Method</th>
-                                                    <th>Channel</th>
-                                                    <th>Remark</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($contract->payment_requests as $item)
-                                                    @php
-                                                        $badge = ['pending' => 'warning', 'success' => 'success', 'rejected' => 'danger'][$item->status] ?? 'secondary';
-                                                    @endphp
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ date('d M Y', strtotime($item->payment_date)) }}</td>
-                                                        <td class="highlight-amount">{{ number_format($item->amount)}}</td>
-                                                        <td><span class="contract-code">{{ $item->payment_reference}}</span></td>
-                                                        <td>{{ $item->payment_method}}</td>
-                                                        <td>{{ $item->payment_channel}}</td>
-                                                        <td>{{ $item->remarks ?: '-' }}</td>
-                                                        <td><span class="badge bg-{{ $badge }}">{{ ucfirst($item->status) }}</span></td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @else
-                                    <div class="empty-state">
-                                        <i class="bx bx-time" style="font-size: 2rem; color: #dee2e6;"></i>
-                                        <p class="mt-2">No repayment requests yet</p>
-                                    </div>
-                                @endif
                             </div>
                             <div class="tab-pane fade" id="bondTab" role="tabpanel">
                                 <h6 class="section-title mb-3">
@@ -868,10 +823,6 @@
                                       <option value="Halo pesa">Halo pesa</option>
                                     </optgroup>
                                   </select>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="">Remarks</label>
-                                <textarea name="remarks" class="form-control" rows="2" placeholder="Write Remarks (optional).."></textarea>
                             </div>
                         <div class="col-md-12" id="approve_alert" style="margin-top: 10px">
 
