@@ -29,7 +29,17 @@ class MenuDefinitions
             ]),
 
             self::item('payment-section', 'Payment Management', null, 'section', children: [
-                self::item('payments', 'Payments', 'bx-receipt', 'link', 'payment.management', null, 'view payments'),
+                self::item('payments', 'Payments', 'bx-receipt', 'hub', 'payment.management',
+                    'payment.*,payments,nmb.subscribers,customer.loans.mandates,view.payment.mandate', 'view payments', children: [
+                    self::item('all-payments', 'All Payments', 'bx-money', 'hub', 'payment.all', 'payment.all,payments,payment.requests', 'view payments', description: 'Management of Payments', color: 'blue', children: [
+                        self::item('payment-list', 'All Payments', 'bx-list-ul', 'link', 'payments', 'payments', 'view payments', description: 'All posted repayments', color: 'blue'),
+                        self::item('payment-requests', 'Payment Requests', 'bx-time-five', 'link', 'payment.requests', 'payment.requests', 'view payment requests', description: 'Pending & rejected repayment requests', color: 'amber'),
+                    ]),
+                    self::item('payment-mandates', 'All Payment Mandates', 'bx-file', 'link', 'payment.mandates', 'payment.mandates,view.payment.mandate', 'view payments', description: 'Manage Payment Mandates', color: 'indigo'),
+                    self::item('customer-loan-mandates', 'Customer Loan Mandates', 'bx-user-check', 'link', 'customer.loans.mandates', null, 'view payments', description: 'Customer Applied Loans Mandates', color: 'violet'),
+                    self::item('disbursements', 'Disbursement', 'bx-send', 'link', 'payment.disbursed', null, 'view payments', description: 'All Payment Disbursed', color: 'emerald'),
+                    self::item('nmb-subscribers', 'NMB Subscribers', 'bx-user', 'link', 'nmb.subscribers', null, 'view payments', description: 'All NMB Subscribers', color: 'cyan'),
+                ]),
             ]),
 
             self::item('system-section', 'System Management', null, 'section', children: [

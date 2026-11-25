@@ -55,6 +55,8 @@ class PermissionSeeder extends Seeder
         // Payments
         'sync mandates', 'cancel mandates', 'sync mandate collections',
         'verify mandate otp', 'nmb transact',
+        // Payment requests
+        'view payment requests', 'approve payment requests', 'reject payment requests',
     ];
 
     /**
