@@ -14,6 +14,7 @@ use App\Models\Management\NMBConsentRequest;
 use App\Models\Management\NMBSubscription;
 use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\PaymentMandate;
+use App\Models\Payment\PaymentRequest;
 use App\Services\Loan\InstallmentService;
 use Auth;
 use Illuminate\Support\Facades\Http;
@@ -83,6 +84,61 @@ class PaymentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Action Done Successfully',
+        ], 200);
+    }
+
+    public function loanRepaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'payment_date'      => 'required|date',
+            'paid_amount'       => 'required|numeric|min:1',
+            'payment_reference' => 'required|string',
+            'payment_method'    => 'required|string',
+            'payment_channel'   => 'required|string',
+            'contract_uuid'     => 'required',
+            'remarks'           => 'nullable|string',
+        ]);
+
+        $loan_contract = LoanContract::with('customer')->where('uuid', $valid_data['contract_uuid'])->first();
+        if (!$loan_contract) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Loan contract not found',
+            ], 404);
+        }
+
+        $payment_exists = Payment::where('payment_reference', $valid_data['payment_reference'])
+            ->whereNotNull('loan_contract_id')
+            ->exists();
+        $request_exists = PaymentRequest::where('payment_reference', $valid_data['payment_reference'])
+            ->whereIn('status', ['pending', 'success'])
+            ->exists();
+
+        if ($payment_exists || $request_exists) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment Already exist',
+            ], 500);
+        }
+
+        PaymentRequest::create([
+            'uuid'              => (string) Str::orderedUuid(),
+            'phone_number'      => optional($loan_contract->customer)->phone_number,
+            'amount'            => $valid_data['paid_amount'],
+            'payment_reference' => $valid_data['payment_reference'],
+            'payment_method'    => $valid_data['payment_method'],
+            'payment_channel'   => $valid_data['payment_channel'],
+            'payment_date'      => $valid_data['payment_date'],
+            'loan_contract_id'  => $loan_contract->id,
+            'customer_id'       => $loan_contract->customer_id,
+            'added_by'          => Auth::id(),
+            'remarks'           => $valid_data['remarks'] ?? null,
+            'status'            => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Repayment request submitted and pending approval',
         ], 200);
     }
 

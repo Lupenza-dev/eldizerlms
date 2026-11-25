@@ -10,6 +10,7 @@ use App\Models\Management\College;
 use App\Models\Management\CustomerMandate;
 use App\Models\Management\Device;
 use App\Models\Payment\Payment;
+use App\Models\Payment\PaymentRequest;
 
 class LoanContract extends Model
 {
@@ -36,6 +37,10 @@ class LoanContract extends Model
 
   public function payments(){
     return $this->hasMany(Payment::class);
+  }
+
+  public function payment_requests(){
+    return $this->hasMany(PaymentRequest::class)->latest();
   }
 
   public function student(){

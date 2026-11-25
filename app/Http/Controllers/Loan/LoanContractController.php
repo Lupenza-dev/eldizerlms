@@ -61,7 +61,7 @@ class LoanContractController extends Controller
 
     public function profile($uuid)
     {
-        $contract = LoanContract::with('customer', 'loan_approval', 'installments', 'payments', 'guarantors', 'customer_mandate')->where('uuid', $uuid)->first();
+        $contract = LoanContract::with('customer', 'loan_approval', 'installments', 'payments', 'payment_requests', 'guarantors', 'customer_mandate')->where('uuid', $uuid)->first();
         return view('loans.loan_contract_profile', compact('contract'));
     }
 

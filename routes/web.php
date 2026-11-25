@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('loan/contract/profile/{uuid}', [LoanContractController::class, 'profile'])->name('loan.contract.profile');
     Route::get('payments/disbursed', [PaymentController::class, 'disbursments'])->name('payment.disbursed');
     Route::post('loan/repayment', [PaymentController::class, 'loanRepayment'])->name('loan.repayment');
+    Route::post('loan/repayment/request', [PaymentController::class, 'loanRepaymentRequest'])->name('loan.repayment.request');
     Route::get('payments', [PaymentController::class, 'payments'])->name('payments');
     Route::get('nmb/subscribers', [PaymentController::class, 'nmbSubscribers'])->name('nmb.subscribers');
     Route::post('nmb/create/transaction', [PaymentController::class, 'nmbCreateTransaction'])->name('create.transaction');
