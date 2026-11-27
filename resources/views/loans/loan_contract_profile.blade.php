@@ -917,7 +917,7 @@
           });
       $.ajax({
       type:'POST',
-      url:"{{ route('loan.repayment')}}",
+      url:"{{ route('loan.repayment.request')}}",
       data : new FormData(this),
       contentType: false,
       cache: false,
@@ -925,9 +925,9 @@
       success:function(response){
         console.log(response);
         $('#approve_alert').html('<div class="alert alert-success">'+response.message+'</div>');
-    //     setTimeout(function(){
-    //      location.reload();
-    //   },500);
+        setTimeout(function(){
+         location.reload();
+      },800);
       },
       error:function(response){
           console.log(response.responseText);
@@ -945,7 +945,7 @@
                    $('#approve_btn').attr('disabled', true);
               },
               complete : function(){
-                $('#approve_btn').html('<i class="bx bx-check"></i> Approve');
+                $('#approve_btn').html('<span class="bx bx-save"></span> Submit');
                 $('#approve_btn').attr('disabled', false);
               }
       });

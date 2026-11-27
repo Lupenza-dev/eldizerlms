@@ -14,6 +14,7 @@ use App\Models\Management\NMBConsentRequest;
 use App\Models\Management\NMBSubscription;
 use App\Models\Payment\MandatePaymentCollection;
 use App\Models\Payment\PaymentMandate;
+use App\Models\Payment\PaymentRequest;
 use App\Services\Loan\InstallmentService;
 use Auth;
 use Illuminate\Support\Facades\Http;
@@ -83,6 +84,180 @@ class PaymentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Action Done Successfully',
+        ], 200);
+    }
+
+    public function loanRepaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'payment_date'      => 'required|date',
+            'paid_amount'       => 'required|numeric|min:1',
+            'payment_reference' => 'required|string',
+            'payment_method'    => 'required|string',
+            'payment_channel'   => 'required|string',
+            'contract_uuid'     => 'required',
+        ]);
+
+        $loan_contract = LoanContract::with('customer')->where('uuid', $valid_data['contract_uuid'])->first();
+        if (!$loan_contract) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Loan contract not found',
+            ], 404);
+        }
+
+        if ($loan_contract->status == 'CLOSED') {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Loan contract already closed',
+            ], 422);
+        }
+
+        $payment_exists = Payment::where('payment_reference', $valid_data['payment_reference'])
+            ->whereNotNull('loan_contract_id')
+            ->exists();
+        $request_exists = PaymentRequest::where('payment_reference', $valid_data['payment_reference'])
+            ->whereIn('status', ['pending', 'success'])
+            ->exists();
+
+        if ($payment_exists || $request_exists) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment Already exist',
+            ], 500);
+        }
+
+        PaymentRequest::create([
+            'uuid'              => (string) Str::orderedUuid(),
+            'phone_number'      => optional($loan_contract->customer)->phone_number,
+            'amount'            => $valid_data['paid_amount'],
+            'payment_reference' => $valid_data['payment_reference'],
+            'payment_method'    => $valid_data['payment_method'],
+            'payment_channel'   => $valid_data['payment_channel'],
+            'payment_date'      => $valid_data['payment_date'],
+            'loan_contract_id'  => $loan_contract->id,
+            'customer_id'       => $loan_contract->customer_id,
+            'added_by'          => Auth::id(),
+            'status'            => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Repayment request submitted and pending approval',
+        ], 200);
+    }
+
+    public function allPayments()
+    {
+        return view('payments.all_payments');
+    }
+
+    public function paymentRequests()
+    {
+        $payment_requests = PaymentRequest::with('loan_contract.customer', 'addedBy')
+            ->whereIn('status', ['pending', 'rejected'])
+            ->orderByRaw("FIELD(status, 'pending', 'rejected')")
+            ->latest()
+            ->get();
+
+        return view('payments.payment_requests', compact('payment_requests'));
+    }
+
+    public function approvePaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'uuid' => 'required',
+        ]);
+
+        $payment_request = PaymentRequest::where('uuid', $valid_data['uuid'])->first();
+        if (!$payment_request) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment request not found',
+            ], 404);
+        }
+
+        // TODO: approval logic (create Payment, update installments, mark request as success).
+
+        $check_payment = Payment::where('payment_reference',$payment_request->payment_reference)->where('loan_contract_id', '!=', null)->first();
+        $loan_contract = LoanContract::where('id', $payment_request->loan_contract_id)->first();
+        if ($check_payment) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment Already exist',
+            ], 500);
+        }
+
+        $payment = Payment::where('payment_reference',$payment_request->payment_reference)->first();
+
+        if (!$payment) {
+            $payment = Payment::create([
+                'phone_number' => $loan_contract->customer->phone_number,
+                'amount'       => $payment_request->amount,
+                'payment_reference'       =>$payment_request->payment_reference,
+                'payment_method'       => $payment_request->payment_method,
+                'payment_channel'       => $payment_request->payment_channel,
+                'payment_date'          => $payment_request->payment_date,
+                'added_by'              => Auth::user()->id,
+                'uuid'                  => (string)Str::orderedUuid(),
+                'status'                 => "Posted",
+                'loan_contract_id'      => $loan_contract->id,
+                'customer_id'           => $loan_contract->customer_id,
+            ]);
+        }
+
+        $installment = new InstallmentService();
+        $installment_result = $installment->updateInstallment($payment);
+
+        $payment_request->update([
+            'status'  => 'success',
+            'remarks' => "Posted Successfully",
+        ]);
+
+        $payment->remarks = "Loan Repayment";
+        $payment->status  = "Success";
+        $payment->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Action Done Successfully',
+        ], 200);
+
+
+    }
+
+    public function rejectPaymentRequest(Request $request)
+    {
+        $valid_data = $this->validate($request, [
+            'uuid'    => 'required',
+            'remarks' => 'required|string|min:3',
+        ], [
+            'remarks.required' => 'Please provide the reason for rejecting this payment request',
+        ]);
+
+        $payment_request = PaymentRequest::where('uuid', $valid_data['uuid'])->first();
+        if (!$payment_request) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment request not found',
+            ], 404);
+        }
+
+        if ($payment_request->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Only pending payment requests can be rejected',
+            ], 422);
+        }
+
+        $payment_request->update([
+            'status'  => 'rejected',
+            'remarks' => $valid_data['remarks'],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment request rejected',
         ], 200);
     }
 
