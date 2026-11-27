@@ -106,6 +106,13 @@ class PaymentController extends Controller
             ], 404);
         }
 
+        if ($loan_contract->status == 'CLOSED') {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Loan contract already closed',
+            ], 422);
+        }
+
         $payment_exists = Payment::where('payment_reference', $valid_data['payment_reference'])
             ->whereNotNull('loan_contract_id')
             ->exists();
@@ -172,10 +179,51 @@ class PaymentController extends Controller
 
         // TODO: approval logic (create Payment, update installments, mark request as success).
 
+        $check_payment = Payment::where('payment_reference',$payment_request->payment_reference)->where('loan_contract_id', '!=', null)->first();
+        $loan_contract = LoanContract::where('id', $payment_request->loan_contract_id)->first();
+        if ($check_payment) {
+            return response()->json([
+                'success' => false,
+                'errors'  => 'Payment Already exist',
+            ], 500);
+        }
+
+        $payment = Payment::where('payment_reference',$payment_request->payment_reference)->first();
+
+        if (!$payment) {
+            $payment = Payment::create([
+                'phone_number' => $loan_contract->customer->phone_number,
+                'amount'       => $payment_request->amount,
+                'payment_reference'       =>$payment_request->payment_reference,
+                'payment_method'       => $payment_request->payment_method,
+                'payment_channel'       => $payment_request->payment_channel,
+                'payment_date'          => $payment_request->payment_date,
+                'added_by'              => Auth::user()->id,
+                'uuid'                  => (string)Str::orderedUuid(),
+                'status'                 => "Posted",
+                'loan_contract_id'      => $loan_contract->id,
+                'customer_id'           => $loan_contract->customer_id,
+            ]);
+        }
+
+        $installment = new InstallmentService();
+        $installment_result = $installment->updateInstallment($payment);
+
+        $payment_request->update([
+            'status'  => 'success',
+            'remarks' => "Posted Successfully",
+        ]);
+
+        $payment->remarks = "Loan Repayment";
+        $payment->status  = "Success";
+        $payment->save();
+
         return response()->json([
             'success' => true,
-            'message' => 'Approve action is not implemented yet',
+            'message' => 'Action Done Successfully',
         ], 200);
+
+
     }
 
     public function rejectPaymentRequest(Request $request)
